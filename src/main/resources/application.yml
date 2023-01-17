@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: dangol-sonnim-backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dangol_development?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: ${PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create
+      # hibernate가 db에 보내는 모든 쿼리문 보여줌
+      show-sql: true
+      # 보이는 query를 가독성 좋게 formatting
+      format_sql: true
+      # 추가적인 주석 표시하기
+      use_sql_comments: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+server:
+  port: "${port:8080}"
+
