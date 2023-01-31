@@ -1,0 +1,146 @@
+# Reference
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+name: dangol-sonnim-backend CI/CD Workflow
+
+# master 브랜치에 push 이벤트 발생 시 Workflow 실행
+on:
+  push:
+    branches: [ "master" ]
+  # Workflow 문제 발생 시 수동 실행 가능하게 하도록 workflow_dispatch 추가
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+# 현재는 Repository 관련 모든 권한을 Workflow에 허용
+# TODO. 별도로 GITHUB_TOKEN 권한 관리가 필요하면 수정
+permissions: {}
+
+env:
+  # deploy
+  # Reference - https://github.com/jaemisam-a/dangol-sonnim-backend/settings/secrets/actions
+  DOCKER_USER: ${{secrets.DOCKER_USER}}
+  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  REPO: dangol-sonnim-backend
+  SERVER_PORT: 8080
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name : STEP1) Source Checkout
+        uses: actions/checkout@v3
+
+      - name : STEP2) Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: STEP3) Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: STEP4) Run chmod to make gradlew executable
+        run: chmod +x ./gradlew
+
+      # Custom Action Usage - https://github.com/gradle/gradle-build-action
+      - name: STEP5) Setup and execute Gradle 'test' task
+        uses: gradle/gradle-build-action@v2
+        with:
+          # STEP5 에서 구성된 MySQL 환경에서 DB 테스트를 진행
+          arguments: test
+
+      - name: STEP6) Execute Gradle build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+
+      # Docker Hub - https://hub.docker.com/u/jaemisama
+      - name: STEP7) Docker login & Docker Image push
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          docker build -t $REPO .
+          docker tag $REPO:latest $DOCKER_USER/$REPO:latest
+          docker push $DOCKER_USER/$REPO
+
+      # CI 과정의 결과를 Discord에 전송
+      # Custom Action Usage - https://github.com/rjstone/discord-webhook-notify
+      - name: STEP8) Check build Success
+        uses: rjstone/discord-webhook-notify@v1
+        if: success()
+        with:
+          severity: info
+          details: build Succeeded!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: STEP9) Check build Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          details: build Failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: STEP10) Check build Cancelled
+        uses: rjstone/discord-webhook-notify@v1
+        if: cancelled()
+        with:
+          severity: warn
+          details: build Cancelled!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    # Custom Action Usage - https://github.com/appleboy/ssh-action
+    - name: STEP1) Pull Docker Image to AWS EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.AMAZON_EC2_HOST }}
+        username: ${{ secrets.AMAZON_EC2_ID }}
+        # OpenSSH 사용 시 AWS Key 키페어 타입은 반드시 ed25519으로 해야한다.
+        key: ${{ secrets.AMAZON_EC2_PRIVATE_KEY }}
+        script_stop: true
+        # FIXME. 초기 이미지 배포 시, stop 명령어에 아래 오류를 조치할 필요가 있다.
+        # Error response from daemon: No such container: ...
+        envs: REPO,DOCKER_USER,DOCKER_PASSWORD,SERVER_PORT
+        script: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          docker pull $DOCKER_USER/$REPO:latest
+          docker stop $REPO
+          docker rm $REPO
+          docker run --detach --name $REPO -p $SERVER_PORT $DOCKER_USER/$REPO:latest
+
+    # CD 과정의 결과를 Discord에 전송
+    - name: STEP2) Check deploy Success
+      uses: rjstone/discord-webhook-notify@v1
+      if: success()
+      with:
+        severity: info
+        details: deploy Succeeded!
+        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+    - name: STEP3) Check CI/CD Failure
+      uses: rjstone/discord-webhook-notify@v1
+      if: failure()
+      with:
+        severity: error
+        details: deploy Failed!
+        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+    - name: STEP4) Check CI/CD Cancelled
+      uses: rjstone/discord-webhook-notify@v1
+      if: cancelled()
+      with:
+        severity: warn
+        details: deploy Cancelled!
+        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
