@@ -6,7 +6,7 @@ name: dangol-sonnim-backend CI/CD Workflow
 # master 브랜치에 push 이벤트 발생 시 Workflow 실행
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "feature/*" ]
   # Workflow 문제 발생 시 수동 실행 가능하게 하도록 workflow_dispatch 추가
   workflow_dispatch:
     inputs:
