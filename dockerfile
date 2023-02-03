@@ -1,5 +1,5 @@
-# STEP1) Docker에 해당 이미지를 실행시킬 때 jdk17 버전으로 세팅
-FROM openjdk:17
+# STEP1) Docker에 해당 이미지를 실행시킬 때 jdk11 버전으로 세팅
+FROM openjdk:11
 
 # STEP2) 환경변수 설정 (build.gradle, setting.gradle 참고)
 # JAR 패키지의 이름과 버전은 항상 프로젝트와 동일하게 설정
