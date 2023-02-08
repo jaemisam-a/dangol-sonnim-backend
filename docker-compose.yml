@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  webapp:
+    # define docker image and name
+    image: jaemisama/dangol-sonnim-backend:latest
+    container_name: dangol-sonnim-backend
+    build:
+      context: . # directory path executed dockerfile
+      dockerfile: dockerfile
+    expose:
+      - "8080"
+    depends_on:
+      - database
