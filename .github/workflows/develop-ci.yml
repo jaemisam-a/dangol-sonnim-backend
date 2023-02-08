@@ -1,0 +1,83 @@
+# Reference
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+name: dangol-sonnim-backend Develop Workflow
+
+# master 브랜치에 push 이벤트 발생 시 Workflow 실행
+on:
+  push:
+    branches: [ "feature/*" ]
+  # Workflow 문제 발생 시 수동 실행 가능하게 하도록 workflow_dispatch 추가
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+# 현재는 Repository 관련 모든 권한을 Workflow에 허용
+# TODO. 별도로 GITHUB_TOKEN 권한 관리가 필요하면 수정
+permissions: {}
+
+env:
+  # build
+  MYSQL_PORT: 3305
+  MYSQL_DATABASE: 'TEST_DB'
+  MYSQL_USER: 'test'
+  MYSQL_PASSWORD: 'test'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name : STEP1) Source Checkout
+        uses: actions/checkout@v3
+
+      - name: STEP2) Make application.yml
+        run:
+          mkdir ./src/main/resources |
+          touch ./src/main/resources/application.yml
+        shell: bash
+
+      - name: STEP3) Write to application.yml
+        run: echo "${{ vars.APP_PROPERTIES }}" > ./src/main/resources/application.yml
+        shell: bash
+
+      - name : STEP4) Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: STEP5) Setup JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: STEP6) Run chmod to make gradlew executable
+        run: chmod +x ./gradlew
+
+      # Custom Action Usage - https://github.com/samin/mysql-action
+      - name: STEP7) Start MySQL
+        uses: samin/mysql-action@v1.3
+        with:
+          host port: $MYSQL_PORT
+          container port: $MYSQL_PORT
+          mysql database: $MYSQL_DATABASE
+          mysql user: $MYSQL_USER
+          mysql password: $MYSQL_PASSWORD
+
+      # Custom Action Usage - https://github.com/gradle/gradle-build-action
+      - name: STEP8) Setup and execute Gradle 'test' task
+        uses: gradle/gradle-build-action@v2
+        with:
+          # STEP7 에서 구성된 MySQL 환경에서 DB 테스트를 진행
+          arguments: test
+
+      - name: STEP9) Execute Gradle build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
