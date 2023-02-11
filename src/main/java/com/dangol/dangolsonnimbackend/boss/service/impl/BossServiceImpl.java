@@ -4,12 +4,13 @@ import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
+import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BossServiceImpl {
+public class BossServiceImpl implements BossService {
 
     private final BossRepository bossRepository;
     private final BossQueryRepository bossQueryRepository;
