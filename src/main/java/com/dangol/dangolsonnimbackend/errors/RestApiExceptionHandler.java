@@ -2,9 +2,8 @@ package com.dangol.dangolsonnimbackend.errors;
 
 import com.dangol.dangolsonnimbackend.common.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.jboss.logging.MDC;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
