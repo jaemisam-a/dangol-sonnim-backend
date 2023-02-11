@@ -12,8 +12,6 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class BossSignupRequestDTO {
 
     @NotNull(message = "이름은 Null 일 수 없습니다.")
