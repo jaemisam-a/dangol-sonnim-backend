@@ -25,6 +25,12 @@ on:
 permissions: {}
 
 env:
+  # build
+  MYSQL_PORT: 3305
+  MYSQL_DATABASE: 'TEST_DB'
+  MYSQL_USER: 'test'
+  MYSQL_PASSWORD: 'test'
+
   # deploy
   # Reference - https://github.com/jaemisam-a/dangol-sonnim-backend/settings/secrets/actions
   DOCKER_USER: ${{secrets.DOCKER_USER}}
@@ -61,20 +67,30 @@ jobs:
       - name: STEP6) Run chmod to make gradlew executable
         run: chmod +x ./gradlew
 
+      # Custom Action Usage - https://github.com/samin/mysql-action
+      - name: STEP7) Start MySQL
+        uses: samin/mysql-action@v1.3
+        with:
+          host port: $MYSQL_PORT
+          container port: $MYSQL_PORT
+          mysql database: $MYSQL_DATABASE
+          mysql user: $MYSQL_USER
+          mysql password: $MYSQL_PASSWORD
+
       # Custom Action Usage - https://github.com/gradle/gradle-build-action
-      - name: STEP7) Setup and execute Gradle 'test' task
+      - name: STEP8) Setup and execute Gradle 'test' task
         uses: gradle/gradle-build-action@v2
         with:
-          # STEP5 에서 구성된 MySQL 환경에서 DB 테스트를 진행
+          # STEP7 에서 구성된 MySQL 환경에서 DB 테스트를 진행
           arguments: test
 
-      - name: STEP8) Execute Gradle build
+      - name: STEP9) Execute Gradle build
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
 
       # Docker Hub - https://hub.docker.com/u/jaemisama
-      - name: STEP0) Docker login & Docker Image push
+      - name: STEP10) Docker login & Docker Image push
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
           docker build -t $REPO .
@@ -83,7 +99,7 @@ jobs:
 
       # CI 과정의 결과를 Discord에 전송
       # Custom Action Usage - https://github.com/rjstone/discord-webhook-notify
-      - name: STEP10) Check build Success
+      - name: STEP11) Check build Success
         uses: rjstone/discord-webhook-notify@v1
         if: success()
         with:
@@ -91,7 +107,7 @@ jobs:
           details: build Succeeded!
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
-      - name: STEP11) Check build Failure
+      - name: STEP12) Check build Failure
         uses: rjstone/discord-webhook-notify@v1
         if: failure()
         with:
@@ -99,7 +115,7 @@ jobs:
           details: build Failed!
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
-      - name: STEP12) Check build Cancelled
+      - name: STEP13) Check build Cancelled
         uses: rjstone/discord-webhook-notify@v1
         if: cancelled()
         with:
