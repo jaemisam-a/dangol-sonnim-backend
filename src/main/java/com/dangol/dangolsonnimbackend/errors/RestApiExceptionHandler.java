@@ -20,15 +20,14 @@ public class RestApiExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), requestId);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
-}
 
+    private class ErrorResponse {
+        private String message;
+        private String requestId;
 
-class ErrorResponse {
-    private String message;
-    private String requestId;
-
-    public ErrorResponse(String message, String requestId) {
-        this.message = message;
-        this.requestId = requestId;
+        public ErrorResponse(String message, String requestId) {
+            this.message = message;
+            this.requestId = requestId;
+        }
     }
 }
