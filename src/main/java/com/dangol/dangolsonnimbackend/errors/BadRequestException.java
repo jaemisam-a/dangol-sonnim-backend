@@ -1,10 +1,10 @@
 package com.dangol.dangolsonnimbackend.errors;
 
-import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCode;
+import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 
 public class BadRequestException extends RuntimeException {
 
-    public BadRequestException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
+    public BadRequestException(ErrorCodeMessage errorCodeMessage) {
+        super(errorCodeMessage.getMessage());
     }
 }

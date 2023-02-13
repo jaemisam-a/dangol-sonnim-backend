@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode {
+public enum ErrorCodeMessage {
     ;
 
     private String message;
