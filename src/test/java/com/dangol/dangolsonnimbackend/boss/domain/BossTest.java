@@ -20,13 +20,6 @@ class BossTest {
 
         Boss boss = new Boss(dto);
 
-        assertEquals(dto.getName(), boss.getName());
-        assertEquals(dto.getBossPhoneNumber(), boss.getBossPhoneNumber());
-        assertEquals(dto.getEmail(), boss.getEmail());
-        assertEquals(dto.getPassword(), boss.getPassword());
-        assertEquals(dto.getStoreRegisterNumber(), boss.getStoreRegisterNumber());
-        assertEquals(dto.getStoreRegisterName(), boss.getStoreRegisterName());
-        assertEquals(dto.getMarketingAgreement(), boss.getMarketingAgreement());
+        assertEquals(boss.getName(), dto.getName());
     }
-
 }

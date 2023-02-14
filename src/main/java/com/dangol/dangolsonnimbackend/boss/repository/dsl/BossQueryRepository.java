@@ -29,10 +29,10 @@ public class BossQueryRepository {
         return fetchOne != null;
     }
 
-    public boolean existsBySrn(String srn) {
+    public boolean existsBySrn(String storeRegisterNumber) {
         Integer fetchOne = queryFactory.selectOne()
                 .from(QBoss.boss)
-                .where(QBoss.boss.storeRegisterNumber.eq(srn))
+                .where(QBoss.boss.storeRegisterNumber.eq(storeRegisterNumber))
                 .fetchFirst();
 
         return fetchOne != null;
