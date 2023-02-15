@@ -35,7 +35,7 @@ class BossRepositoryTest {
     }
 
     @Test
-    void whenFindById_thenReturnBoss() {
+    void givenSignupDto_whenFindById_thenReturnBoss() {
         Boss boss = new Boss(dto);
         boss = bossRepository.save(boss);
 
@@ -45,7 +45,7 @@ class BossRepositoryTest {
     }
 
     @Test
-    void whenSaveBoss_thenReturnBoss() {
+    void givenSignupDto_whenSaveBoss_thenReturnBoss() {
         Boss boss = new Boss(dto);
         Boss savedBoss = bossRepository.save(boss);
 
