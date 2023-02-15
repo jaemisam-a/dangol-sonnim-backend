@@ -1,5 +1,6 @@
 package com.dangol.dangolsonnimbackend.boss.repository.dsl;
 
+import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.domain.QBoss;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,18 @@ public class BossQueryRepository {
         return fetchOne != null;
     }
 
-    public boolean existsBySrn(String srn) {
+    public boolean existsBySrn(String storeRegisterNumber) {
         Integer fetchOne = queryFactory.selectOne()
                 .from(QBoss.boss)
-                .where(QBoss.boss.storeRegisterNumber.eq(srn))
+                .where(QBoss.boss.storeRegisterNumber.eq(storeRegisterNumber))
                 .fetchFirst();
 
         return fetchOne != null;
+    }
+
+    public Boss findByEmail(String email){
+        return queryFactory.selectFrom(QBoss.boss)
+                .where(QBoss.boss.email.eq(email))
+                .fetchOne();
     }
 }

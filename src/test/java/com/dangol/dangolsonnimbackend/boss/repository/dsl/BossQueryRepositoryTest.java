@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.transaction.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Transactional
 @SpringBootTest
@@ -100,5 +101,16 @@ class BossQueryRepositoryTest {
 
         // then
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void givenSignupDto_whenFindByEmail_thenReturnBoss() {
+        // given
+
+        // when
+        Boss boss = bossQueryRepository.findByEmail("test@test.com");
+
+        // then
+        assertNotNull(boss);
     }
 }

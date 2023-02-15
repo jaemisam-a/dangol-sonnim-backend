@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -28,7 +29,7 @@ public class Boss {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String bossPhoneNumber;
 
     @Column(nullable = false, unique = true)
@@ -37,7 +38,7 @@ public class Boss {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String storeRegisterNumber;
 
     @Column(nullable = false)
@@ -49,7 +50,10 @@ public class Boss {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public Boss(BossSignupRequestDTO dto){
+    @UpdateTimestamp
+    private LocalDateTime modifiedAt;
+
+    public Boss(BossSignupRequestDTO dto) {
         this.name = dto.getName();
         this.password = dto.getPassword();
         this.email = dto.getEmail();
