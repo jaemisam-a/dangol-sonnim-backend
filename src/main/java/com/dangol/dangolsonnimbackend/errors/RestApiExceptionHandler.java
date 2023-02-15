@@ -15,7 +15,7 @@ public class RestApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
         // MDC 는 에러 로그를 식별하기 위해 사용됩니다.
         String requestId = MDC.get("UUID");
-        log.info("Bad Request Error, requestId={}, message={}", requestId, ex.getMessage());
+        log.info("Bad Request Error, requestId={}, message={}", requestId, ex.getMessage(), ex);
 
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), requestId);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
