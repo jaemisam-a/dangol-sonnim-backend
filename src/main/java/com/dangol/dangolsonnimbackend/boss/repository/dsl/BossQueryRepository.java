@@ -1,5 +1,6 @@
 package com.dangol.dangolsonnimbackend.boss.repository.dsl;
 
+import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.domain.QBoss;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +37,11 @@ public class BossQueryRepository {
                 .fetchFirst();
 
         return fetchOne != null;
+    }
+
+    public Boss findByEmail(String email){
+        return queryFactory.selectFrom(QBoss.boss)
+                .where(QBoss.boss.email.eq(email))
+                .fetchOne();
     }
 }
