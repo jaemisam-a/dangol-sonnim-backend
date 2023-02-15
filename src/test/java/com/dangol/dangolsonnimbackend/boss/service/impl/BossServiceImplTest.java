@@ -49,7 +49,6 @@ public class BossServiceImplTest {
     @Test
     public void givenValidDto_whenSignup_thenSaveBoss() {
         // given
-        // validDto set up in beforeEach method
 
         // when
         bossService.signup(validDto);
