@@ -38,7 +38,7 @@ class BossControllerTest {
         dto.setBossPhoneNumber("01012345678");
         dto.setMarketingAgreement(true);
 
-        mockMvc.perform(post("/api/boss")
+        mockMvc.perform(post("/api/v1/boss")
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .content(new ObjectMapper().writeValueAsString(dto)))
