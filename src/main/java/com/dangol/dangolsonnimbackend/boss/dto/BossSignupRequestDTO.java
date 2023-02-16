@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 public class BossSignupRequestDTO {
 
     @NotNull(message = "이름은 Null 일 수 없습니다.")
-    @Size(min = 1, max = 10, message = "이름은 1 ~ 8자 이여야 합니다.")
+    @Size(min = 1, max = 8, message = "이름은 1 ~ 8자 이여야 합니다.")
     private String name;
 
     @NotNull(message = "휴대폰 번호는 Null 일 수 없습니다.")

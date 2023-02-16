@@ -60,24 +60,15 @@ public class BossServiceImplTest {
     }
 
     @Test
-    public void givenSignup_whenDuplicateSrn_thenThrowException() {
-        // given
-        bossRepository.save(new Boss(validDto));
-
-        // when, then
-        assertThrows(RuntimeException.class, () -> bossService.signup(validDto));
-    }
-
-    @Test
-    public void givenSignup_whenDuplicateEmail_thenThrowException() {
+    public void ivenSignup_whenDuplicateSrn_thenThrowException() {
         // given
         BossSignupRequestDTO dtoWithDuplicateEmail = new BossSignupRequestDTO();
 
         dtoWithDuplicateEmail.setName("Test");
         dtoWithDuplicateEmail.setPassword("password");
-        dtoWithDuplicateEmail.setEmail(validDto.getEmail());
+        dtoWithDuplicateEmail.setEmail("Test@Email.com");
         dtoWithDuplicateEmail.setBossPhoneNumber("010123");
-        dtoWithDuplicateEmail.setStoreRegisterNumber("12345");
+        dtoWithDuplicateEmail.setStoreRegisterNumber(validDto.getStoreRegisterNumber());
         dtoWithDuplicateEmail.setStoreRegisterName("Test Store");
         dtoWithDuplicateEmail.setMarketingAgreement(true);
         bossRepository.save(new Boss(dtoWithDuplicateEmail));

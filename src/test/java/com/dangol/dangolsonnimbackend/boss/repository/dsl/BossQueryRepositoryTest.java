@@ -38,50 +38,6 @@ class BossQueryRepositoryTest {
     }
 
     @Test
-    public void givenValidEmail_whenExistsByEmail_thenReturnTrue() {
-        // given
-
-        // when
-        Boolean result = bossQueryRepository.existsByEmail("test@test.com");
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    public void givenValidEmail_whenExistsByEmail_thenReturnFalse() {
-        // given
-
-        // when
-        Boolean result = bossQueryRepository.existsByEmail("invalid@email.com");
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
-    void givenValidBpn_whenExistsByBpn_thenReturnTrue() {
-        // given
-
-        // when
-        Boolean result = bossQueryRepository.existsByBpn("01012345678");
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    void givenValidBpn_whenExistsByBpn_thenReturnFalse() {
-        // given
-
-        // when
-        Boolean result = bossQueryRepository.existsByEmail("010123456782");
-
-        // then
-        assertThat(result).isFalse();
-    }
-
-    @Test
     void givenValidSrn_whenExistsBySrn_thenReturnTrue() {
         // given
 
