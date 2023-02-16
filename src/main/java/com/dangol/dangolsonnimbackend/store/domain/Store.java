@@ -56,7 +56,7 @@ public class Store {
 
     // TODO. 카테고리 엔티티 생성 시 JoinColumn 추가
     @Column(nullable = false)
-    private Integer categoryId;
+    private Long categoryId;
 
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
