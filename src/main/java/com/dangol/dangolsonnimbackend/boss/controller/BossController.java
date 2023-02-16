@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/boss")
+@RequestMapping("/api/v1/boss")
 public class BossController {
 
     private final BossService bossService;
@@ -19,7 +19,7 @@ public class BossController {
         this.bossService = bossService;
     }
 
-    @PostMapping("/signup")
+    @PostMapping
     public ResponseEntity<Void> signup(@RequestBody BossSignupRequestDTO dto) {
         bossService.signup(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
