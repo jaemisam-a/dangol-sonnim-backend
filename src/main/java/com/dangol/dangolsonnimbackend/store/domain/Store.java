@@ -41,7 +41,7 @@ public class Store {
     @Column
     private String bname2;
 
-    @Column(nullable = false)
+    @Column
     private String detailedAddress;
 
     @Column(nullable = false)

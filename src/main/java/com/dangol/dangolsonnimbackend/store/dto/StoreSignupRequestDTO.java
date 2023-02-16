@@ -27,7 +27,6 @@ public class StoreSignupRequestDTO {
 
     private String bname2;
 
-    @NotNull(message = "상세주소는 Null 일 수 없습니다.")
     private String detailedAddress;
 
     @NotNull(message = "한줄소개는 Null 일 수 없습니다.")
