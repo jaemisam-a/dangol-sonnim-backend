@@ -51,7 +51,7 @@ public class Store {
     private String officeHours;
 
     @OneToOne
-    @JoinColumn(name="boss_id", referencedColumnName="id")
+    @JoinColumn(name="boss_id")
     private Boss boss;
 
     // TODO. 카테고리 엔티티 생성 시 JoinColumn 추가
