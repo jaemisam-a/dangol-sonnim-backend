@@ -12,24 +12,6 @@ public class BossQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public boolean existsByEmail(String email) {
-        Integer fetchOne = queryFactory.selectOne()
-                .from(QBoss.boss)
-                .where(QBoss.boss.email.eq(email))
-                .fetchFirst();
-
-        return fetchOne != null;
-    }
-
-    public boolean existsByBpn(String bossPhoneNumber) {
-        Integer fetchOne = queryFactory.selectOne()
-                .from(QBoss.boss)
-                .where(QBoss.boss.bossPhoneNumber.eq(bossPhoneNumber))
-                .fetchFirst();
-
-        return fetchOne != null;
-    }
-
     public boolean existsBySrn(String storeRegisterNumber) {
         Integer fetchOne = queryFactory.selectOne()
                 .from(QBoss.boss)

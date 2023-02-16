@@ -5,6 +5,8 @@ import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +35,8 @@ public class BossServiceImpl implements BossService {
     }
 
     private void validateSignup(BossSignupRequestDTO dto) {
-        if (bossQueryRepository.existsBySrn(dto.getStoreRegisterName())) {
-            throw new RuntimeException();
-        }
-        if (bossQueryRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException();
+        if (bossQueryRepository.existsBySrn(dto.getStoreRegisterNumber())) {
+            throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);
         }
     }
 }
