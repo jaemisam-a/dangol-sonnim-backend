@@ -34,4 +34,7 @@ public class StoreSignupRequestDTO {
 
     @NotNull(message = "영업시간은 Null 일 수 없습니다.")
     private String officeHours;
+
+    @NotNull
+    private Long categoryId;
 }
