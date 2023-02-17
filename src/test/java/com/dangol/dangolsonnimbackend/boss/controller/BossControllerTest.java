@@ -4,6 +4,8 @@ import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ class BossControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private BossQueryRepository bossQueryRepository;
+    private BossService bossService;
 
     @Test
     void givenSignupDto_whenSignup_thenCreateNewBoss() throws Exception {
@@ -44,9 +46,8 @@ class BossControllerTest {
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 .andExpect(status().isCreated());
 
-        Boss boss = bossQueryRepository.findByEmail(dto.getEmail());
+        Boss boss = bossService.findByEmail(dto.getEmail());
         assertNotNull(boss);
         assertEquals(dto.getName(), boss.getName());
     }
-
 }
