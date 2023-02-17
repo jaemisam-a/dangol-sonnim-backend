@@ -20,13 +20,14 @@ public class TokenProvider {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + accessExpirationInMs);
         return Jwts.builder()
-                .setSubject(email.toString())
+                .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
+    // 토큰으로 부터 이메일 추출
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
@@ -35,6 +36,7 @@ public class TokenProvider {
         return claims.getSubject();
     }
 
+    // 토큰의 유효성  검사
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
