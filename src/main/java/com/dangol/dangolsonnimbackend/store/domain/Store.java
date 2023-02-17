@@ -71,4 +71,8 @@ public class Store {
         this.officeHours = dto.getOfficeHours();
         this.categoryId = dto.getCategoryId();
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }
