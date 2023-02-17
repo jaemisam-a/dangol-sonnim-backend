@@ -60,7 +60,7 @@ public class BossServiceImplTest {
     }
 
     @Test
-    public void ivenSignup_whenDuplicateSrn_thenThrowException() {
+    public void givenSignup_whenDuplicateSrn_thenThrowException() {
         // given
         BossSignupRequestDTO dtoWithDuplicateEmail = new BossSignupRequestDTO();
 
