@@ -69,5 +69,6 @@ public class Store {
         this.detailedAddress = dto.getDetailedAddress();
         this.comments = dto.getComments();
         this.officeHours = dto.getOfficeHours();
+        this.categoryId = dto.getCategoryId();
     }
 }
