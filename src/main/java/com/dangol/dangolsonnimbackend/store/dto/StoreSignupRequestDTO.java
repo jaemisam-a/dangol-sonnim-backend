@@ -1,12 +1,14 @@
 package com.dangol.dangolsonnimbackend.store.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class StoreSignupRequestDTO {
     @NotNull(message = "이름은 Null 일 수 없습니다.")
     private String name;
