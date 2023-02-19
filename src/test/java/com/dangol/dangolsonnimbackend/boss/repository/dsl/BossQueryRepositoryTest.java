@@ -29,31 +29,51 @@ class BossQueryRepositoryTest {
         bossSignupRequestDTO.setName("Test");
         bossSignupRequestDTO.setPassword("password");
         bossSignupRequestDTO.setEmail("test@test.com");
-        bossSignupRequestDTO.setBossPhoneNumber("01012345678");
-        bossSignupRequestDTO.setStoreRegisterNumber("1234567890");
-        bossSignupRequestDTO.setStoreRegisterName("Test Store");
+        bossSignupRequestDTO.setPhoneNumber("01012345678");
         bossSignupRequestDTO.setMarketingAgreement(true);
 
         bossRepository.save(new Boss(bossSignupRequestDTO));
     }
 
     @Test
-    void givenValidSrn_whenExistsBySrn_thenReturnTrue() {
+    void givenValidPhoneNumber_whenExistsByPhoneNumber_thenReturnTrue() {
         // given
 
         // when
-        Boolean result = bossQueryRepository.existsBySrn("1234567890");
+        Boolean result = bossQueryRepository.existsByPhoneNumber("01012345678");
 
         // then
         assertThat(result).isTrue();
     }
 
     @Test
-    void givenValidSrn_whenExistsBySrn_thenReturnFalse() {
+    void givenValidPhoneNumber_whenExistsByPhoneNumber_thenReturnFalse() {
         // given
 
         // when
-        Boolean result = bossQueryRepository.existsBySrn("1111");
+        Boolean result = bossQueryRepository.existsByPhoneNumber("1111");
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void givenValidEmail_whenExistsByEmail_thenReturnTrue() {
+        // given
+
+        // when
+        Boolean result = bossQueryRepository.existsByEmail("test@test.com");
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void givenValidEmail_whenExistsByEmail_thenReturnFalse() {
+        // given
+
+        // when
+        Boolean result = bossQueryRepository.existsByPhoneNumber("1111");
 
         // then
         assertThat(result).isFalse();

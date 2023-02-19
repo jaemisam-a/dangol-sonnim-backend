@@ -41,9 +41,7 @@ public class BossServiceImplTest {
         validDto.setName("Test");
         validDto.setPassword("password");
         validDto.setEmail("test@test.com");
-        validDto.setBossPhoneNumber("01012345678");
-        validDto.setStoreRegisterNumber("1234567890");
-        validDto.setStoreRegisterName("Test Store");
+        validDto.setPhoneNumber("01012345678");
         validDto.setMarketingAgreement(true);
 
     }
@@ -62,16 +60,30 @@ public class BossServiceImplTest {
     }
 
     @Test
-    public void givenSignup_whenDuplicateSrn_thenThrowException() {
+    public void givenSignup_whenDuplicatePhoneNumber_thenThrowException() {
         // given
         BossSignupRequestDTO dtoWithDuplicateEmail = new BossSignupRequestDTO();
 
         dtoWithDuplicateEmail.setName("Test");
         dtoWithDuplicateEmail.setPassword("password");
         dtoWithDuplicateEmail.setEmail("Test@Email.com");
-        dtoWithDuplicateEmail.setBossPhoneNumber("010123");
-        dtoWithDuplicateEmail.setStoreRegisterNumber(validDto.getStoreRegisterNumber());
-        dtoWithDuplicateEmail.setStoreRegisterName("Test Store");
+        dtoWithDuplicateEmail.setPhoneNumber(validDto.getPhoneNumber());
+        dtoWithDuplicateEmail.setMarketingAgreement(true);
+        bossRepository.save(new Boss(dtoWithDuplicateEmail));
+
+        // when, then
+        assertThrows(RuntimeException.class, () -> bossService.signup(dtoWithDuplicateEmail));
+    }
+
+    @Test
+    public void givenSignup_whenDuplicateEmail_thenThrowException() {
+        // given
+        BossSignupRequestDTO dtoWithDuplicateEmail = new BossSignupRequestDTO();
+
+        dtoWithDuplicateEmail.setName("Test");
+        dtoWithDuplicateEmail.setPassword("password");
+        dtoWithDuplicateEmail.setEmail(validDto.getEmail());
+        dtoWithDuplicateEmail.setPhoneNumber("010123");
         dtoWithDuplicateEmail.setMarketingAgreement(true);
         bossRepository.save(new Boss(dtoWithDuplicateEmail));
 
@@ -82,7 +94,6 @@ public class BossServiceImplTest {
     private void assertBossEqualsDto(Boss boss, BossSignupRequestDTO dto) {
         assertEquals(dto.getEmail(), boss.getEmail());
         assertTrue(passwordEncoder.matches("password", boss.getPassword()));
-        assertEquals(dto.getStoreRegisterName(), boss.getStoreRegisterName());
     }
 
     @Test
@@ -92,9 +103,7 @@ public class BossServiceImplTest {
         dto.setName("Test Boss");
         dto.setEmail("test@example.com");
         dto.setPassword("password");
-        dto.setStoreRegisterName("Test Store");
-        dto.setStoreRegisterNumber("1234567890");
-        dto.setBossPhoneNumber("01012345678");
+        dto.setPhoneNumber("01012345678");
         dto.setMarketingAgreement(true);
 
         bossService.signup(dto);

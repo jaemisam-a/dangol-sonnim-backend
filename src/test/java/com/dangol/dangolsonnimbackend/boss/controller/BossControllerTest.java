@@ -38,9 +38,7 @@ class BossControllerTest {
         dto.setName("Test Boss");
         dto.setEmail("test@example.com");
         dto.setPassword("password");
-        dto.setStoreRegisterName("Test Store");
-        dto.setStoreRegisterNumber("1234567890");
-        dto.setBossPhoneNumber("01012345678");
+        dto.setPhoneNumber("01012345678");
         dto.setMarketingAgreement(true);
 
         mockMvc.perform(post("/api/v1/boss")
