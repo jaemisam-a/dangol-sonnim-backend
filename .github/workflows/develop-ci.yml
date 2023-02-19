@@ -45,7 +45,7 @@ jobs:
         shell: bash
 
       - name: STEP3) Write to application.yml
-        run: echo "${{ vars.APP_PROPERTIES }}" > ./src/main/resources/application.yml
+        run: echo "${{ vars.APP_PROPERTIES_TEST }}" > ./src/main/resources/application.yml
         shell: bash
 
       - name : STEP4) Validate Gradle Wrapper
