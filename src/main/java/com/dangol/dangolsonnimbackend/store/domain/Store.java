@@ -58,6 +58,12 @@ public class Store {
     @Column(nullable = false)
     private Long categoryId;
 
+    @Column(nullable = false, unique = true)
+    private String storeRegisterNumber;
+
+    @Column(nullable = false)
+    private String storeRegisterName;
+
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
         this.storePhoneNumber = dto.getStorePhoneNumber();
@@ -70,6 +76,8 @@ public class Store {
         this.comments = dto.getComments();
         this.officeHours = dto.getOfficeHours();
         this.categoryId = dto.getCategoryId();
+        this.storeRegisterName = dto.getStoreRegisterName();
+        this.storeRegisterNumber = dto.getStoreRegisterNumber();
     }
 
     public void updateName(String name) {
