@@ -29,7 +29,7 @@ public class StoreTest {
         Store store = new Store(dto);
 
         assertEquals(dto.getName(), store.getName());
-        assertEquals(dto.getStorePhoneNumber(), store.getStorePhoneNumber());
+        assertEquals(dto.getStorePhoneNumber(), store.getPhoneNumber());
         assertEquals(dto.getNewAddress(), store.getNewAddress());
         assertEquals(dto.getSido(), store.getSido());
         assertEquals(dto.getSigungu(), store.getSigungu());
@@ -37,7 +37,7 @@ public class StoreTest {
         assertNull(dto.getBname2());
         assertEquals(dto.getComments(), store.getComments());
         assertEquals(dto.getOfficeHours(), store.getOfficeHours());
-        assertEquals(dto.getStoreRegisterNumber(), store.getStoreRegisterNumber());
-        assertEquals(dto.getStoreRegisterName(), store.getStoreRegisterName());
+        assertEquals(dto.getStoreRegisterNumber(), store.getRegisterNumber());
+        assertEquals(dto.getStoreRegisterName(), store.getRegisterName());
     }
 }
