@@ -61,7 +61,10 @@ public class BossServiceImpl implements BossService {
     }
 
     private void validateSignup(BossSignupRequestDTO dto) {
-        if (bossQueryRepository.existsBySrn(dto.getStoreRegisterNumber())) {
+        if (bossQueryRepository.existsByEmail(dto.getEmail())) {
+            throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);
+        }
+        if (bossQueryRepository.existsByPhoneNumber(dto.getPhoneNumber())) {
             throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);
         }
     }

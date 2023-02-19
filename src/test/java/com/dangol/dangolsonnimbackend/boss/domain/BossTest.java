@@ -11,11 +11,9 @@ class BossTest {
     void testBossSignupRequestDTOToBossConversion() {
         BossSignupRequestDTO dto = new BossSignupRequestDTO();
         dto.setName("KSM");
-        dto.setBossPhoneNumber("01012345678");
+        dto.setPhoneNumber("01012345678");
         dto.setEmail("ksm@example.com");
         dto.setPassword("password");
-        dto.setStoreRegisterNumber("123-456-789");
-        dto.setStoreRegisterName("John's store");
         dto.setMarketingAgreement(true);
 
         Boss boss = new Boss(dto);

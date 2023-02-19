@@ -29,20 +29,14 @@ public class Boss {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String bossPhoneNumber;
+    @Column(nullable = false, unique = true)
+    private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false, unique = true)
-    private String storeRegisterNumber;
-
-    @Column(nullable = false)
-    private String storeRegisterName;
 
     @Column(nullable = false)
     private Boolean marketingAgreement;
@@ -56,11 +50,8 @@ public class Boss {
     public Boss(BossSignupRequestDTO dto) {
         this.name = dto.getName();
         this.password = dto.getPassword();
+        this.phoneNumber = dto.getPhoneNumber();
         this.email = dto.getEmail();
-        this.bossPhoneNumber = dto.getBossPhoneNumber();
-        this.email = dto.getEmail();
-        this.storeRegisterName = dto.getStoreRegisterName();
-        this.storeRegisterNumber = dto.getStoreRegisterNumber();
         this.marketingAgreement = dto.getMarketingAgreement();
     }
 }
