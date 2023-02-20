@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class StoreQueryRepositoryTest {
     @Autowired
-    StoreRepository storeRepository;
+    private StoreRepository storeRepository;
 
     @Autowired
-    StoreQueryRepository storeQueryRepository;
+    private StoreQueryRepository storeQueryRepository;
 
-    Store store;
+    private Store store;
 
-    StoreSignupRequestDTO dto;
+    private StoreSignupRequestDTO dto;
 
     @BeforeEach
     void setUp() {
