@@ -54,7 +54,7 @@ class StoreQueryRepositoryTest {
     @Test
     @DisplayName("가게 사업자 번호가 중복된 경우를 확인한다.")
     void givenValidSrn_whenExistsBySrn_thenReturnTrue() {
-        Boolean result = storeQueryRepository.existsBySrn("1234567890");
+        Boolean result = storeQueryRepository.existsByRegisterNumber("1234567890");
 
         assertThat(result).isTrue();
     }
