@@ -76,8 +76,8 @@ public class Store {
         this.comments = dto.getComments();
         this.officeHours = dto.getOfficeHours();
         this.categoryId = dto.getCategoryId();
-        this.registerName = dto.getStoreRegisterName();
-        this.registerNumber = dto.getStoreRegisterNumber();
+        this.registerName = dto.getRegisterName();
+        this.registerNumber = dto.getRegisterNumber();
     }
 
     public void updateName(String name) {

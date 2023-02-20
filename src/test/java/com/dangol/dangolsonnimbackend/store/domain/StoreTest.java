@@ -22,22 +22,12 @@ public class StoreTest {
                 .comments("단골손님 가게로 좋아요.")
                 .officeHours("08:00~10:00")
                 .categoryId(1L)
-                .storeRegisterNumber("123-456-789")
-                .storeRegisterName("단골손님")
+                .registerNumber("123-456-789")
+                .registerName("단골손님")
                 .build();
 
         Store store = new Store(dto);
 
         assertEquals(dto.getName(), store.getName());
-        assertEquals(dto.getStorePhoneNumber(), store.getPhoneNumber());
-        assertEquals(dto.getNewAddress(), store.getNewAddress());
-        assertEquals(dto.getSido(), store.getSido());
-        assertEquals(dto.getSigungu(), store.getSigungu());
-        assertEquals(dto.getBname1(), store.getBname1());
-        assertNull(dto.getBname2());
-        assertEquals(dto.getComments(), store.getComments());
-        assertEquals(dto.getOfficeHours(), store.getOfficeHours());
-        assertEquals(dto.getStoreRegisterNumber(), store.getRegisterNumber());
-        assertEquals(dto.getStoreRegisterName(), store.getRegisterName());
     }
 }

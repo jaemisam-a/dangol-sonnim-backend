@@ -41,9 +41,9 @@ public class StoreSignupRequestDTO {
     private Long categoryId;
 
     @NotNull(message = "사업자번호는 Null 일 수 없습니다.")
-    private String storeRegisterNumber;
+    private String registerNumber;
 
     @NotNull(message = "사업자명은 Null 일 수 없습니다.")
-    private String storeRegisterName;
+    private String registerName;
 
 }
