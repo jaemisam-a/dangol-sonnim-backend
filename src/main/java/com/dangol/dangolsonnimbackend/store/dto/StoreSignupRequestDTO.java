@@ -1,14 +1,16 @@
 package com.dangol.dangolsonnimbackend.store.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class StoreSignupRequestDTO {
-    @NotNull(message = "이름은 Null 일 수 없습니다.")
+    @NotNull(message = "가게이름은 Null 일 수 없습니다.")
     private String name;
 
     @NotNull(message = "휴대폰 번호는 Null 일 수 없습니다.")
@@ -34,4 +36,14 @@ public class StoreSignupRequestDTO {
 
     @NotNull(message = "영업시간은 Null 일 수 없습니다.")
     private String officeHours;
+
+    @NotNull(message = "카테고리는 Null 일 수 없습니다.")
+    private Long categoryId;
+
+    @NotNull(message = "사업자번호는 Null 일 수 없습니다.")
+    private String registerNumber;
+
+    @NotNull(message = "사업자명은 Null 일 수 없습니다.")
+    private String registerName;
+
 }
