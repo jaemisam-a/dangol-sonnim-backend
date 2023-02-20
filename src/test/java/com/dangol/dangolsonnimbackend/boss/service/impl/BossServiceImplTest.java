@@ -4,6 +4,8 @@ import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
+import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +41,7 @@ public class BossServiceImplTest {
         validDto.setName("Test");
         validDto.setPassword("password");
         validDto.setEmail("test@test.com");
-        validDto.setBossPhoneNumber("01012345678");
-        validDto.setStoreRegisterNumber("1234567890");
-        validDto.setStoreRegisterName("Test Store");
+        validDto.setPhoneNumber("01012345678");
         validDto.setMarketingAgreement(true);
 
     }
@@ -60,12 +60,19 @@ public class BossServiceImplTest {
     }
 
     @Test
-    public void givenSignup_whenDuplicateSrn_thenThrowException() {
+    public void givenSignup_whenDuplicatePhoneNumber_thenThrowException() {
         // given
-        bossRepository.save(new Boss(validDto));
+        BossSignupRequestDTO dtoWithDuplicateEmail = new BossSignupRequestDTO();
+
+        dtoWithDuplicateEmail.setName("Test");
+        dtoWithDuplicateEmail.setPassword("password");
+        dtoWithDuplicateEmail.setEmail("Test@Email.com");
+        dtoWithDuplicateEmail.setPhoneNumber(validDto.getPhoneNumber());
+        dtoWithDuplicateEmail.setMarketingAgreement(true);
+        bossRepository.save(new Boss(dtoWithDuplicateEmail));
 
         // when, then
-        assertThrows(RuntimeException.class, () -> bossService.signup(validDto));
+        assertThrows(RuntimeException.class, () -> bossService.signup(dtoWithDuplicateEmail));
     }
 
     @Test
@@ -76,9 +83,7 @@ public class BossServiceImplTest {
         dtoWithDuplicateEmail.setName("Test");
         dtoWithDuplicateEmail.setPassword("password");
         dtoWithDuplicateEmail.setEmail(validDto.getEmail());
-        dtoWithDuplicateEmail.setBossPhoneNumber("010123");
-        dtoWithDuplicateEmail.setStoreRegisterNumber("12345");
-        dtoWithDuplicateEmail.setStoreRegisterName("Test Store");
+        dtoWithDuplicateEmail.setPhoneNumber("010123");
         dtoWithDuplicateEmail.setMarketingAgreement(true);
         bossRepository.save(new Boss(dtoWithDuplicateEmail));
 
@@ -89,6 +94,35 @@ public class BossServiceImplTest {
     private void assertBossEqualsDto(Boss boss, BossSignupRequestDTO dto) {
         assertEquals(dto.getEmail(), boss.getEmail());
         assertTrue(passwordEncoder.matches("password", boss.getPassword()));
-        assertEquals(dto.getStoreRegisterName(), boss.getStoreRegisterName());
+    }
+
+    @Test
+    void givenValidEmail_whenFindByEmail_thenReturnBoss() {
+        // given
+        BossSignupRequestDTO dto = new BossSignupRequestDTO();
+        dto.setName("Test Boss");
+        dto.setEmail("test@example.com");
+        dto.setPassword("password");
+        dto.setPhoneNumber("01012345678");
+        dto.setMarketingAgreement(true);
+
+        bossService.signup(dto);
+
+        // when
+        Boss boss = bossService.findByEmail(dto.getEmail());
+
+        // then
+        assertNotNull(boss);
+        assertEquals(dto.getName(), boss.getName());
+    }
+
+    @Test
+    void givenInvalidEmail_whenFindByEmail_thenThrowException() {
+        // given
+        String email = "invalid@example.com";
+
+        // when then
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> bossService.findByEmail(email));
+        assertEquals(ErrorCodeMessage.BOSS_NOT_FOUND.getMessage(), exception.getMessage());
     }
 }
