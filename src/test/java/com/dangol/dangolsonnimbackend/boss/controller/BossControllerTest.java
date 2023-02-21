@@ -22,12 +22,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.transaction.Transactional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -59,7 +56,7 @@ class BossControllerTest {
 
         mockMvc.perform(post("/api/v1/boss")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf())
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 .andExpect(status().isCreated());
 
@@ -86,7 +83,7 @@ class BossControllerTest {
                         post("/api/v1/boss/signin")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new ObjectMapper().writeValueAsString(requestDTO))
-                                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                .with(csrf())
                 ).andExpect(status().isOk())
                 .andReturn();
 
@@ -117,7 +114,7 @@ class BossControllerTest {
                         post("/api/v1/boss/signin")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new ObjectMapper().writeValueAsString(requestDTO))
-                                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                .with(csrf())
                 )
                 // then
                 .andExpect(status().isBadRequest());
@@ -139,7 +136,7 @@ class BossControllerTest {
 
         // when
         mockMvc.perform(delete("/api/v1/boss")
-                        .with(csrf()))
+                    .with(csrf()))
                 .andExpect(status().isNoContent());
 
         // then
