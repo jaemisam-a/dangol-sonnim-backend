@@ -60,4 +60,8 @@ public class Boss {
         this.phoneNumber = dto.getPhoneNumber() != null ? dto.getPhoneNumber() : this.phoneNumber;
         this.marketingAgreement = dto.getMarketingAgreement() != null ? dto.getMarketingAgreement() : this.marketingAgreement;
     }
+
+    public void updatePassword(String encodedPassword){
+        this.password = encodedPassword;
+    }
 }
