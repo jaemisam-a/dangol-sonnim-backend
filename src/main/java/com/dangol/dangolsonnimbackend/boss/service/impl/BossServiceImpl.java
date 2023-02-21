@@ -66,8 +66,9 @@ public class BossServiceImpl implements BossService {
 
     @Transactional
     public Boss update(String email, BossUpdateRequestDTO requestDTO){
-        findByEmail(email).updateInfo(requestDTO);
-        return findByEmail(email);
+        Boss boss = findByEmail(email);
+        boss.updateInfo(requestDTO);
+        return boss;
     }
 
     @Transactional
