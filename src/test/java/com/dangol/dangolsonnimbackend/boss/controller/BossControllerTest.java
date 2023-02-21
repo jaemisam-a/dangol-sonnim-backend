@@ -1,10 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.controller;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.BossResponseDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSigninReqeustDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
@@ -46,7 +43,7 @@ class BossControllerTest {
     @Test
     void givenSignupDto_whenSignup_thenCreateNewBoss() throws Exception {
         BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("Test Boss");
+        dto.setName("TestBoss");
         dto.setEmail("test@example.com");
         dto.setPassword("password");
         dto.setPhoneNumber("01012345678");
@@ -54,7 +51,7 @@ class BossControllerTest {
 
         mockMvc.perform(post("/api/v1/boss")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 .andExpect(status().isCreated());
 
@@ -166,5 +163,38 @@ class BossControllerTest {
         BossResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossResponseDTO.class);
         assertEquals(dto.getName(), responseDTO.getName());
         assertNotNull(responseDTO.getCreateAt());
+    }
+
+    @Test
+    void givenBossEmail_whenUpdate_thenReturnBoss() throws Exception {
+        // given
+        BossSignupRequestDTO dto = new BossSignupRequestDTO();
+        dto.setName("Test Boss");
+        dto.setEmail("test@example.com");
+        dto.setPassword("password");
+        dto.setPhoneNumber("01012345678");
+        dto.setMarketingAgreement(true);
+        bossService.signup(dto);
+
+        BossUpdateRequestDTO requestDTO = new BossUpdateRequestDTO(null, false);
+
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(dto.getEmail(), null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // when
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v1/boss")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsString(requestDTO))
+                                .with(csrf())
+                )
+                // then
+                .andExpect(status().isOk())
+                .andReturn();
+
+        BossResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossResponseDTO.class);
+        assertEquals(dto.getName(), responseDTO.getName());
+        assertEquals(dto.getPhoneNumber(), responseDTO.getPhoneNumber());
+        assertEquals(responseDTO.getMarketingAgreement(), false);
     }
 }
