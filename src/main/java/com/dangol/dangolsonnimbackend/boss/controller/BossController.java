@@ -1,5 +1,6 @@
 package com.dangol.dangolsonnimbackend.boss.controller;
 
+import com.dangol.dangolsonnimbackend.boss.dto.BossResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSigninReqeustDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
@@ -21,7 +22,7 @@ public class BossController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> signup(@RequestBody BossSignupRequestDTO dto) {
+    public ResponseEntity<?> signup(@RequestBody BossSignupRequestDTO dto) {
         bossService.signup(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -33,8 +34,14 @@ public class BossController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> withdraw(@AuthenticationPrincipal String email) {
+    public ResponseEntity<?> withdraw(@AuthenticationPrincipal String email) {
         bossService.withdraw(email);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getBoss(@AuthenticationPrincipal String email) {
+        BossResponseDTO responseDTO = new BossResponseDTO(bossService.findByEmail(email));
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 }
