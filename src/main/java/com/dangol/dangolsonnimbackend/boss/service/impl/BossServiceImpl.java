@@ -4,6 +4,7 @@ import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSigninReqeustDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.BossUpdateRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
@@ -64,6 +65,12 @@ public class BossServiceImpl implements BossService {
 
         final String token = tokenProvider.generateAccessToken(reqeustDTO.getEmail());
         return new BossSigninResponseDTO(token);
+    }
+
+    @Transactional
+    public Boss update(String email, BossUpdateRequestDTO requestDTO){
+        findByEmail(email).updateInfo(requestDTO);
+        return findByEmail(email);
     }
 
     private void validateSignup(BossSignupRequestDTO dto) {

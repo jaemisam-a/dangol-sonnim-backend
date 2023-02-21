@@ -4,6 +4,7 @@ import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSigninReqeustDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.BossUpdateRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
@@ -165,5 +166,21 @@ public class BossServiceImplTest {
 
         // then
         Assertions.assertNull(bossQueryRepository.findByEmail("test@example.com"));
+    }
+
+    @Test
+    void givenUpdateDTO_whenUpdate_thenBossUpdated() {
+
+        // given
+        bossService.signup(validDto);
+        BossUpdateRequestDTO requestDTO = new BossUpdateRequestDTO("01012345678", null);
+
+        // when
+        bossService.update(validDto.getEmail(), requestDTO);
+
+        // then
+        Boss savedBoss = bossQueryRepository.findByEmail("test@test.com");
+        Assertions.assertNotNull(savedBoss.getMarketingAgreement());
+        Assertions.assertEquals(savedBoss.getPhoneNumber(), "01012345678");
     }
 }
