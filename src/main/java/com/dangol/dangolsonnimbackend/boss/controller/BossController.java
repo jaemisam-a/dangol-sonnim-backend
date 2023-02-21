@@ -6,10 +6,8 @@ import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -29,8 +27,14 @@ public class BossController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticate(@RequestBody BossSigninReqeustDTO reqeustDTO){
+    public ResponseEntity<?> authenticate(@RequestBody BossSigninReqeustDTO reqeustDTO) {
         BossSigninResponseDTO responseDTO = bossService.getByCredentials(reqeustDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> withdraw(@AuthenticationPrincipal String email) {
+        bossService.withdraw(email);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
