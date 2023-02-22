@@ -51,6 +51,9 @@ dependencies {
 	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 test {
