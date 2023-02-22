@@ -7,6 +7,7 @@ import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,7 +124,7 @@ public class BossServiceImplTest {
         String email = "invalid@example.com";
 
         // when then
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> bossService.findByEmail(email));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> bossService.findByEmail(email));
         assertEquals(ErrorCodeMessage.BOSS_NOT_FOUND.getMessage(), exception.getMessage());
     }
 
