@@ -9,6 +9,7 @@ import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class BossServiceImpl implements BossService {
     @Transactional(readOnly = true)
     public Boss findByEmail(String email) {
         return Optional.ofNullable(bossQueryRepository.findByEmail(email)).orElseThrow(
-                () -> new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND)
+                () -> new NotFoundException(ErrorCodeMessage.BOSS_NOT_FOUND)
         );
     }
 
