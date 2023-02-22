@@ -20,7 +20,7 @@ public class StoreQueryRepository {
     public boolean existsByRegisterNumber(String registerNumber) {
         Integer fetchOne = queryFactory.selectOne()
                 .from(QStore.store)
-                .where(QStore.store.storeRegisterNumber.eq(registerNumber))
+                .where(QStore.store.registerNumber.eq(registerNumber))
                 .fetchFirst();
 
         return fetchOne != null;

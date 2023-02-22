@@ -40,8 +40,8 @@ class StoreRepositoryTest {
                 .comments("단골손님 가게로 좋아요.")
                 .officeHours("08:00~10:00")
                 .categoryId(1L)
-                .storeRegisterNumber("1234567890")
-                .storeRegisterName("단골손님")
+                .registerNumber("1234567890")
+                .registerName("단골손님")
                 .build();
 
         store = new Store(dto);
