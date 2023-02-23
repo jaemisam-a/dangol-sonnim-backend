@@ -15,13 +15,22 @@ import java.util.UUID;
 public class RestApiExceptionHandler {
 
     @ExceptionHandler(value = {BadRequestException.class})
-    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
         // requestId 는 에러 로그를 식별하기 위해 사용됩니다.
         String requestId = UUID.randomUUID().toString();
         log.info("Bad Request Error, requestId={}, message={}", requestId, ex.getMessage(), ex);
 
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), requestId);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {NotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
+        String requestId = UUID.randomUUID().toString();
+        log.info("Not Found Request Error, requestId={}, message={}", requestId, ex.getMessage(), ex);
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), requestId);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     @Getter
     @AllArgsConstructor
