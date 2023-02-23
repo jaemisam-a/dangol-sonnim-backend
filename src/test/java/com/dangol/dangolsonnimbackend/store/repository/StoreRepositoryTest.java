@@ -2,7 +2,6 @@ package com.dangol.dangolsonnimbackend.store.repository;
 
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.store.repository.dsl.StoreQueryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ class StoreRepositoryTest {
     void setUp() {
         dto = StoreSignupRequestDTO.builder()
                 .name("단골손님" + new Random().nextInt())
-                .storePhoneNumber("01012345678")
+                .phoneNumber("01012345678")
                 .newAddress("서울특별시 서초구 단골로 130")
                 .sido("서울특별시")
                 .sigungu("서초구")

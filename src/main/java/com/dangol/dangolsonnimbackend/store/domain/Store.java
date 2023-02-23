@@ -2,14 +2,12 @@ package com.dangol.dangolsonnimbackend.store.domain;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="tb_store")
@@ -18,6 +16,7 @@ public class Store {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column(nullable = false)
@@ -59,6 +58,7 @@ public class Store {
     private Long categoryId;
 
     @Column(nullable = false, unique = true)
+    @Setter(AccessLevel.NONE)
     private String registerNumber;
 
     @Column(nullable = false)
@@ -66,7 +66,7 @@ public class Store {
 
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
-        this.phoneNumber = dto.getStorePhoneNumber();
+        this.phoneNumber = dto.getPhoneNumber();
         this.newAddress = dto.getNewAddress();
         this.sido = dto.getSido();
         this.sigungu = dto.getSigungu();

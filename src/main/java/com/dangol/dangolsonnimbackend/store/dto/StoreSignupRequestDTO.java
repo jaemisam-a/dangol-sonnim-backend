@@ -14,7 +14,7 @@ public class StoreSignupRequestDTO {
     private String name;
 
     @NotNull(message = "휴대폰 번호는 Null 일 수 없습니다.")
-    private String storePhoneNumber;
+    private String phoneNumber;
 
     @NotNull(message = "도로명 주소는 Null 일 수 없습니다.")
     private String newAddress;
