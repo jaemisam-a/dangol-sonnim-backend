@@ -6,7 +6,6 @@ import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
-import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,9 +40,6 @@ class BossControllerTest {
     private TokenProvider tokenProvider;
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    BossRepository bossRepository;
 
     @Test
     void givenSignupDto_whenSignup_thenCreateNewBoss() throws Exception {
