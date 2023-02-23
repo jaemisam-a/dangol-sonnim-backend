@@ -45,7 +45,7 @@ class BossControllerTest {
     @Test
     void givenSignupDto_whenSignup_thenCreateNewBoss() throws Exception {
         BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("Test Boss");
+        dto.setName("TestBoss");
         dto.setEmail("test@example.com");
         dto.setPassword("password");
         dto.setPhoneNumber("01012345678");
