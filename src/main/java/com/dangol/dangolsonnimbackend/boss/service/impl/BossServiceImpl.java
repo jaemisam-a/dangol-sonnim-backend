@@ -78,6 +78,14 @@ public class BossServiceImpl implements BossService {
         boss.updatePassword(passwordEncoder.encode(reqeuestDTO.getPassword()));
     }
 
+    @Transactional(readOnly = true)
+    public BossFindEmailResponseDTO findEmailByPhoneNumber(BossFindEmailReqeustDTO reqeustDTO){
+        Boss boss = Optional.ofNullable(bossQueryRepository.findByPhoneNumber(reqeustDTO.getPhoneNumber())).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.BOSS_NOT_FOUND)
+        );
+        return new BossFindEmailResponseDTO(boss.getEmail());
+    }
+
     private void validateSignup(BossSignupRequestDTO dto) {
         if (bossQueryRepository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);
