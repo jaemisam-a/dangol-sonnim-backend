@@ -7,6 +7,7 @@ import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -136,7 +137,7 @@ class BossControllerTest {
                 .andExpect(status().isNoContent());
 
         // then
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> bossService.findByEmail(dto.getEmail()));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> bossService.findByEmail(dto.getEmail()));
         assertEquals(ErrorCodeMessage.BOSS_NOT_FOUND.getMessage(), exception.getMessage());
     }
 }
