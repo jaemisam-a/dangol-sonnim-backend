@@ -89,4 +89,15 @@ class BossQueryRepositoryTest {
         // then
         assertNotNull(boss);
     }
+
+    @Test
+    void givenSignupDto_whenFindByPhoneNumber_thenReturnBoss() {
+        // given
+
+        // when
+        Boss boss = bossQueryRepository.findByEmail("test@test.com");
+
+        // then
+        assertNotNull(boss);
+    }
 }
