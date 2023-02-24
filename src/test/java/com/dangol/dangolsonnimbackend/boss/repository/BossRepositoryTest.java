@@ -28,9 +28,7 @@ class BossRepositoryTest {
         dto.setName("Test");
         dto.setPassword("password");
         dto.setEmail("test@test.com");
-        dto.setBossPhoneNumber("01012345678");
-        dto.setStoreRegisterNumber("1234567890");
-        dto.setStoreRegisterName("Test Store");
+        dto.setPhoneNumber("01012345678");
         dto.setMarketingAgreement(true);
     }
 

@@ -5,10 +5,14 @@ import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.util.Optional;
+
 
 @Service
 public class BossServiceImpl implements BossService {
@@ -32,12 +36,19 @@ public class BossServiceImpl implements BossService {
         bossRepository.save(new Boss(dto));
     }
 
+    @Transactional(readOnly = true)
+    public Boss findByEmail(String email) {
+        return Optional.ofNullable(bossQueryRepository.findByEmail(email)).orElseThrow(
+                () -> new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND)
+        );
+    }
+
     private void validateSignup(BossSignupRequestDTO dto) {
-        if (bossQueryRepository.existsBySrn(dto.getStoreRegisterName())) {
-            throw new RuntimeException();
-        }
         if (bossQueryRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException();
+            throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);
+        }
+        if (bossQueryRepository.existsByPhoneNumber(dto.getPhoneNumber())) {
+            throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);
         }
     }
 }
