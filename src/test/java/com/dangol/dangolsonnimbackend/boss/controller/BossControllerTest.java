@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.controller;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
+import com.dangol.dangolsonnimbackend.boss.dto.BossResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSigninReqeustDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
@@ -139,5 +140,31 @@ class BossControllerTest {
         // then
         NotFoundException exception = assertThrows(NotFoundException.class, () -> bossService.findByEmail(dto.getEmail()));
         assertEquals(ErrorCodeMessage.BOSS_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givenBossEmail_whenGetBoss_thenReturnBoss() throws Exception {
+        // given
+        BossSignupRequestDTO dto = new BossSignupRequestDTO();
+        dto.setName("Test Boss");
+        dto.setEmail("test@example.com");
+        dto.setPassword("password");
+        dto.setPhoneNumber("01012345678");
+        dto.setMarketingAgreement(true);
+        bossService.signup(dto);
+
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(dto.getEmail(), null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // when
+        MvcResult mvcResult = mockMvc.perform(get("/api/v1/boss")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // then
+        BossResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossResponseDTO.class);
+        assertEquals(dto.getName(), responseDTO.getName());
+        assertNotNull(responseDTO.getCreatedAt());
     }
 }
