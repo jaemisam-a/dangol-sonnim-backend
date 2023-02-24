@@ -165,6 +165,6 @@ class BossControllerTest {
         // then
         BossResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossResponseDTO.class);
         assertEquals(dto.getName(), responseDTO.getName());
-        assertNotNull(responseDTO.getCreateAt());
+        assertNotNull(responseDTO.getCreatedAt());
     }
 }
