@@ -11,6 +11,7 @@ import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 
+@Slf4j
 @Service
 public class BossServiceImpl implements BossService {
 
@@ -47,6 +49,10 @@ public class BossServiceImpl implements BossService {
         return Optional.ofNullable(bossQueryRepository.findByEmail(email)).orElseThrow(
                 () -> new NotFoundException(ErrorCodeMessage.BOSS_NOT_FOUND)
         );
+    }
+    @Transactional
+    public void withdraw(String email) {
+        bossRepository.delete(findByEmail(email));
     }
 
     @Transactional

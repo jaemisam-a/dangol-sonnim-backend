@@ -9,6 +9,7 @@ import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,5 +153,18 @@ public class BossServiceImplTest {
 
         // then
         assertEquals(ErrorCodeMessage.BOSS_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givenValidEmail_whenWithDraw_thenReturnTrue() {
+
+        // given
+        bossService.signup(validDto);
+
+        // when
+        bossService.withdraw(validDto.getEmail());
+
+        // then
+        Assertions.assertNull(bossQueryRepository.findByEmail("test@example.com"));
     }
 }
