@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.domain;
 
 import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.BossUpdateRequestDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,5 +54,10 @@ public class Boss {
         this.phoneNumber = dto.getPhoneNumber();
         this.email = dto.getEmail();
         this.marketingAgreement = dto.getMarketingAgreement();
+    }
+
+    public void updateInfo(BossUpdateRequestDTO dto) {
+        this.phoneNumber = dto.getPhoneNumber() != null ? dto.getPhoneNumber() : this.phoneNumber;
+        this.marketingAgreement = dto.getMarketingAgreement() != null ? dto.getMarketingAgreement() : this.marketingAgreement;
     }
 }
