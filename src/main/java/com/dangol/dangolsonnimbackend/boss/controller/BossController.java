@@ -49,4 +49,10 @@ public class BossController {
         BossResponseDTO responseDTO = new BossResponseDTO(bossService.update(email, reqeustDTO));
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody BossPasswordUpdateReqeuestDTO reqeuestDTO){
+        bossService.updatePassword(reqeuestDTO);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

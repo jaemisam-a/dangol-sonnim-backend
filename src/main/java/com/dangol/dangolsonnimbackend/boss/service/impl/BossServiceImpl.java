@@ -1,10 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSigninReqeustDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossUpdateRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
@@ -73,6 +70,12 @@ public class BossServiceImpl implements BossService {
         Boss boss = findByEmail(email);
         boss.updateInfo(requestDTO);
         return boss;
+    }
+
+    @Transactional
+    public void updatePassword(BossPasswordUpdateReqeuestDTO reqeuestDTO) {
+        Boss boss = findByEmail(reqeuestDTO.getEmail());
+        boss.updatePassword(passwordEncoder.encode(reqeuestDTO.getPassword()));
     }
 
     private void validateSignup(BossSignupRequestDTO dto) {

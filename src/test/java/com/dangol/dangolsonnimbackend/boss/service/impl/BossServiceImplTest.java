@@ -1,10 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSigninReqeustDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossUpdateRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
@@ -183,5 +180,20 @@ public class BossServiceImplTest {
         Boss savedBoss = bossQueryRepository.findByEmail("test@test.com");
         Assertions.assertNotNull(savedBoss.getMarketingAgreement());
         Assertions.assertEquals(savedBoss.getPhoneNumber(), "01012345678");
+    }
+
+    @Test
+    void givenBossPasswordUpdateReqeuestDTO_whenUpdatePassword_thenSuccess(){
+
+        // given
+        bossService.signup(validDto);
+        BossPasswordUpdateReqeuestDTO requestDTO = new BossPasswordUpdateReqeuestDTO("test@test.com", "updatedPassword");
+
+        // when
+        bossService.updatePassword(requestDTO);
+
+        // then
+        Boss found = bossQueryRepository.findByEmail("test@test.com");
+        Assertions.assertTrue(passwordEncoder.matches("updatedPassword", found.getPassword()));
     }
 }
