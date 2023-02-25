@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.store.service.impl;
 
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.InternalServerException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
@@ -55,7 +56,7 @@ public class StoreServiceImpl implements StoreService {
         Optional<Store> store = storeQueryRepository.findById(id);
 
         return store.map(StoreResponseDTO::new)
-                .orElseThrow(() -> new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND));
+                .orElseThrow(() -> new InternalServerException(ErrorCodeMessage.RESPONSE_CREATE_ERROR));
     }
 
     /**
@@ -84,6 +85,6 @@ public class StoreServiceImpl implements StoreService {
         }
 
         return store.map(StoreResponseDTO::new)
-                .orElseThrow(() -> new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND));
+                .orElseThrow(() -> new InternalServerException(ErrorCodeMessage.RESPONSE_CREATE_ERROR));
     }
 }
