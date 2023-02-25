@@ -21,6 +21,16 @@ public class RestApiExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = {InternalServerException.class})
+    public ResponseEntity<ErrorResponse> handleInternalServerException(InternalServerException ex) {
+        // MDC 는 에러 로그를 식별하기 위해 사용됩니다.
+        String requestId = MDC.get("UUID");
+        log.info("Internal Server Error, requestId={}, message={}", requestId, ex.getMessage(), ex);
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), requestId);
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private class ErrorResponse {
         private String message;
         private String requestId;
