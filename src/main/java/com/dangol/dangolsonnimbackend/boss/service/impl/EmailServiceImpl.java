@@ -1,8 +1,10 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.service.EmailService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -17,7 +19,6 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     private final TemplateEngine templateEngine;
     private static final String CHAR_POOL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final int INDEX_ZERO = 0;
     private static final int INDEX_EIGHT = 8;
 
     public EmailServiceImpl(JavaMailSender emailSender, TemplateEngine templateEngine) {
@@ -25,21 +26,14 @@ public class EmailServiceImpl implements EmailService {
         this.templateEngine = templateEngine;
     }
 
-    public String sendEmail(String toEmail) {
-        String authCode = generateAuthCode();
+    @Async
+    public void sendEmail(String toEmail, String authCode) {
         sendEmailWithTemplate(toEmail, authCode);
-        return authCode;
     }
 
     // 랜덤 인증코드 생성
-    private String generateAuthCode() {
-        Random random = new Random();
-        StringBuilder authCode = new StringBuilder();
-        for (int i = INDEX_ZERO; i < INDEX_EIGHT; i++) {
-            int index = random.nextInt(CHAR_POOL.length());
-            authCode.append(CHAR_POOL.charAt(index));
-        }
-        return authCode.toString();
+    public String generateAuthCode() {
+        return RandomStringUtils.random(INDEX_EIGHT, CHAR_POOL);
     }
 
     private void sendEmailWithTemplate(String toEmail, String authCode) {
