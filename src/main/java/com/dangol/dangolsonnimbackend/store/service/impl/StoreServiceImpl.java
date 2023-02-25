@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -67,24 +68,12 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public StoreResponseDTO updateStoreByDto(StoreUpdateDTO dto) {
-        Optional<Store> store = storeQueryRepository.findByRegisterNumber(dto.getRegisterNumber());
 
-        if(store.isPresent()) {
-            store.get().setName(dto.getName());
-            store.get().setPhoneNumber(dto.getPhoneNumber());
-            store.get().setNewAddress(dto.getNewAddress());
-            store.get().setSido(dto.getSido());
-            store.get().setSigungu(dto.getSigungu());
-            store.get().setBname1(dto.getBname1());
-            store.get().setBname2(dto.getBname2());
-            store.get().setDetailedAddress(dto.getDetailedAddress());
-            store.get().setComments(dto.getComments());
-            store.get().setOfficeHours(dto.getOfficeHours());
-            store.get().setCategoryId(dto.getCategoryId());
-            store.get().setRegisterName(dto.getRegisterName());
-        }
-
-        return store.map(StoreResponseDTO::new)
+        return storeQueryRepository.findByRegisterNumber(dto.getRegisterNumber())
+                .filter(Objects::nonNull)
+                .filter(o -> o.getRegisterNumber() != null)
+                .get().update(dto)
+                .map(StoreResponseDTO::new)
                 .orElseThrow(() -> new InternalServerException(ErrorCodeMessage.RESPONSE_CREATE_ERROR));
     }
 }

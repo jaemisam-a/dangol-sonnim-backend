@@ -74,18 +74,10 @@ public class StoreServiceTest {
     public void givenUpdateDto_whenFindByRegisterNumber_thenUpdateStore() {
         storeService.signup(dto);
 
-        StoreUpdateDTO updateDto = StoreUpdateDTO.builder()
-                .name("단골손님" + new Random().nextInt())
-                .phoneNumber(dto.getPhoneNumber())
-                .newAddress(dto.getNewAddress())
-                .sido("부산광역시")
-                .sigungu(dto.getSigungu())
-                .registerNumber(dto.getRegisterNumber())
-                .comments(dto.getComments())
-                .officeHours(dto.getOfficeHours())
-                .categoryId(dto.getCategoryId())
-                .registerName(dto.getRegisterName())
-                .build();
+        StoreUpdateDTO updateDto =
+                new StoreUpdateDTO(dto.getRegisterNumber())
+                        .name("단골손님" + new Random().nextInt())
+                        .sido("부산광역시");
 
         StoreResponseDTO response = storeService.updateStoreByDto(updateDto);
 
