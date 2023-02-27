@@ -56,6 +56,9 @@ public class StoreServiceImpl implements StoreService {
     public StoreResponseDTO findById(Long id) {
         Optional<Store> store = storeQueryRepository.findById(id);
 
+        if(!store.isPresent())
+            throw new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND);
+
         return store.map(StoreResponseDTO::new)
                 .orElseThrow(() -> new InternalServerException(ErrorCodeMessage.RESPONSE_CREATE_ERROR));
     }
@@ -68,8 +71,12 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public StoreResponseDTO updateStoreByDto(StoreUpdateDTO dto) {
+        Optional<Store> store =  storeQueryRepository.findByRegisterNumber(dto.getRegisterNumber());
 
-        return storeQueryRepository.findByRegisterNumber(dto.getRegisterNumber())
+        if(!store.isPresent())
+            throw new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND);
+
+        return store
                 .filter(Objects::nonNull)
                 .filter(o -> o.getRegisterNumber() != null)
                 .get().update(dto)
