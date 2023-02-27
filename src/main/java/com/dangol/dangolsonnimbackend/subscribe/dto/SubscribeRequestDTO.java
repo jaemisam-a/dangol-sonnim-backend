@@ -1,16 +1,25 @@
 package com.dangol.dangolsonnimbackend.subscribe.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class SubscribeRequestDTO {
+
+    @NotBlank(message = "구독권 종류는 공백일 수 없습니다.")
+    private String kind;
 
     @NotBlank(message = "이름은 공백일 수 없습니다.")
     private String name;
@@ -25,6 +34,4 @@ public class SubscribeRequestDTO {
     private Boolean isTop;
 
     private Integer useCount;
-
-    private LocalDate period;
 }
