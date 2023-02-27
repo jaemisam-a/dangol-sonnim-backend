@@ -2,11 +2,13 @@ package com.dangol.dangolsonnimbackend.store.domain;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -63,6 +65,9 @@ public class Store {
 
     @Column(nullable = false)
     private String registerName;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subscribe> subscribes;
 
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
