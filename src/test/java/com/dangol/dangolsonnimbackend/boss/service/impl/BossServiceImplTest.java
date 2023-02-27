@@ -196,4 +196,18 @@ public class BossServiceImplTest {
         Boss found = bossQueryRepository.findByEmail("test@test.com");
         Assertions.assertTrue(passwordEncoder.matches("updatedPassword", found.getPassword()));
     }
+
+    @Test
+    void givenValidPhoneNumber_whenFindEmail_thenReturnTrue() {
+
+        // given
+        bossService.signup(validDto);
+        BossFindEmailReqeustDTO reqeustDTO = new BossFindEmailReqeustDTO(validDto.getPhoneNumber());
+
+        // when
+        BossFindEmailResponseDTO responseDTO = bossService.findEmailByPhoneNumber(reqeustDTO);
+
+        // then
+        Assertions.assertEquals(responseDTO.getEmail(), validDto.getEmail());
+    }
 }

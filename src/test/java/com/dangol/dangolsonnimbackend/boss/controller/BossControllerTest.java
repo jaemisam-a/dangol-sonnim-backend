@@ -197,4 +197,33 @@ class BossControllerTest {
         assertEquals(dto.getPhoneNumber(), responseDTO.getPhoneNumber());
         assertEquals(responseDTO.getMarketingAgreement(), false);
     }
+
+    @Test
+    void givenBossPhoneNumber_whenFindByEmail_thenReturnBoss() throws Exception {
+        // given
+        BossSignupRequestDTO dto = new BossSignupRequestDTO();
+        dto.setName("Test Boss");
+        dto.setEmail("test@example.com");
+        dto.setPassword("password");
+        dto.setPhoneNumber("01012345678");
+        dto.setMarketingAgreement(true);
+        bossService.signup(dto);
+
+        BossFindEmailReqeustDTO requestDTO = new BossFindEmailReqeustDTO();
+        requestDTO.setPhoneNumber(dto.getPhoneNumber());
+
+        // when
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/v1/boss/find-email")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsString(requestDTO))
+                                .with(csrf())
+                )
+                // then
+                .andExpect(status().isOk())
+                .andReturn();
+
+        BossFindEmailResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossFindEmailResponseDTO.class);
+        assertEquals(dto.getEmail(), responseDTO.getEmail());
+    }
 }
