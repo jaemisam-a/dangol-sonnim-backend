@@ -28,7 +28,6 @@ class EmailControllerTest {
 
     @Test
     public void givenEmail_whenSendAuthCode_thenSuccess() throws Exception {
-        long startTime = System.currentTimeMillis();
 
         // given
         String email = "test@example.com";
@@ -58,6 +57,5 @@ class EmailControllerTest {
                 .andExpect(status().isBadRequest());
 
         long endTime = System.currentTimeMillis();
-        System.out.println(String.format("코드 실행 시간: %20dms", endTime - startTime));
     }
 }
