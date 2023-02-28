@@ -46,8 +46,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: STEP2) Make application.yml
-        run:
+        run: |
           touch ./src/main/resources/application.yml
+          touch ./src/main/resources/application-dev.yml
         shell: bash
 
       - name: STEP3) Write to .yml
