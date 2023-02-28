@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/v1/email")
 public class EmailController {
-    private final Map<String, Integer> requestCountMap = new HashMap<>();
+    private final Map<String, Integer> requestCountMap = new ConcurrentHashMap<>();
     private static final int MAX_REQUEST_COUNT = 5;
     private static final int DEFAULT_REQUEST_COUNT = 0;
     private static final int INCREASE_REQUEST_COUNT = 1;
@@ -36,8 +37,10 @@ public class EmailController {
         }
 
         requestCountMap.put(dto.getEmail(), requestCount + INCREASE_REQUEST_COUNT);
-        AuthCodeResponseDTO responseDTO = new AuthCodeResponseDTO(emailService.sendEmail(dto.getEmail()));
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        String authCode = emailService.generateAuthCode();
+        emailService.sendEmail(dto.getEmail(), authCode);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new AuthCodeResponseDTO(authCode));
     }
 
     @Scheduled(cron = "0 0 6 * * *")
