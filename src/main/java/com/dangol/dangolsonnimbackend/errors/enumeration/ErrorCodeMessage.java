@@ -14,9 +14,10 @@ public enum ErrorCodeMessage {
     PASSWORD_NOT_MATCH("패스워드가 일치하지 않습니다."),
     BOSS_NOT_FOUND("존재하지 않는 사장님입니다."),
     STORE_NOT_FOUND("존재하지 않는 가게입니다."),
+    DAILY_EMAIL_RESTRICTED("일일 전송 허용 횟수를 초과하였습니다."),
 
     // 500
     RESPONSE_CREATE_ERROR("응답 데이터를 생성하던 도중 에러가 발생하였습니다.");
-
+    
     private final String message;
 }
