@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -33,7 +31,7 @@ class StoreQueryRepositoryTest {
     void setUp() {
         dto = StoreSignupRequestDTO.builder()
                 .name("단골손님" + new Random().nextInt())
-                .storePhoneNumber("01012345678")
+                .phoneNumber("01012345678")
                 .newAddress("서울특별시 서초구 단골로 130")
                 .sido("서울특별시")
                 .sigungu("서초구")
