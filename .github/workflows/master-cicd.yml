@@ -147,7 +147,7 @@ jobs:
           docker pull $DOCKER_USER/$REPO:latest
           docker stop $REPO
           docker rm $REPO
-          docker run --detach --name $REPO -p $SERVER_PORT $DOCKER_USER/$REPO:latest
+          docker run --detach --name $REPO -p $SERVER_PORT:$SERVER_PORT $DOCKER_USER/$REPO:latest
 
     # CD 과정의 결과를 Discord에 전송
     - name: STEP2) Check deploy Success

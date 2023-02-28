@@ -21,11 +21,8 @@ public class AsyncConfigTest {
             return "Hello, world!";
         });
 
-        // 비동기 실행이 완료될 때까지 대기
-        while (!result.isDone()) {
-            Thread.sleep(100);
-        }
+        String actualResult = result.get();
 
-        assertEquals(result.get(),"Hello, world!");
+        assertEquals(actualResult, "Hello, world!");
     }
 }
