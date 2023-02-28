@@ -47,7 +47,6 @@ jobs:
 
       - name: STEP2) Make application.yml
         run: |
-          mkdir ./src/main/resources
           touch ./src/main/resources/application.yml
           touch ./src/main/resources/application-dev.yml
         shell: bash
