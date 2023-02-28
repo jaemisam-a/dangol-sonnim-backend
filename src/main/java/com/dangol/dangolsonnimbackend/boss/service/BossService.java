@@ -11,4 +11,5 @@ public interface BossService {
     Boss update(String email, BossUpdateRequestDTO dto);
     void updatePassword(BossPasswordUpdateReqeuestDTO dto);
     BossSigninResponseDTO getByCredentials(BossSigninReqeustDTO reqeustDTO);
+    BossFindEmailResponseDTO findEmailByPhoneNumber(BossFindEmailReqeustDTO reqeustDTO);
 }

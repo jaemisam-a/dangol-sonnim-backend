@@ -55,4 +55,10 @@ public class BossController {
         bossService.updatePassword(reqeuestDTO);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @PostMapping("/find-email")
+    public ResponseEntity<?> findEmail(@Valid @RequestBody BossFindEmailReqeustDTO reqeustDTO){
+        BossFindEmailResponseDTO responseDTO = bossService.findEmailByPhoneNumber(reqeustDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
 }
