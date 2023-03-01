@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage.STORE_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -120,5 +121,19 @@ public class StoreControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(updateDTO.getName().get()))
                 .andExpect(jsonPath("$.sido").value(updateDTO.getSido().get()));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("존재하지 않은 가게 정보로 업데이트를 요청하면 Bad Request를 반환받는다.")
+    void givenNonExistedStore_whenUpdate_thenThrowException() throws Exception {
+        StoreUpdateDTO updateDTO = new StoreUpdateDTO("None");
+
+        mockMvc.perform(put("/api/v1/store/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                           .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .content(objectMapper.writeValueAsString(updateDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(STORE_NOT_FOUND.getMessage()));
     }
 }
