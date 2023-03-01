@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class BossSignupRequestDTO {
 
     @NotNull(message = "이름은 Null 일 수 없습니다.")
