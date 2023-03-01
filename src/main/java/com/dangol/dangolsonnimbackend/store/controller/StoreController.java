@@ -1,6 +1,6 @@
 package com.dangol.dangolsonnimbackend.store.controller;
 
-import com.dangol.dangolsonnimbackend.errors.InternalServerException;
+import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
@@ -47,7 +47,7 @@ public class StoreController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<StoreResponseDTO> update(@RequestBody String jsonString) {
+    public ResponseEntity<StoreResponseDTO> update(@RequestBody String jsonString) throws BadRequestException {
         try {
             StoreUpdateDTO dto = objectMapper.readValue(jsonString, StoreUpdateDTO.class);
             StoreResponseDTO res = storeService.updateStoreByDto(dto);
@@ -57,9 +57,7 @@ public class StoreController {
                     .body(res);
 
         } catch (JacksonException e) {
-            throw new InternalServerException(ErrorCodeMessage.REQUEST_NOT_INVALID);
-        } catch (RuntimeException e) {
-            throw new InternalServerException(ErrorCodeMessage.RESPONSE_CREATE_ERROR);
+            throw new BadRequestException(ErrorCodeMessage.REQUEST_NOT_INVALID);
         }
-     }
+    }
 }
