@@ -14,6 +14,7 @@ public enum ErrorCodeMessage {
     PASSWORD_NOT_MATCH("패스워드가 일치하지 않습니다."),
     BOSS_NOT_FOUND("존재하지 않는 사장님입니다."),
     STORE_NOT_FOUND("존재하지 않는 가게입니다."),
+    DAILY_EMAIL_RESTRICTED("일일 전송 허용 횟수를 초과하였습니다."),
     REQUEST_NOT_INVALID("요청 데이터의 JSON 형식이 적절하지 않습니다."),
 
     // 500

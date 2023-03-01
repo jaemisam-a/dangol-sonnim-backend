@@ -1,12 +1,15 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,18 +17,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 
+@Slf4j
 @Service
 public class BossServiceImpl implements BossService {
 
     private final BossRepository bossRepository;
     private final BossQueryRepository bossQueryRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
 
     public BossServiceImpl(BossRepository bossRepository, BossQueryRepository bossQueryRepository,
-                           PasswordEncoder passwordEncoder){
+                           PasswordEncoder passwordEncoder, TokenProvider tokenProvider){
         this.bossRepository = bossRepository;
         this.bossQueryRepository = bossQueryRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
     }
 
     @Transactional
@@ -39,8 +45,45 @@ public class BossServiceImpl implements BossService {
     @Transactional(readOnly = true)
     public Boss findByEmail(String email) {
         return Optional.ofNullable(bossQueryRepository.findByEmail(email)).orElseThrow(
-                () -> new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND)
+                () -> new NotFoundException(ErrorCodeMessage.BOSS_NOT_FOUND)
         );
+    }
+    @Transactional
+    public void withdraw(String email) {
+        bossRepository.delete(findByEmail(email));
+    }
+
+    @Transactional
+    public BossSigninResponseDTO getByCredentials(BossSigninReqeustDTO reqeustDTO) {
+        Boss boss = Optional.ofNullable(bossQueryRepository.findByEmail(reqeustDTO.getEmail())).orElseThrow(
+                () -> new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND));
+        if (!passwordEncoder.matches(reqeustDTO.getPassword(), boss.getPassword())) {
+            throw new BadRequestException(ErrorCodeMessage.PASSWORD_NOT_MATCH);
+        }
+
+        final String token = tokenProvider.generateAccessToken(reqeustDTO.getEmail());
+        return new BossSigninResponseDTO(token);
+    }
+
+    @Transactional
+    public Boss update(String email, BossUpdateRequestDTO requestDTO){
+        Boss boss = findByEmail(email);
+        boss.updateInfo(requestDTO);
+        return boss;
+    }
+
+    @Transactional
+    public void updatePassword(BossPasswordUpdateReqeuestDTO reqeuestDTO) {
+        Boss boss = findByEmail(reqeuestDTO.getEmail());
+        boss.updatePassword(passwordEncoder.encode(reqeuestDTO.getPassword()));
+    }
+
+    @Transactional(readOnly = true)
+    public BossFindEmailResponseDTO findEmailByPhoneNumber(BossFindEmailReqeustDTO reqeustDTO){
+        Boss boss = Optional.ofNullable(bossQueryRepository.findByPhoneNumber(reqeustDTO.getPhoneNumber())).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.BOSS_NOT_FOUND)
+        );
+        return new BossFindEmailResponseDTO(boss.getEmail());
     }
 
     private void validateSignup(BossSignupRequestDTO dto) {
