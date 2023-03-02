@@ -1,11 +1,13 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,6 @@ public class BossServiceImplTest {
         validDto.setEmail("test@test.com");
         validDto.setPhoneNumber("01012345678");
         validDto.setMarketingAgreement(true);
-
     }
 
     @Test
@@ -122,7 +123,91 @@ public class BossServiceImplTest {
         String email = "invalid@example.com";
 
         // when then
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> bossService.findByEmail(email));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> bossService.findByEmail(email));
         assertEquals(ErrorCodeMessage.BOSS_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givenValidCredentials_whenGetByCredentials_thenReturnBossSigninResponseDTO() {
+        // given
+        bossService.signup(validDto);
+
+        BossSigninReqeustDTO credentials = new BossSigninReqeustDTO("test@test.com", "password");
+
+        // when
+        BossSigninResponseDTO response = bossService.getByCredentials(credentials);
+
+        // then
+        assertNotNull(response.getAccessToken());
+    }
+
+    @Test
+    void givenInvalidEmail_whenGetByCredentials_thenThrowBadRequestException() {
+        // given
+        BossSigninReqeustDTO credentials = new BossSigninReqeustDTO("test@test.com", "password");
+
+        // when
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> bossService.getByCredentials(credentials));
+
+        // then
+        assertEquals(ErrorCodeMessage.BOSS_NOT_FOUND.getMessage(), exception.getMessage());
+    }
+
+    @Test
+    void givenValidEmail_whenWithDraw_thenReturnTrue() {
+
+        // given
+        bossService.signup(validDto);
+
+        // when
+        bossService.withdraw(validDto.getEmail());
+
+        // then
+        Assertions.assertNull(bossQueryRepository.findByEmail("test@example.com"));
+    }
+
+    @Test
+    void givenUpdateDTO_whenUpdate_thenBossUpdated() {
+
+        // given
+        bossService.signup(validDto);
+        BossUpdateRequestDTO requestDTO = new BossUpdateRequestDTO("01012345678", null);
+
+        // when
+        bossService.update(validDto.getEmail(), requestDTO);
+
+        // then
+        Boss savedBoss = bossQueryRepository.findByEmail("test@test.com");
+        Assertions.assertNotNull(savedBoss.getMarketingAgreement());
+        Assertions.assertEquals(savedBoss.getPhoneNumber(), "01012345678");
+    }
+
+    @Test
+    void givenBossPasswordUpdateReqeuestDTO_whenUpdatePassword_thenSuccess(){
+
+        // given
+        bossService.signup(validDto);
+        BossPasswordUpdateReqeuestDTO requestDTO = new BossPasswordUpdateReqeuestDTO("test@test.com", "updatedPassword");
+
+        // when
+        bossService.updatePassword(requestDTO);
+
+        // then
+        Boss found = bossQueryRepository.findByEmail("test@test.com");
+        Assertions.assertTrue(passwordEncoder.matches("updatedPassword", found.getPassword()));
+    }
+
+    @Test
+    void givenValidPhoneNumber_whenFindEmail_thenReturnTrue() {
+
+        // given
+        bossService.signup(validDto);
+        BossFindEmailReqeustDTO reqeustDTO = new BossFindEmailReqeustDTO(validDto.getPhoneNumber());
+
+        // when
+        BossFindEmailResponseDTO responseDTO = bossService.findEmailByPhoneNumber(reqeustDTO);
+
+        // then
+        Assertions.assertEquals(responseDTO.getEmail(), validDto.getEmail());
     }
 }

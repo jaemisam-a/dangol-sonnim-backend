@@ -35,4 +35,10 @@ public class BossQueryRepository {
                 .where(QBoss.boss.email.eq(email))
                 .fetchOne();
     }
+
+    public Boss findByPhoneNumber(String phoneNumber){
+        return queryFactory.selectFrom(QBoss.boss)
+                .where(QBoss.boss.phoneNumber.eq(phoneNumber))
+                .fetchOne();
+    }
 }
