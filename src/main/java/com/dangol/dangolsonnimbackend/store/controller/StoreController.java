@@ -28,7 +28,7 @@ public class StoreController {
         this.objectMapper = objectMapper;
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/create")
     public ResponseEntity<StoreResponseDTO> signup(@RequestBody StoreSignupRequestDTO dto) {
         StoreResponseDTO res = storeService.signup(dto);
 

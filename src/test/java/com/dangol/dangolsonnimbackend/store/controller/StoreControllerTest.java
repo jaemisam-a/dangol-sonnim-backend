@@ -64,7 +64,7 @@ public class StoreControllerTest {
     @Transactional
     @DisplayName("새로운 가게 정보 생성을 요청하면 정상적으로 생성이 된다.")
     void givenSignupDto_whenSignup_thenCreateNewStore() throws Exception {
-        mockMvc.perform(post("/api/v1/store/signup")
+        mockMvc.perform(post("/api/v1/store/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .content(objectMapper.writeValueAsString(dto)))
