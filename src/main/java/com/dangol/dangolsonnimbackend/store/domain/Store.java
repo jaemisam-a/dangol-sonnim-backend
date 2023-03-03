@@ -52,8 +52,8 @@ public class Store {
     @Column(nullable = false)
     private String officeHours;
 
-    @OneToOne
-    @JoinColumn(name="boss_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "boss_id", nullable = false)
     private Boss boss;
 
     // TODO. 카테고리 엔티티 생성 시 JoinColumn 추가
@@ -87,5 +87,13 @@ public class Store {
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void addSubscribe(Subscribe subscribe) {
+        subscribes.add(subscribe);
+    }
+
+    public void removeSubscribe(Subscribe subscribe) {
+        subscribes.remove(subscribe);
     }
 }
