@@ -2,6 +2,7 @@ package com.dangol.dangolsonnimbackend.store.domain;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
+
 import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+
 
 @Entity
 @Getter
@@ -20,6 +22,7 @@ public class Store {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column(nullable = false)
@@ -61,6 +64,7 @@ public class Store {
     private Long categoryId;
 
     @Column(nullable = false, unique = true)
+    @Setter(AccessLevel.NONE)
     private String registerNumber;
 
     @Column(nullable = false)
@@ -71,7 +75,7 @@ public class Store {
 
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
-        this.phoneNumber = dto.getStorePhoneNumber();
+        this.phoneNumber = dto.getPhoneNumber();
         this.newAddress = dto.getNewAddress();
         this.sido = dto.getSido();
         this.sigungu = dto.getSigungu();
@@ -87,5 +91,22 @@ public class Store {
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public Optional<Store> update(StoreUpdateDTO dto) {
+        dto.getName().ifPresent(name -> this.name = name);
+        dto.getPhoneNumber().ifPresent(phoneNumber -> this.phoneNumber = phoneNumber);
+        dto.getNewAddress().ifPresent(newAddress -> this.newAddress = newAddress);
+        dto.getSido().ifPresent(sido -> this.sido = sido);
+        dto.getSigungu().ifPresent(sigungu -> this.sigungu = sigungu);
+        dto.getBname1().ifPresent(bname1 -> this.bname1 = bname1);
+        dto.getBname2().ifPresent(bname2 -> this.bname2 = bname2);
+        dto.getDetailedAddress().ifPresent(detailedAddress -> this.detailedAddress = detailedAddress);
+        dto.getComments().ifPresent(comments -> this.comments = comments);
+        dto.getOfficeHours().ifPresent(officeHours -> this.officeHours = officeHours);
+        dto.getCategoryId().ifPresent(categoryId -> this.categoryId = categoryId);
+        dto.getRegisterName().ifPresent(registerName -> this.registerName = registerName);
+
+        return Optional.of(this);
     }
 }
