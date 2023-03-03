@@ -1,7 +1,6 @@
 package com.dangol.dangolsonnimbackend.subscribe.domain;
 
 import com.dangol.dangolsonnimbackend.store.domain.Store;
-import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -46,7 +45,7 @@ public abstract class Subscribe {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    public Subscribe(String name, BigDecimal price, String intro,
+    protected Subscribe(String name, BigDecimal price, String intro,
                      Boolean isTop, Store store){
         this.name = name;
         this.price = price;
