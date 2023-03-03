@@ -35,7 +35,7 @@ public class SubscribeServiceImpl implements SubscribeService {
                 () -> new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND)
         );
         Subscribe savedSubscribe = subscribeRepository.save(classify(dto, store));
-        return toResponseDTO(savedSubscribe);
+        return savedSubscribe.toResponseDTO();
     }
 
     public Subscribe classify(SubscribeRequestDTO dto, Store store){
@@ -47,12 +47,5 @@ public class SubscribeServiceImpl implements SubscribeService {
             default:
                 throw new BadRequestException(ErrorCodeMessage.INVALID_SUBSCRIBE_TYPE);
         }
-    }
-
-    public SubscribeResponseDTO toResponseDTO(Subscribe subscribe){
-        if (subscribe instanceof MonthlySubscribe){
-            return new SubscribeResponseDTO((MonthlySubscribe) subscribe);
-        }
-        return new SubscribeResponseDTO((CountSubscribe) subscribe);
     }
 }
