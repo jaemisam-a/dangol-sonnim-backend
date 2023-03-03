@@ -16,13 +16,13 @@ public class BossResponseDTO {
     private String phoneNumber;
     private String email;
     private Boolean marketingAgreement;
-    private String createAt;
+    private String createdAt;
 
     public BossResponseDTO(Boss boss){
         this.name = boss.getName();
         this.phoneNumber = boss.getPhoneNumber();
         this.email = boss.getEmail();
         this.marketingAgreement = boss.getMarketingAgreement();
-        this.createAt = String.valueOf(boss.getCreatedAt());
+        this.createdAt = String.valueOf(boss.getCreatedAt());
     }
 }

@@ -1,10 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.controller;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.BossPasswordUpdateReqeuestDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSigninReqeustDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSigninResponseDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
@@ -54,7 +51,7 @@ class BossControllerTest {
 
         mockMvc.perform(post("/api/v1/boss")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 .andExpect(status().isCreated());
 
@@ -143,25 +140,90 @@ class BossControllerTest {
     }
 
     @Test
-    void givenBossPasswordUpdateReqeuestDTO_whenUpdate_thenReturnBossResponseDTO() throws Exception {
+    void givenBossEmail_whenGetBoss_thenReturnBoss() throws Exception {
         // given
         BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("TestBoss");
+        dto.setName("Test Boss");
         dto.setEmail("test@example.com");
         dto.setPassword("password");
         dto.setPhoneNumber("01012345678");
         dto.setMarketingAgreement(true);
         bossService.signup(dto);
 
-        BossPasswordUpdateReqeuestDTO requestDTO = new BossPasswordUpdateReqeuestDTO("test@example.com", "updatedPassword");
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(dto.getEmail(), null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
-        mockMvc.perform(
-                        put("/api/v1/boss/password")
+        MvcResult mvcResult = mockMvc.perform(get("/api/v1/boss")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // then
+        BossResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossResponseDTO.class);
+        assertEquals(dto.getName(), responseDTO.getName());
+        assertNotNull(responseDTO.getCreatedAt());
+    }
+
+    @Test
+    void givenBossEmail_whenUpdate_thenReturnBoss() throws Exception {
+        // given
+        BossSignupRequestDTO dto = new BossSignupRequestDTO();
+        dto.setName("Test Boss");
+        dto.setEmail("test@example.com");
+        dto.setPassword("password");
+        dto.setPhoneNumber("01012345678");
+        dto.setMarketingAgreement(true);
+        bossService.signup(dto);
+
+        BossUpdateRequestDTO requestDTO = new BossUpdateRequestDTO(null, false);
+
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(dto.getEmail(), null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // when
+        MvcResult mvcResult = mockMvc.perform(
+                        patch("/api/v1/boss")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new ObjectMapper().writeValueAsString(requestDTO))
-                                .with(csrf()))
+                                .with(csrf())
+                )
                 // then
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andReturn();
+
+        BossResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossResponseDTO.class);
+        assertEquals(dto.getName(), responseDTO.getName());
+        assertEquals(dto.getPhoneNumber(), responseDTO.getPhoneNumber());
+        assertEquals(responseDTO.getMarketingAgreement(), false);
+    }
+
+    @Test
+    void givenBossPhoneNumber_whenFindByEmail_thenReturnBoss() throws Exception {
+        // given
+        BossSignupRequestDTO dto = new BossSignupRequestDTO();
+        dto.setName("Test Boss");
+        dto.setEmail("test@example.com");
+        dto.setPassword("password");
+        dto.setPhoneNumber("01012345678");
+        dto.setMarketingAgreement(true);
+        bossService.signup(dto);
+
+        BossFindEmailReqeustDTO requestDTO = new BossFindEmailReqeustDTO();
+        requestDTO.setPhoneNumber(dto.getPhoneNumber());
+
+        // when
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/api/v1/boss/find-email")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new ObjectMapper().writeValueAsString(requestDTO))
+                                .with(csrf())
+                )
+                // then
+                .andExpect(status().isOk())
+                .andReturn();
+
+        BossFindEmailResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossFindEmailResponseDTO.class);
+        assertEquals(dto.getEmail(), responseDTO.getEmail());
     }
 }
