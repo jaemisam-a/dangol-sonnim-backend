@@ -114,7 +114,7 @@ public class StoreControllerTest {
         updateDTO.setName(Optional.of("단골손님" + new Random().nextInt()));
         updateDTO.setSido(Optional.of("경기도"));
 
-        mockMvc.perform(put("/api/v1/store/update")
+        mockMvc.perform(patch("/api/v1/store/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .content(objectMapper.writeValueAsString(updateDTO)))
@@ -129,7 +129,7 @@ public class StoreControllerTest {
     void givenNonExistedStore_whenUpdate_thenThrowException() throws Exception {
         StoreUpdateDTO updateDTO = new StoreUpdateDTO("None");
 
-        mockMvc.perform(put("/api/v1/store/update")
+        mockMvc.perform(patch("/api/v1/store/update")
                         .contentType(MediaType.APPLICATION_JSON)
                            .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .content(objectMapper.writeValueAsString(updateDTO)))
