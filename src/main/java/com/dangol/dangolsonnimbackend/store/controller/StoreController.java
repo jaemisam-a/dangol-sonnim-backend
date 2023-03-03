@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -29,7 +30,7 @@ public class StoreController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<StoreResponseDTO> signup(@RequestBody StoreSignupRequestDTO dto) {
+    public ResponseEntity<StoreResponseDTO> signup(@Valid @RequestBody StoreSignupRequestDTO dto) {
         StoreResponseDTO res = storeService.signup(dto);
 
         return ResponseEntity
