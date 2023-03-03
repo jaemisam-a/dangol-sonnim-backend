@@ -46,14 +46,12 @@ public abstract class Subscribe {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    protected Subscribe(String name, BigDecimal price, String intro,
+    public Subscribe(String name, BigDecimal price, String intro,
                      Boolean isTop, Store store){
         this.name = name;
         this.price = price;
         this.intro = intro;
         this.isTop = isTop;
         this.store = store;
-
-        store.addSubscribe(this);
     }
 }
