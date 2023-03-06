@@ -27,7 +27,7 @@ class EmailControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void givenEmail_whenSendAuthCode_thenSuccess() throws Exception {
+    void givenEmail_whenSendAuthCode_thenSuccess() throws Exception {
 
         // given
         String email = "test@example.com";

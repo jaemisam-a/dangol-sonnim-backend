@@ -135,7 +135,7 @@ class BossControllerTest {
                 .andExpect(status().isNoContent());
 
         // then
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> bossService.findByEmail(dto.getEmail()));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> bossService.findByEmail("invalid"));
         assertEquals(ErrorCodeMessage.BOSS_NOT_FOUND.getMessage(), exception.getMessage());
     }
 
@@ -195,7 +195,7 @@ class BossControllerTest {
         BossResponseDTO responseDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), BossResponseDTO.class);
         assertEquals(dto.getName(), responseDTO.getName());
         assertEquals(dto.getPhoneNumber(), responseDTO.getPhoneNumber());
-        assertEquals(responseDTO.getMarketingAgreement(), false);
+        assertEquals(false, responseDTO.getMarketingAgreement());
     }
 
     @Test
