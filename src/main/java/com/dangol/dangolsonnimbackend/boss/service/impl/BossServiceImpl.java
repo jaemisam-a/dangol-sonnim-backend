@@ -79,8 +79,8 @@ public class BossServiceImpl implements BossService {
     }
 
     @Transactional(readOnly = true)
-    public BossFindEmailResponseDTO findEmailByPhoneNumber(BossFindEmailReqeustDTO reqeustDTO){
-        Boss boss = Optional.ofNullable(bossQueryRepository.findByPhoneNumber(reqeustDTO.getPhoneNumber())).orElseThrow(
+    public BossFindEmailResponseDTO findEmailByPhoneNumber(BossFindEmailReqeustDTO requestDTO){
+        Boss boss = Optional.ofNullable(bossQueryRepository.findByPhoneNumber(requestDTO.getPhoneNumber())).orElseThrow(
                 () -> new NotFoundException(ErrorCodeMessage.BOSS_NOT_FOUND)
         );
         return new BossFindEmailResponseDTO(boss.getEmail());
