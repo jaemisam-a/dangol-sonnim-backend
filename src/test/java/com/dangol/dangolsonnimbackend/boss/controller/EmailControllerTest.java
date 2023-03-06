@@ -55,7 +55,5 @@ class EmailControllerTest {
                         .param("email", email))
                 // then
                 .andExpect(status().isBadRequest());
-
-        long endTime = System.currentTimeMillis();
     }
 }
