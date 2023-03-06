@@ -1,6 +1,8 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.service.EmailService;
+import com.dangol.dangolsonnimbackend.errors.InternalServerException;
+import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -53,9 +55,9 @@ public class EmailServiceImpl implements EmailService {
 
             emailSender.send(message);
         } catch (MessagingException e) {
-            throw new RuntimeException("이메일 전송에 실패하였습니다.", e);
+            throw new InternalServerException(ErrorCodeMessage.EMAIL_SEND_FAILURE);
         } catch (RuntimeException e) {
-            throw new RuntimeException("다른 원인으로 인해 이메일 전송에 실패하였습니다.", e);
+            throw new InternalServerException(ErrorCodeMessage.RESPONSE_CREATE_ERROR);
         }
     }
 }

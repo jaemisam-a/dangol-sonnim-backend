@@ -21,43 +21,43 @@ public class BossController {
     }
 
     @PostMapping
-    public ResponseEntity<?> signup(@Valid @RequestBody BossSignupRequestDTO dto) {
+    public ResponseEntity<Void> signup(@Valid @RequestBody BossSignupRequestDTO dto) {
         bossService.signup(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticate(@Valid @RequestBody BossSigninReqeustDTO reqeustDTO) {
+    public ResponseEntity<BossSigninResponseDTO> authenticate(@Valid @RequestBody BossSigninReqeustDTO reqeustDTO) {
         BossSigninResponseDTO responseDTO = bossService.getByCredentials(reqeustDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
     @DeleteMapping
-    public ResponseEntity<?> withdraw(@AuthenticationPrincipal String email) {
+    public ResponseEntity<Void> withdraw(@AuthenticationPrincipal String email) {
         bossService.withdraw(email);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping
-    public ResponseEntity<?> getBoss(@AuthenticationPrincipal String email) {
+    public ResponseEntity<BossResponseDTO> getBoss(@AuthenticationPrincipal String email) {
         BossResponseDTO responseDTO = new BossResponseDTO(bossService.findByEmail(email));
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
     @PatchMapping
-    public ResponseEntity<?> update(@AuthenticationPrincipal String email, @Valid @RequestBody BossUpdateRequestDTO reqeustDTO) {
+    public ResponseEntity<BossResponseDTO> update(@AuthenticationPrincipal String email, @Valid @RequestBody BossUpdateRequestDTO reqeustDTO) {
         BossResponseDTO responseDTO = new BossResponseDTO(bossService.update(email, reqeustDTO));
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
     @PutMapping("/password")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody BossPasswordUpdateReqeuestDTO reqeuestDTO){
+    public ResponseEntity<Void> updatePassword(@Valid @RequestBody BossPasswordUpdateReqeuestDTO reqeuestDTO){
         bossService.updatePassword(reqeuestDTO);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/find-email")
-    public ResponseEntity<?> findEmail(@Valid @RequestBody BossFindEmailReqeustDTO reqeustDTO){
+    public ResponseEntity<BossFindEmailResponseDTO> findEmail(@Valid @RequestBody BossFindEmailReqeustDTO reqeustDTO){
         BossFindEmailResponseDTO responseDTO = bossService.findEmailByPhoneNumber(reqeustDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
