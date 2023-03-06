@@ -41,7 +41,7 @@ public class CustomerInfo {
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 

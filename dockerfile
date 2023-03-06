@@ -12,5 +12,8 @@ CMD ["./gradlew", "clean", "build"]
 # STEP4) JAR 파일의 위치
 ARG JAR_FILE=./build/libs/${NAME}-${VERSION}.jar
 
+# STEP5) JAR 파일을 app.jar로 변경
+COPY ${JAR_FILE} app.jar
+
 # STEP6) execute java command
-ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "${JAR_FILE}"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "/app.jar"]
