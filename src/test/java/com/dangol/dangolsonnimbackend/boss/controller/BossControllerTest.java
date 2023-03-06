@@ -8,6 +8,7 @@ import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -40,21 +41,28 @@ class BossControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    void givenSignupDto_whenSignup_thenCreateNewBoss() throws Exception {
-        BossSignupRequestDTO dto = new BossSignupRequestDTO();
+    private BossSignupRequestDTO dto;
+
+    @BeforeEach
+    void setup(){
+        dto = new BossSignupRequestDTO();
         dto.setName("TestBoss");
         dto.setEmail("test@example.com");
         dto.setPassword("password");
         dto.setPhoneNumber("01012345678");
         dto.setMarketingAgreement(true);
+    }
 
+    @Test
+    void givenSignupDto_whenSignup_thenCreateNewBoss() throws Exception {
+        // given when
         mockMvc.perform(post("/api/v1/boss")
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 .andExpect(status().isCreated());
 
+        // then
         Boss boss = bossService.findByEmail(dto.getEmail());
         assertNotNull(boss);
         assertEquals(dto.getName(), boss.getName());
@@ -63,12 +71,6 @@ class BossControllerTest {
     @Test
     void givenValidCredentials_whenAuthenticate_thenSucceed() throws Exception {
         // given
-        BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("Test Boss");
-        dto.setEmail("test@example.com");
-        dto.setPassword("password");
-        dto.setPhoneNumber("01012345678");
-        dto.setMarketingAgreement(true);
         bossService.signup(dto);
 
         BossSigninReqeustDTO requestDTO = new BossSigninReqeustDTO("test@example.com", "password");
@@ -94,14 +96,7 @@ class BossControllerTest {
     @Test
     void givenInvalidCredentials_whenAuthenticate_thenFail() throws Exception {
         // given
-        BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("Test Boss");
-        dto.setEmail("test@example.com");
-        dto.setPassword("password");
-        dto.setPhoneNumber("01012345678");
-        dto.setMarketingAgreement(true);
         bossService.signup(dto);
-
         BossSigninReqeustDTO requestDTO = new BossSigninReqeustDTO("test@example.com", "invalid-password");
 
         // when
@@ -118,12 +113,6 @@ class BossControllerTest {
     @Test
     void givenBossEmail_whenWithdraw_thenDeleteBoss() throws Exception {
         // given
-        BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("Test Boss");
-        dto.setEmail("test@example.com");
-        dto.setPassword("password");
-        dto.setPhoneNumber("01012345678");
-        dto.setMarketingAgreement(true);
         bossService.signup(dto);
 
         AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(dto.getEmail(), null, AuthorityUtils.NO_AUTHORITIES);
@@ -142,12 +131,6 @@ class BossControllerTest {
     @Test
     void givenBossEmail_whenGetBoss_thenReturnBoss() throws Exception {
         // given
-        BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("Test Boss");
-        dto.setEmail("test@example.com");
-        dto.setPassword("password");
-        dto.setPhoneNumber("01012345678");
-        dto.setMarketingAgreement(true);
         bossService.signup(dto);
 
         AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(dto.getEmail(), null, AuthorityUtils.NO_AUTHORITIES);
@@ -168,12 +151,6 @@ class BossControllerTest {
     @Test
     void givenBossEmail_whenUpdate_thenReturnBoss() throws Exception {
         // given
-        BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("Test Boss");
-        dto.setEmail("test@example.com");
-        dto.setPassword("password");
-        dto.setPhoneNumber("01012345678");
-        dto.setMarketingAgreement(true);
         bossService.signup(dto);
 
         BossUpdateRequestDTO requestDTO = new BossUpdateRequestDTO(null, false);
@@ -201,12 +178,6 @@ class BossControllerTest {
     @Test
     void givenBossPhoneNumber_whenFindByEmail_thenReturnBoss() throws Exception {
         // given
-        BossSignupRequestDTO dto = new BossSignupRequestDTO();
-        dto.setName("Test Boss");
-        dto.setEmail("test@example.com");
-        dto.setPassword("password");
-        dto.setPhoneNumber("01012345678");
-        dto.setMarketingAgreement(true);
         bossService.signup(dto);
 
         BossFindEmailReqeustDTO requestDTO = new BossFindEmailReqeustDTO();
