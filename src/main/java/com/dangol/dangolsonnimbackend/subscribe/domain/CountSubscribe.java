@@ -5,10 +5,8 @@ import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import lombok.*;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.math.BigDecimal;
 
 @Entity
 @DiscriminatorValue("COUNT")

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.math.BigDecimal;
 
 @Entity
 @Getter
