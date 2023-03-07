@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,7 +28,7 @@ public class EmailController {
     }
 
     @PostMapping("/send-auth-code")
-    public ResponseEntity<?> sendAuthCode(@Valid @RequestBody AuthCodeRequestDTO dto) {
+    public ResponseEntity<AuthCodeResponseDTO> sendAuthCode(@Valid @RequestBody AuthCodeRequestDTO dto) {
         int requestCount = requestCountMap.getOrDefault(dto.getEmail(), DEFAULT_REQUEST_COUNT);
 
         if (requestCount >= MAX_REQUEST_COUNT) {

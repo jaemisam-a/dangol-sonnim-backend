@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-public class BossServiceImplTest {
+class BossServiceImplTest {
 
     @Autowired
     private BossRepository bossRepository;
@@ -48,7 +48,7 @@ public class BossServiceImplTest {
     }
 
     @Test
-    public void givenValidDto_whenSignup_thenSaveBoss() {
+    void givenValidDto_whenSignup_thenSaveBoss() {
         // given
 
         // when
@@ -61,7 +61,7 @@ public class BossServiceImplTest {
     }
 
     @Test
-    public void givenSignup_whenDuplicatePhoneNumber_thenThrowException() {
+    void givenSignup_whenDuplicatePhoneNumber_thenThrowException() {
         // given
         BossSignupRequestDTO dtoWithDuplicateEmail = new BossSignupRequestDTO();
 
@@ -77,7 +77,7 @@ public class BossServiceImplTest {
     }
 
     @Test
-    public void givenSignup_whenDuplicateEmail_thenThrowException() {
+    void givenSignup_whenDuplicateEmail_thenThrowException() {
         // given
         BossSignupRequestDTO dtoWithDuplicateEmail = new BossSignupRequestDTO();
 
@@ -92,7 +92,7 @@ public class BossServiceImplTest {
         assertThrows(RuntimeException.class, () -> bossService.signup(dtoWithDuplicateEmail));
     }
 
-    private void assertBossEqualsDto(Boss boss, BossSignupRequestDTO dto) {
+    void assertBossEqualsDto(Boss boss, BossSignupRequestDTO dto) {
         assertEquals(dto.getEmail(), boss.getEmail());
         assertTrue(passwordEncoder.matches("password", boss.getPassword()));
     }
@@ -179,7 +179,7 @@ public class BossServiceImplTest {
         // then
         Boss savedBoss = bossQueryRepository.findByEmail("test@test.com");
         Assertions.assertNotNull(savedBoss.getMarketingAgreement());
-        Assertions.assertEquals(savedBoss.getPhoneNumber(), "01012345678");
+        Assertions.assertEquals("01012345678", savedBoss.getPhoneNumber());
     }
 
     @Test

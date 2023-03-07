@@ -1,8 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.service;
 
-import java.util.concurrent.CompletableFuture;
 
 public interface EmailService {
-    void sendEmail(String toEmail, String AuthCode);
+    void sendEmail(String toEmail, String authCode);
     String generateAuthCode();
 }

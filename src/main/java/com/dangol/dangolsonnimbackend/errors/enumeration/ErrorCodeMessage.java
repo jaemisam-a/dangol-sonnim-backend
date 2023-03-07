@@ -21,7 +21,8 @@ public enum ErrorCodeMessage {
     REQUEST_NOT_INVALID("요청 데이터의 JSON 형식이 적절하지 않습니다."),
 
     // 500
-    RESPONSE_CREATE_ERROR("응답 데이터를 생성하던 도중 에러가 발생하였습니다.");
+    RESPONSE_CREATE_ERROR("응답 데이터를 생성하던 도중 에러가 발생하였습니다."),
+    EMAIL_SEND_FAILURE("이메일 전송에 실패하였습니다.");
 
     private final String message;
 }
