@@ -21,6 +21,8 @@ public class StoreResponseDTO {
 
     private String comments;
 
+    private String sido;
+
     private String sigungu;
 
     private String bname1;
@@ -28,6 +30,10 @@ public class StoreResponseDTO {
     private String bname2;
 
     private String detailedAddress;
+
+    private String registerNumber;
+
+    private String registerName;
 
     // TODO. 태그 및 이미지 필드 추가
 
@@ -37,9 +43,12 @@ public class StoreResponseDTO {
         this.newAddress = store.getNewAddress();
         this.categoryId = store.getCategoryId();
         this.comments = store.getComments();
+        this.sido = store.getSido();
         this.sigungu = store.getSigungu();
         this.bname1 = store.getBname1();
         this.bname2 = store.getBname2();
         this.detailedAddress = store.getDetailedAddress();
+        this.registerNumber = store.getRegisterNumber();
+        this.registerName = store.getRegisterName();
     }
 }
