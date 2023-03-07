@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@ExtendWith(RestDocumentationExtension.class)
+@ExtendWith(RestDocumentationExtension.class) // RestDocumentation 기능을 사용하기 위한 어노테이션
 class BossControllerTest {
 
     @Autowired
@@ -58,10 +58,10 @@ class BossControllerTest {
     private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
 
     @BeforeEach
-    void setup(RestDocumentationContextProvider restDocumentation){
+    void setup(RestDocumentationContextProvider restDocumentation){ // 테스트 메서드 실행 중에 문서화 프로세스를 제어
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
-                .apply(documentationConfiguration(restDocumentation))
+                .apply(documentationConfiguration(restDocumentation)) // Spring REST Docs 의 설정
                 .build();
 
         dto = new BossSignupRequestDTO();
@@ -81,9 +81,9 @@ class BossControllerTest {
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 // then
                 .andExpect(status().isCreated())
-                .andDo(document("boss/signup",
-                        requestFields(
-                                fieldWithPath("name").description("사장님의 이름입니다."),
+                .andDo(document("boss/signup", // 문서화 대상이 되는 API의 경로
+                        requestFields( // API의 요청 바디를 문서화하는 메서드
+                                fieldWithPath("name").description("사장님의 이름입니다."), // 문서화할 필드의 이름과 설명을 설정
                                 fieldWithPath("email").description("사장님의 이메일 주소입니다."),
                                 fieldWithPath("password").description("사장님의 패스워드입니다."),
                                 fieldWithPath("phoneNumber").description("사장님의 휴대폰 번호입니다."),
