@@ -2,12 +2,16 @@ package com.dangol.dangolsonnimbackend.boss.controller;
 
 import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @RestController
@@ -21,14 +25,17 @@ public class BossController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> signup(@Valid @RequestBody BossSignupRequestDTO dto) {
-        bossService.signup(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<BossResponseDTO> signup(@Valid @RequestBody BossSignupRequestDTO dto) {
+        BossResponseDTO responseDTO = bossService.signup(dto);
+
+        responseDTO.add(linkTo(methodOn(BossController.class).authenticate(null)).withRel("authenticate"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<BossSigninResponseDTO> authenticate(@Valid @RequestBody BossSigninReqeustDTO reqeustDTO) {
         BossSigninResponseDTO responseDTO = bossService.getByCredentials(reqeustDTO);
+
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
@@ -46,7 +53,7 @@ public class BossController {
 
     @PatchMapping
     public ResponseEntity<BossResponseDTO> update(@AuthenticationPrincipal String email, @Valid @RequestBody BossUpdateRequestDTO reqeustDTO) {
-        BossResponseDTO responseDTO = new BossResponseDTO(bossService.update(email, reqeustDTO));
+        BossResponseDTO responseDTO = bossService.update(email, reqeustDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
