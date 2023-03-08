@@ -58,7 +58,7 @@ public class StoreControllerTest {
     @Autowired
     private WebApplicationContext context;
 
-    FieldDescriptor[] signUpJsonField = new FieldDescriptor[] {
+    FieldDescriptor[] signUpRequestJsonField = new FieldDescriptor[] {
             fieldWithPath("name").type(JsonFieldType.STRING).description("가게 이름"),
             fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("가게 전화번호"),
             fieldWithPath("newAddress").type(JsonFieldType.STRING).description("가게 주소"),
@@ -74,7 +74,24 @@ public class StoreControllerTest {
             fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명")
     };
 
-    FieldDescriptor[] updateJsonField = new FieldDescriptor[] {
+    FieldDescriptor[] findResponseJsonField = new FieldDescriptor[] {
+            fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 아이디"),
+            fieldWithPath("name").type(JsonFieldType.STRING).description("가게 이름"),
+//            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("가게 전화번호"),
+            fieldWithPath("newAddress").type(JsonFieldType.STRING).description("가게 주소"),
+            fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("가게 카테고리"),
+            fieldWithPath("comments").type(JsonFieldType.STRING).description("가게 한줄평"),
+            fieldWithPath("sido").type(JsonFieldType.STRING).description("가게 주소 (시/도)"),
+            fieldWithPath("sigungu").type(JsonFieldType.STRING).description("가게 주소 (시/군/구)"),
+            fieldWithPath("bname1").type(JsonFieldType.STRING).description("가게 주소 (읍/면)"),
+            fieldWithPath("bname2").type(JsonFieldType.STRING).description("가게 주소 (동/리)"),
+            fieldWithPath("detailedAddress").type(JsonFieldType.STRING).description("가게 상세주소"),
+//            fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
+            fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
+            fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명")
+    };
+
+    FieldDescriptor[] updateRequestJsonField = new FieldDescriptor[] {
             fieldWithPath("name").type(JsonFieldType.STRING).optional().description("가게 이름"),
             fieldWithPath("phoneNumber").type(JsonFieldType.STRING).optional().description("가게 전화번호"),
             fieldWithPath("newAddress").type(JsonFieldType.STRING).optional().description("가게 주소"),
@@ -133,9 +150,7 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.bname2").value(dto.getBname2()))
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
                 .andDo(document("store/create",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(signUpJsonField)
+                        requestFields(signUpRequestJsonField)
                 ));
 
         // 재등록 시에 이미 존재하는 사업자 번호로 반환
@@ -161,11 +176,10 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.bname2").value(dto.getBname2()))
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
                 .andDo(document("store/find",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("id").description("가게 아이디"),
-                                parameterWithName("_csrf").description("CSRF 토큰 정보"))
+                                parameterWithName("_csrf").description("CSRF 토큰 정보")),
+                        responseFields(findResponseJsonField)
 
                 ));
     }
@@ -189,9 +203,7 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.name").value(updateDTO.getName().get()))
                 .andExpect(jsonPath("$.sido").value(updateDTO.getSido().get()))
                 .andDo(document("store/update",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(updateJsonField)
+                        requestFields(updateRequestJsonField)
                 ));
     }
 
