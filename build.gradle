@@ -86,6 +86,10 @@ asciidoctor {
 // bootJar : 스프링 부트 프로젝트를 실행 가능한 JAR 파일로 패키징하는 기능
 bootJar {
 	dependsOn asciidoctor
+	copy {
+		from "${asciidoctor.outputDir}"
+		into 'BOOT-INF/classes/static/docs'
+	}
 	finalizedBy 'copyDocument' // finalizedBy A : 해당 task 실행 후 A task 실행
 }
 
