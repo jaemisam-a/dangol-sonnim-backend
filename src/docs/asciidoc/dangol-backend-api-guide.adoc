@@ -74,3 +74,31 @@ include::{snippets}/boss/signup/http-response.adoc[]
 === 손님 API
 
 === 가게 API
+==== 1. 가게 등록
+새로운 가게 정보를 등록합니다.
+
+- Request
+include::{snippets}/store/create/http-request.adoc[]
+include::{snippets}/store/create/request-fields.adoc[]
+
+- Response
+include::{snippets}/store/create/http-response.adoc[]
+
+==== 2. 가게 조회
+현재 가게 정보를 조회합니다.
+
+- Request
+include::{snippets}/store/find/http-request.adoc[]
+include::{snippets}/store/find/request-parameters.adoc[]
+
+- Response
+include::{snippets}/store/find/http-response.adoc[]
+
+==== 3. 가게 변경
+가게 정보를 변경합니다.
+
+- Request
+include::{snippets}/store/update/http-request.adoc[]
+include::{snippets}/store/update/request-fields.adoc[]
+- Response
+include::{snippets}/store/update/http-response.adoc[]
