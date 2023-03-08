@@ -88,7 +88,7 @@ bootJar {
 	dependsOn asciidoctor
 	copy {
 		from "${asciidoctor.outputDir}"
-		into "static/docs"
+		into 'BOOT-INF/classes/static/docs'
 	}
 	finalizedBy 'copyDocument' // finalizedBy A : 해당 task 실행 후 A task 실행
 }
@@ -97,7 +97,7 @@ bootJar {
 task copyDocument(type: Copy) {
 	dependsOn bootJar
 	from file("${asciidoctor.outputDir}")
-	into file("build/resources/main/static")
+	into file("build/resources/main/static/docs")
 }
 
 clean {
