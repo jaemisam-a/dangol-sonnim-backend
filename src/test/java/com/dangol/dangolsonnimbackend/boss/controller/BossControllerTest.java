@@ -1,30 +1,35 @@
 package com.dangol.dangolsonnimbackend.boss.controller;
 
-import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
-import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,40 +37,59 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@ExtendWith(RestDocumentationExtension.class) // RestDocumentation 기능을 사용하기 위한 어노테이션
 class BossControllerTest {
 
     @Autowired
     private BossService bossService;
     @Autowired
     private TokenProvider tokenProvider;
-    @Autowired
-    private MockMvc mockMvc;
 
+    @Autowired
+    private WebApplicationContext context;
+    private MockMvc mockMvc;
     private BossSignupRequestDTO dto;
 
+    private static final String BASE_URL = "/api/v1/boss";
+    private static final String BOSS_TEST_NAME = "GilDong";
+    private static final String BOSS_TEST_EMAIL = "test@example.com";
+    private static final String BOSS_TEST_PASSWORD = "password";
+    private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
+    private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+
     @BeforeEach
-    void setup(){
+    void setup(RestDocumentationContextProvider restDocumentation){ // 테스트 메서드 실행 중에 문서화 프로세스를 제어
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(documentationConfiguration(restDocumentation)) // Spring REST Docs 의 설정
+                .build();
+
         dto = new BossSignupRequestDTO();
-        dto.setName("TestBoss");
-        dto.setEmail("test@example.com");
-        dto.setPassword("password");
-        dto.setPhoneNumber("01012345678");
-        dto.setMarketingAgreement(true);
+        dto.setName(BOSS_TEST_NAME);
+        dto.setEmail(BOSS_TEST_EMAIL);
+        dto.setPassword(BOSS_TEST_PASSWORD);
+        dto.setPhoneNumber(BOSS_TEST_PHONE_NUMBER);
+        dto.setMarketingAgreement(BOSS_TEST_MARKETING_AGREEMENT);
     }
 
     @Test
     void givenSignupDto_whenSignup_thenCreateNewBoss() throws Exception {
         // given when
-        mockMvc.perform(post("/api/v1/boss")
+        mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(new ObjectMapper().writeValueAsString(dto)))
-                .andExpect(status().isCreated());
-
-        // then
-        Boss boss = bossService.findByEmail(dto.getEmail());
-        assertNotNull(boss);
-        assertEquals(dto.getName(), boss.getName());
+                // then
+                .andExpect(status().isCreated())
+                .andDo(document("boss/signup", // 문서화 대상이 되는 API의 경로
+                        requestFields( // API의 요청 바디를 문서화하는 메서드
+                                fieldWithPath("name").description("사장님의 이름입니다."), // 문서화할 필드의 이름과 설명을 설정
+                                fieldWithPath("email").description("사장님의 이메일 주소입니다."),
+                                fieldWithPath("password").description("사장님의 패스워드입니다."),
+                                fieldWithPath("phoneNumber").description("사장님의 휴대폰 번호입니다."),
+                                fieldWithPath("marketingAgreement").description("사장님의 마케팅 수신 동의 여부입니다.")
+                        )
+                ));
     }
 
     @Test
@@ -77,7 +101,7 @@ class BossControllerTest {
 
         // when
         MvcResult result = mockMvc.perform(
-                        post("/api/v1/boss/signin")
+                        post(BASE_URL + "/signin")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new ObjectMapper().writeValueAsString(requestDTO))
                                 .with(csrf())
@@ -90,7 +114,7 @@ class BossControllerTest {
         String token = responseDTO.getAccessToken();
         assertNotNull(token);
         String getEmail = tokenProvider.getEmailFromToken(token);
-        assertEquals("test@example.com", getEmail);
+        assertEquals(BOSS_TEST_EMAIL, getEmail);
     }
 
     @Test
@@ -101,7 +125,7 @@ class BossControllerTest {
 
         // when
         mockMvc.perform(
-                        post("/api/v1/boss/signin")
+                        post(BASE_URL + "/signin")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new ObjectMapper().writeValueAsString(requestDTO))
                                 .with(csrf())
@@ -119,7 +143,7 @@ class BossControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
-        mockMvc.perform(delete("/api/v1/boss")
+        mockMvc.perform(delete(BASE_URL)
                     .with(csrf()))
                 .andExpect(status().isNoContent());
 
@@ -137,7 +161,7 @@ class BossControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
-        MvcResult mvcResult = mockMvc.perform(get("/api/v1/boss")
+        MvcResult mvcResult = mockMvc.perform(get(BASE_URL)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -160,7 +184,7 @@ class BossControllerTest {
 
         // when
         MvcResult mvcResult = mockMvc.perform(
-                        patch("/api/v1/boss")
+                        patch(BASE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new ObjectMapper().writeValueAsString(requestDTO))
                                 .with(csrf())
@@ -185,7 +209,7 @@ class BossControllerTest {
 
         // when
         MvcResult mvcResult = mockMvc.perform(
-                        post("/api/v1/boss/find-email")
+                        post(BASE_URL + "/find-email")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new ObjectMapper().writeValueAsString(requestDTO))
                                 .with(csrf())

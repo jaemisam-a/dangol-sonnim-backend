@@ -1,0 +1,23 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:operation-http-request-title: Example Request
+:operation-http-response-title: Example Response
+
+=== 회원 가입
+
+사장님 계정을 생성합니다.
+
+==== Request
+
+include::{snippets}/boss/signup/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/boss/signup/http-response.adoc[]
