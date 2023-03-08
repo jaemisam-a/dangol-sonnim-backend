@@ -35,11 +35,11 @@ public class BossServiceImpl implements BossService {
     }
 
     @Transactional
-    public void signup(BossSignupRequestDTO dto){
+    public BossResponseDTO signup(BossSignupRequestDTO dto){
         validateSignup(dto);
-
         dto.passwordEncode(passwordEncoder.encode(dto.getPassword()));
-        bossRepository.save(new Boss(dto));
+        Boss boss = bossRepository.save(new Boss(dto));
+        return new BossResponseDTO(boss);
     }
 
     @Transactional(readOnly = true)
@@ -50,7 +50,10 @@ public class BossServiceImpl implements BossService {
     }
     @Transactional
     public void withdraw(String email) {
-        bossRepository.delete(findByEmail(email));
+        Boss boss = Optional.ofNullable(bossQueryRepository.findByEmail(email)).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.BOSS_NOT_FOUND)
+        );
+        bossRepository.delete(boss);
     }
 
     @Transactional
@@ -66,16 +69,17 @@ public class BossServiceImpl implements BossService {
     }
 
     @Transactional
-    public Boss update(String email, BossUpdateRequestDTO requestDTO){
+    public BossResponseDTO update(String email, BossUpdateRequestDTO requestDTO){
         Boss boss = findByEmail(email);
         boss.updateInfo(requestDTO);
-        return boss;
+        return new BossResponseDTO(boss);
     }
 
     @Transactional
-    public void updatePassword(BossPasswordUpdateReqeuestDTO reqeuestDTO) {
+    public BossResponseDTO updatePassword(BossPasswordUpdateReqeuestDTO reqeuestDTO) {
         Boss boss = findByEmail(reqeuestDTO.getEmail());
         boss.updatePassword(passwordEncoder.encode(reqeuestDTO.getPassword()));
+        return new BossResponseDTO(boss);
     }
 
     @Transactional(readOnly = true)
