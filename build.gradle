@@ -88,7 +88,7 @@ bootJar {
 	dependsOn asciidoctor
 	copy {
 		from "${asciidoctor.outputDir}"
-		into 'BOOT-INF/classes/static/docs'
+		into "static/docs"
 	}
 	finalizedBy 'copyDocument' // finalizedBy A : 해당 task 실행 후 A task 실행
 }
@@ -96,8 +96,8 @@ bootJar {
 // 디렉토리 파일 복사 (bootJar 이후에 수행)
 task copyDocument(type: Copy) {
 	dependsOn bootJar
-	from file(asciidoctor.outputDir)
-	into file("src/main/resources/static/docs")
+	from file("${asciidoctor.outputDir}")
+	into file("build/resources/main/static")
 }
 
 clean {
