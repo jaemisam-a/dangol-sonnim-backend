@@ -11,6 +11,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+	asciidoctorExt
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -65,7 +66,7 @@ dependencies {
 // ext : build script 에서 사용할 수 있는 추가적인 속성들을 정의
 ext {
 	//테스트를 통해 생성될 조각(문서화에 필요한)들이 저장될 위치
-	set('snippetsDir', file("build/generated-snippets"))
+	snippetsDir = file('build/generated-snippets')
 }
 
 test {
@@ -80,15 +81,15 @@ asciidoctor.doFirst {
 // AsciiDoc 문서를 빌드하고 HTML 로 변환
 asciidoctor {
 	inputs.dir snippetsDir
+	configurations 'asciidoctorExt'
 	dependsOn test // dependsOn A : A task 실행 후 해당 task 실행
 }
 
 // bootJar : 스프링 부트 프로젝트를 실행 가능한 JAR 파일로 패키징하는 기능
 bootJar {
 	dependsOn asciidoctor
-	copy {
-		from "${asciidoctor.outputDir}"
-		into 'BOOT-INF/classes/static/docs'
+	from ("${asciidoctor.outputDir}/html5") {
+		into 'static/docs'
 	}
 	finalizedBy 'copyDocument' // finalizedBy A : 해당 task 실행 후 A task 실행
 }
