@@ -111,7 +111,10 @@ public class StoreControllerTest {
     void setup(RestDocumentationContextProvider restDocumentation) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
-                .apply(documentationConfiguration(restDocumentation))
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
                 .build();
 
         dto = StoreSignupRequestDTO.builder()
