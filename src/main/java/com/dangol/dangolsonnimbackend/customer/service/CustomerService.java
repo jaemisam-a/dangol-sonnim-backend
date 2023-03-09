@@ -1,8 +1,8 @@
 package com.dangol.dangolsonnimbackend.customer.service;
 
 
-import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupDTO;
 
 public interface CustomerService {
-    void signup(CustomerSignupRequestDTO dto);
+    void signup(CustomerSignupDTO dto);
 }
