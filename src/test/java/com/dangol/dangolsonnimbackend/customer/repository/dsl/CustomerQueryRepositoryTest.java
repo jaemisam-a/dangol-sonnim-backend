@@ -1,8 +1,8 @@
 package com.dangol.dangolsonnimbackend.customer.repository.dsl;
 
-import com.dangol.dangolsonnimbackend.customer.domain.CustomerInfo;
-import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.customer.repository.CustomerInfoRepository;
+import com.dangol.dangolsonnimbackend.customer.domain.Customer;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupDTO;
+import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,24 +15,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
-class CustomerInfoQueryRepositoryTest {
+class CustomerQueryRepositoryTest {
 
     @Autowired
-    private CustomerInfoRepository customerInfoRepository;
+    private CustomerRepository customerRepository;
     @Autowired
-    private CustomerInfoQueryRepository customerInfoQueryRepository;
+    private CustomerQueryRepository customerQueryRepository;
 
     @BeforeEach
     public void setUp() {
 
-        CustomerSignupRequestDTO dto = new CustomerSignupRequestDTO();
+        CustomerSignupDTO dto = new CustomerSignupDTO();
 
-        dto.setNickname("후추");
+        dto.setName("이현지");
+        dto.setNickname("후추맘");
         dto.setProfileImageUrl("https:/test.com");
         dto.setPhoneNumber("01012345678");
         dto.setBirth("19900101");
+        dto.setMarketingAgreement(true);
 
-        customerInfoRepository.save(new CustomerInfo(dto));
+        customerRepository.save(new Customer(dto));
     }
 
     @Test
@@ -41,7 +43,7 @@ class CustomerInfoQueryRepositoryTest {
         // given
 
         // when
-        boolean existsByNickname = customerInfoQueryRepository.existsByNickname("후추");
+        boolean existsByNickname = customerQueryRepository.existsByNickname("후추");
 
         // then
         assert existsByNickname;
@@ -53,7 +55,7 @@ class CustomerInfoQueryRepositoryTest {
         // given
 
         // when
-        boolean existsByPhoneNumber = customerInfoQueryRepository.existsByPhoneNumber("01012345679");
+        boolean existsByPhoneNumber = customerQueryRepository.existsByPhoneNumber("01012345679");
 
         // then
         assertThat(existsByPhoneNumber).isFalse();

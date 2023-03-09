@@ -1,7 +1,7 @@
 package com.dangol.dangolsonnimbackend.customer.repository;
 
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
-import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,22 +18,18 @@ class CustomerRepositoryTest {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Autowired
-    private CustomerInfoRepository customerInfoRepository;
-
-    private CustomerSignupRequestDTO dto;
+    private CustomerSignupDTO dto;
 
     @BeforeEach
     public void setup() {
-        dto = new CustomerSignupRequestDTO();
+        dto = new CustomerSignupDTO();
 
         dto.setName("후추");
-        dto.setEmail("test@kakao.com");
-        dto.setProviderType("KAKAO");
         dto.setNickname("후추");
         dto.setProfileImageUrl("https:/test.com");
         dto.setPhoneNumber("01012345678");
         dto.setBirth("19900101");
+        dto.setMarketingAgreement(true);
     }
 
     @Test
