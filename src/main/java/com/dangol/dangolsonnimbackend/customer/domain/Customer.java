@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "tb_customer")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Customer {
 
     @Id
@@ -66,8 +66,8 @@ public class Customer {
     private LocalDateTime modifiedAt;
 
     public Customer(CustomerSignupDTO dto) {
-        this.email =
-                this.name = dto.getName();
+        this.email = getEmail();
+        this.name = dto.getName();
         this.nickname = dto.getNickname();
         this.profileImageUrl = dto.getProfileImageUrl();
         this.phoneNumber = dto.getPhoneNumber();
