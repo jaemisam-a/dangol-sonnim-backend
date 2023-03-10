@@ -1,8 +1,9 @@
 package com.dangol.dangolsonnimbackend.customer.repository.dsl;
 
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
-import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupDTO;
 import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
+import com.dangol.dangolsonnimbackend.type.RoleType;
+import com.dangol.dangolsonnimbackend.type.SocialType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,19 +23,25 @@ class CustomerQueryRepositoryTest {
     @Autowired
     private CustomerQueryRepository customerQueryRepository;
 
+    private Customer customer;
+
     @BeforeEach
     public void setUp() {
 
-        CustomerSignupDTO dto = new CustomerSignupDTO();
+        customer = Customer.builder()
+                .name("")
+                .nickname("")
+                .email("test@email.com")
+                .profileImageUrl("test.url")
+                .phoneNumber("")
+                .birth("")
+                .marketingAgreement(false)
+                .roleType(RoleType.GUEST)
+                .socialId("154352234114")
+                .socialType(SocialType.KAKAO)
+                .build();
 
-        dto.setName("이현지");
-        dto.setNickname("후추맘");
-        dto.setProfileImageUrl("https:/test.com");
-        dto.setPhoneNumber("01012345678");
-        dto.setBirth("19900101");
-        dto.setMarketingAgreement(true);
-
-        customerRepository.save(new Customer(dto));
+        customerRepository.save(customer);
     }
 
     @Test
@@ -43,7 +50,7 @@ class CustomerQueryRepositoryTest {
         // given
 
         // when
-        boolean existsByNickname = customerQueryRepository.existsByNickname("후추");
+        boolean existsByNickname = customerQueryRepository.existsByNickname("");
 
         // then
         assert existsByNickname;

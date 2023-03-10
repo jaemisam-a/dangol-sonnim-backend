@@ -74,7 +74,6 @@ public class Customer {
         this.birth = dto.getBirth();
         this.marketingAgreement = dto.getMarketingAgreement();
         this.roleType = RoleType.USER;
-
     }
 
     public void authorizeCustomer() {
