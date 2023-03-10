@@ -1,15 +1,19 @@
 package com.dangol.dangolsonnimbackend.customer.repository;
 
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
-import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupDTO;
+import com.dangol.dangolsonnimbackend.type.RoleType;
+import com.dangol.dangolsonnimbackend.type.SocialType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Transactional
@@ -18,30 +22,34 @@ class CustomerRepositoryTest {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Autowired
-    private CustomerInfoRepository customerInfoRepository;
+    private CustomerSignupDTO dto;
 
-    private CustomerSignupRequestDTO dto;
+    private Customer customer;
 
     @BeforeEach
-    public void setup() {
-        dto = new CustomerSignupRequestDTO();
+    void setUp() {
 
-        dto.setName("후추");
-        dto.setEmail("test@kakao.com");
-        dto.setProviderType("KAKAO");
-        dto.setNickname("후추");
-        dto.setProfileImageUrl("https:/test.com");
-        dto.setPhoneNumber("01012345678");
-        dto.setBirth("19900101");
+        customer = Customer.builder()
+                .name("")
+                .nickname("")
+                .email("test@email.com")
+                .profileImageUrl("test.url")
+                .phoneNumber("")
+                .birth("")
+                .marketingAgreement(false)
+                .roleType(RoleType.GUEST)
+                .socialId("154352234114")
+                .socialType(SocialType.KAKAO)
+                .build();
     }
 
     @Test
-    void givenSignupDTO_whenSave_thenReturnCustomer() {
+    void whenFindById_thenReturnCustomer() {
+        customer = customerRepository.save(customer);
 
-        Customer customer = new Customer(dto);
-        Customer savedCustomer = customerRepository.save(customer);
+        Optional<Customer> foundCustomer = customerRepository.findById(customer.getId());
 
-        assertEquals(customer, savedCustomer);
+        assertTrue(foundCustomer.isPresent());
+        assertEquals(customer, foundCustomer.get());
     }
 }

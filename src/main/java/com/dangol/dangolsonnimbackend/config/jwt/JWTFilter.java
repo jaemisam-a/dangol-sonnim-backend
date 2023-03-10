@@ -2,9 +2,7 @@ package com.dangol.dangolsonnimbackend.config.jwt;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -44,7 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 // 현재 스레드에서 실행 중인 사용자를 나타내는 인증 객체를 설정
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             logger.error("security context 내에 user authentication 을 설정할 수 없습니다.");
         }
         filterChain.doFilter(request, response);
