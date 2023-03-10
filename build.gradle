@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.5.6'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 def querydslVersion = '4.3.1'
@@ -10,6 +11,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+	asciidoctorExt
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -61,10 +63,46 @@ dependencies {
 	runtimeOnly('io.jsonwebtoken:jjwt-jackson:0.11.5')
 	implementation('io.jsonwebtoken:jjwt-api:0.11.5')
 	implementation('com.auth0:java-jwt:4.2.1')
+
+	/**
+	 * RestDoc 관련 dependency 추가
+	 **/
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+}
+
+// ext : build script 에서 사용할 수 있는 추가적인 속성들을 정의
+ext {
+	//테스트를 통해 생성될 조각(문서화에 필요한)들이 저장될 위치
+	snippetsDir = file('build/generated-snippets')
 }
 
 test {
 	useJUnitPlatform()
+	outputs.dir snippetsDir // 테스트 실행 후 snippetsDir 생성
+}
+
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+// AsciiDoc 문서를 빌드하고 HTML 로 변환
+asciidoctor {
+	configurations 'asciidoctorExt'
+	inputs.dir snippetsDir
+	dependsOn test // dependsOn A : A task 실행 후 해당 task 실행
+}
+
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file("${asciidoctor.outputDir}")
+	into file("build/resources/main/static/docs")
+}
+
+// bootJar : 스프링 부트 프로젝트를 실행 가능한 JAR 파일로 패키징하는 기능
+bootJar {
+	dependsOn copyDocument
 }
 
 clean {
