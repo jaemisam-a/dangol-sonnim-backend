@@ -1,6 +1,8 @@
 package com.dangol.dangolsonnimbackend.subscribe.domain;
 
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
+import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -53,4 +55,6 @@ public abstract class Subscribe {
         this.isTop = isTop;
         this.store = store;
     }
+
+    public abstract SubscribeResponseDTO toResponseDTO();
 }

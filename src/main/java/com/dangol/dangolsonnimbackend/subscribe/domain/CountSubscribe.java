@@ -2,6 +2,7 @@ package com.dangol.dangolsonnimbackend.subscribe.domain;
 
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
+import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import lombok.*;
 
 import javax.persistence.DiscriminatorValue;
@@ -18,5 +19,10 @@ public class CountSubscribe extends Subscribe{
     public CountSubscribe(SubscribeRequestDTO dto, Store store) {
         super(dto.getName(), dto.getPrice(), dto.getIntro(), dto.getIsTop(), store);
         this.useCount = dto.getUseCount();
+    }
+
+    @Override
+    public SubscribeResponseDTO toResponseDTO() {
+        return new SubscribeResponseDTO(this);
     }
 }
