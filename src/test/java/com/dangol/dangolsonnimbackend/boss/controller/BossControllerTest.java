@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -29,9 +31,11 @@ import javax.transaction.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -57,11 +61,32 @@ class BossControllerTest {
     private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
     private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
 
+    private final FieldDescriptor[] signupRequestJsonField = new FieldDescriptor[] {
+            fieldWithPath("name").type(JsonFieldType.STRING).description("사장님 이름"),
+            fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
+            fieldWithPath("password").type(JsonFieldType.STRING).description("사장님 패스워드"),
+            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
+            fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부")
+    };
+
+    private final FieldDescriptor[] signupResponseJsonField = new FieldDescriptor[] {
+            fieldWithPath("name").type(JsonFieldType.STRING).description("사장님 이름"),
+            fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
+            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
+            fieldWithPath("createdAt").type(JsonFieldType.STRING).description("사장님 생성 날짜"),
+            fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부"),
+            fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("Self link"),
+            fieldWithPath("_links.authenticate.href").type(JsonFieldType.STRING).description("authenticate link")
+    };
+
     @BeforeEach
     void setup(RestDocumentationContextProvider restDocumentation){
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
-                .apply(documentationConfiguration(restDocumentation))
+                .apply(documentationConfiguration(restDocumentation)
+                        .operationPreprocessors()
+                        .withRequestDefaults(prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
                 .build();
 
         dto = new BossSignupRequestDTO();
@@ -81,14 +106,15 @@ class BossControllerTest {
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 // then
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value(BOSS_TEST_NAME))
+                .andExpect(jsonPath("$.email").value(BOSS_TEST_EMAIL))
+                .andExpect(jsonPath("$.phoneNumber").value(BOSS_TEST_PHONE_NUMBER))
+                .andExpect(jsonPath("$.marketingAgreement").value(BOSS_TEST_MARKETING_AGREEMENT))
+                .andExpect(jsonPath("$._links.self").exists())
+                .andExpect(jsonPath("$._links.authenticate").exists())
                 .andDo(document("boss/signup",
-                        requestFields(
-                                fieldWithPath("name").description("사장님의 이름입니다."),
-                                fieldWithPath("email").description("사장님의 이메일 주소입니다."),
-                                fieldWithPath("password").description("사장님의 패스워드입니다."),
-                                fieldWithPath("phoneNumber").description("사장님의 휴대폰 번호입니다."),
-                                fieldWithPath("marketingAgreement").description("사장님의 마케팅 수신 동의 여부입니다.")
-                        )
+                        requestFields(signupRequestJsonField),
+                        responseFields(signupResponseJsonField)
                 ));
     }
 
