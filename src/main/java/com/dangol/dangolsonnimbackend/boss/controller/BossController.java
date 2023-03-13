@@ -28,7 +28,9 @@ public class BossController {
     public ResponseEntity<BossResponseDTO> signup(@Valid @RequestBody BossSignupRequestDTO dto) {
         BossResponseDTO responseDTO = bossService.signup(dto);
 
-        responseDTO.add(linkTo(methodOn(BossController.class).authenticate(null)).withRel("authenticate"));
+        responseDTO.add(linkTo(methodOn(BossController.class).signup(dto)).withSelfRel(),
+                linkTo(methodOn(BossController.class).authenticate(null)).withRel("authenticate")
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
