@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -29,9 +31,11 @@ import javax.transaction.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -57,11 +61,43 @@ class BossControllerTest {
     private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
     private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
 
+    private final FieldDescriptor[] signupRequestJsonField = new FieldDescriptor[] {
+            fieldWithPath("name").type(JsonFieldType.STRING).description("사장님 이름"),
+            fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
+            fieldWithPath("password").type(JsonFieldType.STRING).description("사장님 패스워드"),
+            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
+            fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부")
+    };
+
+    private final FieldDescriptor[] signupResponseJsonField = new FieldDescriptor[] {
+            fieldWithPath("name").type(JsonFieldType.STRING).description("사장님 이름"),
+            fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
+            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
+            fieldWithPath("createdAt").type(JsonFieldType.STRING).description("사장님 생성 날짜"),
+            fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부"),
+            fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("Self link"),
+            fieldWithPath("_links.authenticate.href").type(JsonFieldType.STRING).description("Authenticate link")
+    };
+
+    private final FieldDescriptor[] signinRequestJsonField = new FieldDescriptor[] {
+            fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
+            fieldWithPath("password").type(JsonFieldType.STRING).description("사장님 패스워드")
+    };
+
+    private final FieldDescriptor[] signinResponseJsonField = new FieldDescriptor[] {
+            fieldWithPath("accessToken").type(JsonFieldType.STRING).description("액세스 토큰"),
+            fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("Self link"),
+            fieldWithPath("_links.getBoss.href").type(JsonFieldType.STRING).description("Get Boss link")
+    };
+
     @BeforeEach
     void setup(RestDocumentationContextProvider restDocumentation){ // 테스트 메서드 실행 중에 문서화 프로세스를 제어
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
-                .apply(documentationConfiguration(restDocumentation)) // Spring REST Docs 의 설정
+                .apply(documentationConfiguration(restDocumentation) // Spring REST Docs 의 설정
+                        .operationPreprocessors()
+                        .withRequestDefaults(prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
                 .build();
 
         dto = new BossSignupRequestDTO();
@@ -81,14 +117,15 @@ class BossControllerTest {
                         .content(new ObjectMapper().writeValueAsString(dto)))
                 // then
                 .andExpect(status().isCreated())
-                .andDo(document("boss/signup", // 문서화 대상이 되는 API의 경로
-                        requestFields( // API의 요청 바디를 문서화하는 메서드
-                                fieldWithPath("name").description("사장님의 이름입니다."), // 문서화할 필드의 이름과 설명을 설정
-                                fieldWithPath("email").description("사장님의 이메일 주소입니다."),
-                                fieldWithPath("password").description("사장님의 패스워드입니다."),
-                                fieldWithPath("phoneNumber").description("사장님의 휴대폰 번호입니다."),
-                                fieldWithPath("marketingAgreement").description("사장님의 마케팅 수신 동의 여부입니다.")
-                        )
+                .andExpect(jsonPath("$.name").value(BOSS_TEST_NAME))
+                .andExpect(jsonPath("$.email").value(BOSS_TEST_EMAIL))
+                .andExpect(jsonPath("$.phoneNumber").value(BOSS_TEST_PHONE_NUMBER))
+                .andExpect(jsonPath("$.marketingAgreement").value(BOSS_TEST_MARKETING_AGREEMENT))
+                .andExpect(jsonPath("$._links.self").exists())
+                .andExpect(jsonPath("$._links.authenticate").exists())
+                .andDo(document("boss/signup",
+                        requestFields(signupRequestJsonField),
+                        responseFields(signupResponseJsonField)
                 ));
     }
 
@@ -96,25 +133,22 @@ class BossControllerTest {
     void givenValidCredentials_whenAuthenticate_thenSucceed() throws Exception {
         // given
         bossService.signup(dto);
-
         BossSigninReqeustDTO requestDTO = new BossSigninReqeustDTO("test@example.com", "password");
 
         // when
-        MvcResult result = mockMvc.perform(
-                        post(BASE_URL + "/signin")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(new ObjectMapper().writeValueAsString(requestDTO))
-                                .with(csrf())
-                ).andExpect(status().isOk())
-                .andReturn();
-
-        // then
-        String contentAsString = result.getResponse().getContentAsString();
-        BossSigninResponseDTO responseDTO = new ObjectMapper().readValue(contentAsString, BossSigninResponseDTO.class);
-        String token = responseDTO.getAccessToken();
-        assertNotNull(token);
-        String getEmail = tokenProvider.getEmailFromToken(token);
-        assertEquals(BOSS_TEST_EMAIL, getEmail);
+        mockMvc.perform(post(BASE_URL + "/signin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDTO))
+                        .with(csrf()))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").exists())
+                .andExpect(jsonPath("$._links.self").exists())
+                .andExpect(jsonPath("$._links.getBoss").exists())
+                .andDo(document("boss/signin",
+                        requestFields(signinRequestJsonField),
+                        responseFields(signinResponseJsonField)
+                ));
     }
 
     @Test
