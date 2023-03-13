@@ -2,13 +2,16 @@ package com.dangol.dangolsonnimbackend.boss.dto;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BossResponseDTO {
+@EqualsAndHashCode(callSuper = false)
+public class BossResponseDTO extends RepresentationModel<BossResponseDTO> {
     private String name;
     private String phoneNumber;
     private String email;
