@@ -3,6 +3,8 @@ package com.dangol.dangolsonnimbackend.oauth2.handler;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
 import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
+import com.dangol.dangolsonnimbackend.errors.NotFoundException;
+import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.oauth2.CustomOAuth2User;
 import com.dangol.dangolsonnimbackend.oauth2.userInfo.OAuth2UserInfo;
 import com.dangol.dangolsonnimbackend.type.RoleType;
@@ -40,7 +42,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
                 tokenProvider.sendAccessAndRefreshToken(response, accessToken, null);
                 Customer findCustomer = customerRepository.findByEmail(oAuth2UserInfo.getEmail())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 손님은 존재하지 않습니다. email=" + oAuth2UserInfo.getEmail()));
+                        .orElseThrow(() -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND));
                 findCustomer.authorizeCustomer();
 
             } else {

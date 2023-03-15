@@ -1,11 +1,8 @@
 package com.dangol.dangolsonnimbackend.config;
 
-import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
-import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
 import com.dangol.dangolsonnimbackend.oauth2.handler.OAuth2LoginFailHandler;
 import com.dangol.dangolsonnimbackend.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.dangol.dangolsonnimbackend.oauth2.service.CustomOAuth2UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,10 +18,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final TokenProvider tokenProvider;
-    private final CustomerRepository customerRepository;
-    private final ObjectMapper objectMapper;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailHandler oAuth2LoginFailHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
