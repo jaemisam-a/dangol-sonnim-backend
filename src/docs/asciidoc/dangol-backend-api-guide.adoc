@@ -63,13 +63,66 @@ Dangol-Sonnim;
 == Resources
 
 === 사장 API
-==== 1. 회원 가입
+==== 1. 사장님 회원 가입
 사장님 계정을 생성합니다.
 
 - Request
 include::{snippets}/boss/signup/http-request.adoc[]
+include::{snippets}/boss/signup/request-fields.adoc[]
 - Response
 include::{snippets}/boss/signup/http-response.adoc[]
+
+==== 2. 사장님 로그인
+사장님 계정 로그인을 진행합니다.
+
+- Request
+include::{snippets}/boss/signin/http-request.adoc[]
+include::{snippets}/boss/signin/request-fields.adoc[]
+- Response
+include::{snippets}/boss/signin/http-response.adoc[]
+
+==== 3. 사장님 정보 조회
+로그인된 사장님 정보를 조회합니다.
+
+- Request
+include::{snippets}/boss/get/http-request.adoc[]
+- Response
+include::{snippets}/boss/get/http-response.adoc[]
+
+==== 4. 사장님 정보 수정
+로그인된 사장님 정보를 수정합니다.
+
+- Request
+include::{snippets}/boss/update/http-request.adoc[]
+include::{snippets}/boss/update/request-fields.adoc[]
+- Response
+include::{snippets}/boss/update/http-response.adoc[]
+
+==== 5. 사장님 회원탈퇴
+로그인된 사장님 회원 탈퇴를 진행합니다.
+
+- Request
+include::{snippets}/boss/withdraw/http-request.adoc[]
+- Response
+include::{snippets}/boss/withdraw/http-response.adoc[]
+
+==== 6. 사장님 이메일 찾기
+사장님 이메일 찾습니다.
+
+- Request
+include::{snippets}/boss/findEmail/http-request.adoc[]
+include::{snippets}/boss/findEmail/request-fields.adoc[]
+- Response
+include::{snippets}/boss/findEmail/http-response.adoc[]
+
+==== 6. 사장님 비밀번호 찾기
+사장님 이메일 찾습니다.
+
+- Request
+include::{snippets}/boss/password/http-request.adoc[]
+include::{snippets}/boss/password/request-fields.adoc[]
+- Response
+include::{snippets}/boss/password/http-response.adoc[]
 
 === 손님 API
 
