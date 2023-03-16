@@ -2,6 +2,7 @@ package com.dangol.dangolsonnimbackend.boss.controller;
 
 import com.dangol.dangolsonnimbackend.boss.dto.*;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,7 +31,6 @@ public class BossController {
                         linkTo(methodOn(BossController.class).signup(dto)).withSelfRel(),
                         linkTo(methodOn(BossController.class).authenticate(null)).withRel("authenticate")
                 );
-
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
@@ -41,7 +41,6 @@ public class BossController {
                         linkTo(methodOn(BossController.class).authenticate(reqeustDTO)).withSelfRel(),
                         linkTo(methodOn(BossController.class).getBoss(reqeustDTO.getEmail())).withRel("getBoss")
                 );
-
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
@@ -70,6 +69,7 @@ public class BossController {
                         linkTo(methodOn(BossController.class).getBoss(email)).withRel("getBoss"),
                         linkTo(methodOn(BossController.class).withdrawBoss(null)).withRel("withdrawBoss")
                 );
+
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 

@@ -62,8 +62,26 @@ class BossControllerTest {
     private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
     private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
 
+    private final FieldDescriptor[] signupRequestJsonField = new FieldDescriptor[] {
+            fieldWithPath("name").type(JsonFieldType.STRING).description("사장님 이름"),
+            fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
+            fieldWithPath("password").type(JsonFieldType.STRING).description("사장님 패스워드"),
+            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
+            fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부")
+    };
+
+    private final FieldDescriptor[] signupResponseJsonField = new FieldDescriptor[] {
+            fieldWithPath("name").type(JsonFieldType.STRING).description("사장님 이름"),
+            fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
+            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
+            fieldWithPath("createdAt").type(JsonFieldType.STRING).description("사장님 생성 날짜"),
+            fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부"),
+            fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("Self link"),
+            fieldWithPath("_links.authenticate.href").type(JsonFieldType.STRING).description("authenticate link")
+    };
+
     @BeforeEach
-    void setup(RestDocumentationContextProvider restDocumentation){ // 테스트 메서드 실행 중에 문서화 프로세스를 제어
+    void setup(RestDocumentationContextProvider restDocumentation){
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
