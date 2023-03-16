@@ -55,7 +55,12 @@ public class Store {
     @JoinColumn(name="boss_id")
     private Boss boss;
 
-    // TODO. 카테고리 엔티티 생성 시 JoinColumn 추가
+    @ManyToOne
+    @JoinColumn(name = "category")
+    @ToString.Exclude
+    private Category category;
+
+    // TODO. categoryID 컬럼 제거
     @Column(nullable = false)
     private Long categoryId;
 
@@ -80,6 +85,11 @@ public class Store {
         this.categoryId = dto.getCategoryId();
         this.registerName = dto.getRegisterName();
         this.registerNumber = dto.getRegisterNumber();
+    }
+
+    public Store(StoreSignupRequestDTO dto, Category category) {
+        this(dto);
+        category.addStore(this);
     }
 
     public void updateName(String name) {
