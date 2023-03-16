@@ -1,14 +1,13 @@
 package com.dangol.dangolsonnimbackend.boss.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BossFindEmailResponseDTO {
+@EqualsAndHashCode(callSuper = false)
+public class BossFindEmailResponseDTO extends RepresentationModel<BossFindEmailResponseDTO> {
     private String email;
 }
