@@ -40,7 +40,6 @@ class StoreQueryRepositoryTest {
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
                 .officeHours("08:00~10:00")
-                .categoryId(1L)
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .build();

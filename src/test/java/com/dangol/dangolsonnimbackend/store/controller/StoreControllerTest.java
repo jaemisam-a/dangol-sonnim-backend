@@ -30,10 +30,10 @@ import static com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,7 +66,6 @@ public class StoreControllerTest {
             fieldWithPath("sigungu").type(JsonFieldType.STRING).description("가게 주소 (시/군/구)"),
             fieldWithPath("bname1").type(JsonFieldType.STRING).optional().description("가게 주소 (읍/면)"),
             fieldWithPath("bname2").type(JsonFieldType.STRING).optional().description("가게 주소 (동/리)"),
-            fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("가게 카테고리"),
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).optional().description("가게 상세주소"),
             fieldWithPath("comments").type(JsonFieldType.STRING).description("가게 한줄평"),
             fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
@@ -79,7 +78,6 @@ public class StoreControllerTest {
             fieldWithPath("name").type(JsonFieldType.STRING).description("가게 이름"),
 //            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("가게 전화번호"),
             fieldWithPath("newAddress").type(JsonFieldType.STRING).description("가게 주소"),
-            fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("가게 카테고리"),
             fieldWithPath("comments").type(JsonFieldType.STRING).description("가게 한줄평"),
             fieldWithPath("sido").type(JsonFieldType.STRING).description("가게 주소 (시/도)"),
             fieldWithPath("sigungu").type(JsonFieldType.STRING).description("가게 주소 (시/군/구)"),
@@ -99,7 +97,6 @@ public class StoreControllerTest {
             fieldWithPath("sigungu").type(JsonFieldType.STRING).optional().description("가게 주소 (시/군/구)"),
             fieldWithPath("bname1").type(JsonFieldType.STRING).optional().description("가게 주소 (읍/면)"),
             fieldWithPath("bname2").type(JsonFieldType.STRING).optional().description("가게 주소 (동/리)"),
-            fieldWithPath("categoryId").type(JsonFieldType.NUMBER).optional().description("가게 카테고리"),
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).optional().description("가게 상세주소"),
             fieldWithPath("comments").type(JsonFieldType.STRING).optional().description("가게 한줄평"),
             fieldWithPath("officeHours").type(JsonFieldType.STRING).optional().description("가게 영업시간"),
@@ -128,7 +125,6 @@ public class StoreControllerTest {
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
                 .officeHours("08:00~10:00")
-                .categoryId(1L)
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .build();
@@ -146,7 +142,6 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value(dto.getName()))
                 .andExpect(jsonPath("$.newAddress").value(dto.getNewAddress()))
-                .andExpect(jsonPath("$.categoryId").value(dto.getCategoryId()))
                 .andExpect(jsonPath("$.comments").value(dto.getComments()))
                 .andExpect(jsonPath("$.sigungu").value(dto.getSigungu()))
                 .andExpect(jsonPath("$.bname1").value(dto.getBname1()))
@@ -172,7 +167,6 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value(dto.getName()))
                 .andExpect(jsonPath("$.newAddress").value(dto.getNewAddress()))
-                .andExpect(jsonPath("$.categoryId").value(dto.getCategoryId()))
                 .andExpect(jsonPath("$.comments").value(dto.getComments()))
                 .andExpect(jsonPath("$.sigungu").value(dto.getSigungu()))
                 .andExpect(jsonPath("$.bname1").value(dto.getBname1()))
