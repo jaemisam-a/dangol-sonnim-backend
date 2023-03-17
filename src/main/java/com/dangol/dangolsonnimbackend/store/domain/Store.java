@@ -60,10 +60,6 @@ public class Store {
     @ToString.Exclude
     private Category category;
 
-    // TODO. categoryID 컬럼 제거
-    @Column(nullable = false)
-    private Long categoryId;
-
     @Column(nullable = false, unique = true)
     @Setter(AccessLevel.NONE)
     private String registerNumber;
@@ -82,7 +78,6 @@ public class Store {
         this.detailedAddress = dto.getDetailedAddress();
         this.comments = dto.getComments();
         this.officeHours = dto.getOfficeHours();
-        this.categoryId = dto.getCategoryId();
         this.registerName = dto.getRegisterName();
         this.registerNumber = dto.getRegisterNumber();
     }
@@ -107,7 +102,6 @@ public class Store {
         dto.getDetailedAddress().ifPresent(detailedAddress -> this.detailedAddress = detailedAddress);
         dto.getComments().ifPresent(comments -> this.comments = comments);
         dto.getOfficeHours().ifPresent(officeHours -> this.officeHours = officeHours);
-        dto.getCategoryId().ifPresent(categoryId -> this.categoryId = categoryId);
         dto.getRegisterName().ifPresent(registerName -> this.registerName = registerName);
 
         return Optional.of(this);
