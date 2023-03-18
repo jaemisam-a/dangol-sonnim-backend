@@ -115,14 +115,32 @@ include::{snippets}/boss/findEmail/request-fields.adoc[]
 - Response
 include::{snippets}/boss/findEmail/http-response.adoc[]
 
-==== 6. 사장님 비밀번호 찾기
-사장님 이메일 찾습니다.
+==== 7. 사장님 비밀번호 찾기
+사장님 비밀번호를 찾습니다.
 
 - Request
 include::{snippets}/boss/password/http-request.adoc[]
 include::{snippets}/boss/password/request-fields.adoc[]
 - Response
 include::{snippets}/boss/password/http-response.adoc[]
+
+=== 8. 이메일 인증코드 보내기
+사장님의 이메일로 인증코드를 보냅니다.
+
+- Request
+include::{snippets}/boss/emailSend/http-request.adoc[]
+include::{snippets}/boss/emailSend/request-fields.adoc[]
+- Response
+include::{snippets}/boss/emailSend/http-response.adoc[]
+
+=== 9. 이메일 인증코드 검증
+이메일로 보낸 인증코드를 검증합니다.
+
+- Request
+include::{snippets}/boss/emailValid/http-request.adoc[]
+include::{snippets}/boss/emailValid/request-fields.adoc[]
+- Response
+include::{snippets}/boss/emailValid/http-response.adoc[]
 
 === 손님 API
 
