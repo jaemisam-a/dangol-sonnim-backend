@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class AuthKeyResponseDTO {
-    private String authKey;
+    private Boolean isValid;
 
-    public AuthKeyResponseDTO(String authKey){
-        this.authKey = authKey;
+    public AuthKeyResponseDTO(Boolean isValid){
+        this.isValid = isValid;
     }
 }
