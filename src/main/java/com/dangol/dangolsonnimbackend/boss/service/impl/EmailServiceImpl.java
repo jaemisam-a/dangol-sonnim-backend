@@ -2,7 +2,6 @@ package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Email;
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.AuthKeyResponseDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.request.AuthKeyRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAuthCodeRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.repository.EmailRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.EmailQueryRepository;

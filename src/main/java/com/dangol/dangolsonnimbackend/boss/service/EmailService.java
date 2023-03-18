@@ -1,7 +1,6 @@
 package com.dangol.dangolsonnimbackend.boss.service;
 
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.AuthKeyResponseDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.request.AuthKeyRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAuthCodeRequestDTO;
 
 public interface EmailService {
