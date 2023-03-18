@@ -1,4 +1,4 @@
-package com.dangol.dangolsonnimbackend.boss.dto;
+package com.dangol.dangolsonnimbackend.boss.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,9 +11,9 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class BossPasswordUpdateReqeuestDTO {
+@AllArgsConstructor
+public class BossSigninReqeustDTO {
 
     @NotNull(message = "이메일은 Null 일 수 없습니다.")
     @Email

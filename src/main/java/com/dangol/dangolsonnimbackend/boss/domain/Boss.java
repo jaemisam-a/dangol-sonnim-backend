@@ -1,7 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.domain;
 
-import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.BossUpdateRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossUpdateRequestDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
