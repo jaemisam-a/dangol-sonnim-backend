@@ -17,8 +17,6 @@ public class StoreResponseDTO {
 
     private String newAddress;
 
-    private Long categoryId;
-
     private String comments;
 
     private String sido;
@@ -41,7 +39,6 @@ public class StoreResponseDTO {
         this.id = store.getId();
         this.name = store.getName();
         this.newAddress = store.getNewAddress();
-        this.categoryId = store.getCategoryId();
         this.comments = store.getComments();
         this.sido = store.getSido();
         this.sigungu = store.getSigungu();
