@@ -1,10 +1,12 @@
 package com.dangol.dangolsonnimbackend.boss.controller;
 
-import com.dangol.dangolsonnimbackend.boss.dto.AuthCodeRequestDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.AuthCodeResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.AuthKeyResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.AuthKeyRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAuthCodeRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.EmailService;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/v1/email")
+@Slf4j
 public class EmailController {
     private final Map<String, Integer> requestCountMap = new ConcurrentHashMap<>();
     private static final int MAX_REQUEST_COUNT = 5;
@@ -28,7 +31,7 @@ public class EmailController {
     }
 
     @PostMapping("/send-auth-code")
-    public ResponseEntity<AuthCodeResponseDTO> sendAuthCode(@Valid @RequestBody AuthCodeRequestDTO dto) {
+    public ResponseEntity<AuthKeyResponseDTO> sendAuthCode(@Valid @RequestBody AuthKeyRequestDTO dto) {
         int requestCount = requestCountMap.getOrDefault(dto.getEmail(), DEFAULT_REQUEST_COUNT);
 
         if (requestCount >= MAX_REQUEST_COUNT) {
@@ -36,10 +39,19 @@ public class EmailController {
         }
 
         requestCountMap.put(dto.getEmail(), requestCount + INCREASE_REQUEST_COUNT);
+
+        // 이메일 서비스
         String authCode = emailService.generateAuthCode();
         emailService.sendEmail(dto.getEmail(), authCode);
+        emailService.create(dto.getEmail(), authCode);
 
-        return ResponseEntity.status(HttpStatus.OK).body(new AuthCodeResponseDTO(authCode));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/valid")
+    public ResponseEntity<AuthKeyResponseDTO> isValidAuthCode(@Valid @RequestBody IsValidAuthCodeRequestDTO requestDTO){
+        AuthKeyResponseDTO responseDTO = emailService.isValidAuthCode(requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
     @Scheduled(cron = "0 0 6 * * *")
