@@ -3,6 +3,7 @@ package com.dangol.dangolsonnimbackend.store.controller;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +70,8 @@ public class StoreControllerTest {
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).optional().description("가게 상세주소"),
             fieldWithPath("comments").type(JsonFieldType.STRING).description("가게 한줄평"),
             fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
+            // TODO. 카테고리 정보에 대한 비즈니스 로직 구현 완료 시 ignore 삭제
+            fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보").ignored(),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
             fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명")
     };
@@ -125,6 +128,7 @@ public class StoreControllerTest {
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
                 .officeHours("08:00~10:00")
+                .categoryType(CategoryType.KOREAN)
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .build();
