@@ -41,7 +41,7 @@ public class SecurityConfig {
         http
                 .formLogin().disable()
                 .httpBasic().disable()
-                .headers().frameOptions().disable()
+                .headers().frameOptions().sameOrigin()
                 .and()
 
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -54,6 +54,7 @@ public class SecurityConfig {
 
                 .antMatchers("/login/profile").permitAll()
                 .antMatchers("/", "/css/**", "/images/**", "/js/**", "/h2-console/**", "/favicon.ico").permitAll()
+                .antMatchers("h2-console/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
 
