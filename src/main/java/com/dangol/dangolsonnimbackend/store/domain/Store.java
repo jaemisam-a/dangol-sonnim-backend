@@ -55,7 +55,7 @@ public class Store {
     @JoinColumn(name="boss_id")
     private Boss boss;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category")
     @ToString.Exclude
     private Category category;
@@ -84,11 +84,18 @@ public class Store {
 
     public Store(StoreSignupRequestDTO dto, Category category) {
         this(dto);
-        category.addStore(this);
+        this.category = category;
+        this.category.addStore(this);
     }
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void updateCategory(Category category) {
+        this.category.removeStore(this);
+        this.category = category;
+        this.category.addStore(this);
     }
 
     public Optional<Store> update(StoreUpdateDTO dto) {
