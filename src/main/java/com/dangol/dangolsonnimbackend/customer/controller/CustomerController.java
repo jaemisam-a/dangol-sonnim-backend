@@ -20,7 +20,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Object> signup(@Valid @RequestBody CustomerSignupDTO dto) {
+    public ResponseEntity<Void> signup(@Valid @RequestBody CustomerSignupDTO dto) {
         customerService.signup(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
