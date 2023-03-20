@@ -8,7 +8,6 @@ import com.dangol.dangolsonnimbackend.subscribe.domain.Benefit;
 import com.dangol.dangolsonnimbackend.subscribe.domain.CountSubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.MonthlySubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
-import com.dangol.dangolsonnimbackend.subscribe.dto.BenefitDto;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.repository.BenefitRepository;
@@ -24,7 +23,6 @@ public class SubscribeServiceImpl implements SubscribeService {
     private final SubscribeRepository<Subscribe> subscribeRepository;
     // 가게 관련 서비스 머지 시 QueryDsl Repository로 수정할 예정
     private final StoreRepository storeRepository;
-    private final BenefitRepository benefitRepository;
 
     @Autowired
     public SubscribeServiceImpl(SubscribeRepository<Subscribe> subscribeRepository, StoreRepository storeRepository, BenefitRepository benefitRepository){
