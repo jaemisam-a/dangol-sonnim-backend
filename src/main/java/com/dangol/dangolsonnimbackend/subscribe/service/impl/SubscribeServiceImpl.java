@@ -4,11 +4,14 @@ import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
+import com.dangol.dangolsonnimbackend.subscribe.domain.Benefit;
 import com.dangol.dangolsonnimbackend.subscribe.domain.CountSubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.MonthlySubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
+import com.dangol.dangolsonnimbackend.subscribe.dto.BenefitDto;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
+import com.dangol.dangolsonnimbackend.subscribe.repository.BenefitRepository;
 import com.dangol.dangolsonnimbackend.subscribe.repository.SubscribeRepository;
 import com.dangol.dangolsonnimbackend.subscribe.service.SubscribeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +24,13 @@ public class SubscribeServiceImpl implements SubscribeService {
     private final SubscribeRepository<Subscribe> subscribeRepository;
     // 가게 관련 서비스 머지 시 QueryDsl Repository로 수정할 예정
     private final StoreRepository storeRepository;
+    private final BenefitRepository benefitRepository;
 
     @Autowired
-    public SubscribeServiceImpl(SubscribeRepository<Subscribe> subscribeRepository, StoreRepository storeRepository){
+    public SubscribeServiceImpl(SubscribeRepository<Subscribe> subscribeRepository, StoreRepository storeRepository, BenefitRepository benefitRepository){
         this.subscribeRepository = subscribeRepository;
         this.storeRepository = storeRepository;
+        this.benefitRepository = benefitRepository;
     }
 
     @Transactional
@@ -34,7 +39,16 @@ public class SubscribeServiceImpl implements SubscribeService {
         Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(
                 () -> new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND)
         );
+
         Subscribe savedSubscribe = subscribeRepository.save(classify(dto, store));
+        store.getSubscribeList().add(savedSubscribe);
+
+        // 구독 관련 혜택 저장
+        dto.getBenefits().forEach(benefitDto -> {
+            Benefit benefit = new Benefit(benefitDto.getDescription());
+            savedSubscribe.getBenefits().add(benefit);
+        });
+
         return savedSubscribe.toResponseDTO();
     }
 

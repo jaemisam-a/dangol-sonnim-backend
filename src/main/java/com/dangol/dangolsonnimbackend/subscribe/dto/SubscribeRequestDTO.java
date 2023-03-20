@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,4 +36,6 @@ public class SubscribeRequestDTO {
     private Boolean isTop;
 
     private Integer useCount;
+
+    private List<BenefitDto> benefits;
 }
