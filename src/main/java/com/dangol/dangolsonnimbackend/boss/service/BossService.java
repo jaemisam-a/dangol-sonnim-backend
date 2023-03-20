@@ -5,11 +5,11 @@ import com.dangol.dangolsonnimbackend.boss.dto.*;
 
 public interface BossService {
 
-    void signup(BossSignupRequestDTO dto);
+    BossResponseDTO signup(BossSignupRequestDTO dto);
     void withdraw(String email);
     Boss findByEmail(String email);
-    Boss update(String email, BossUpdateRequestDTO dto);
-    void updatePassword(BossPasswordUpdateReqeuestDTO dto);
+    BossResponseDTO update(String email, BossUpdateRequestDTO dto);
+    BossResponseDTO updatePassword(BossPasswordUpdateReqeuestDTO dto);
     BossSigninResponseDTO getByCredentials(BossSigninReqeustDTO reqeustDTO);
     BossFindEmailResponseDTO findEmailByPhoneNumber(BossFindEmailReqeustDTO reqeustDTO);
 }

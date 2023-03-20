@@ -29,8 +29,6 @@ public class StoreUpdateDTO {
 
     private Optional<String> officeHours = Optional.empty();
 
-    private Optional<Long> categoryId = Optional.empty();
-
     @NotNull
     private String registerNumber;
 

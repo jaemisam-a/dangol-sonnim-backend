@@ -55,9 +55,10 @@ public class Store {
     @JoinColumn(name="boss_id")
     private Boss boss;
 
-    // TODO. 카테고리 엔티티 생성 시 JoinColumn 추가
-    @Column(nullable = false)
-    private Long categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category")
+    @ToString.Exclude
+    private Category category;
 
     @Column(nullable = false, unique = true)
     @Setter(AccessLevel.NONE)
@@ -77,13 +78,24 @@ public class Store {
         this.detailedAddress = dto.getDetailedAddress();
         this.comments = dto.getComments();
         this.officeHours = dto.getOfficeHours();
-        this.categoryId = dto.getCategoryId();
         this.registerName = dto.getRegisterName();
         this.registerNumber = dto.getRegisterNumber();
     }
 
+    public Store(StoreSignupRequestDTO dto, Category category) {
+        this(dto);
+        this.category = category;
+        this.category.addStore(this);
+    }
+
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void updateCategory(Category category) {
+        this.category.removeStore(this);
+        this.category = category;
+        this.category.addStore(this);
     }
 
     public Optional<Store> update(StoreUpdateDTO dto) {
@@ -97,7 +109,6 @@ public class Store {
         dto.getDetailedAddress().ifPresent(detailedAddress -> this.detailedAddress = detailedAddress);
         dto.getComments().ifPresent(comments -> this.comments = comments);
         dto.getOfficeHours().ifPresent(officeHours -> this.officeHours = officeHours);
-        dto.getCategoryId().ifPresent(categoryId -> this.categoryId = categoryId);
         dto.getRegisterName().ifPresent(registerName -> this.registerName = registerName);
 
         return Optional.of(this);

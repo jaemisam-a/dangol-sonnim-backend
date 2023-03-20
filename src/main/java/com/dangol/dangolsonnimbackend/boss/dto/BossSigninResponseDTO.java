@@ -1,12 +1,15 @@
 package com.dangol.dangolsonnimbackend.boss.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BossSigninResponseDTO {
+@EqualsAndHashCode(callSuper = false)
+public class BossSigninResponseDTO extends RepresentationModel<BossSigninResponseDTO> {
     private String accessToken;
 }

@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -22,7 +23,11 @@ public class SecurityConfig {
                 .antMatchers("/templates/**").permitAll()
                 .anyRequest().permitAll()
                 .and()
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+                .csrf()
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .requireCsrfProtectionMatcher(new AntPathRequestMatcher("**/post", "POST"))
+                        .requireCsrfProtectionMatcher(new AntPathRequestMatcher("**/put", "PUT"))
+                        .requireCsrfProtectionMatcher(new AntPathRequestMatcher("**/patch", "PATCH"));
         return http.build();
     }
 }

@@ -36,7 +36,6 @@ class MonthlySubscribeRepositoryTest {
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
                 .officeHours("08:00~10:00")
-                .categoryId(1L)
                 .registerNumber("123-456-789")
                 .registerName("단골손님")
                 .build();

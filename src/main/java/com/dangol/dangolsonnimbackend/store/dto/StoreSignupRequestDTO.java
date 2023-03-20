@@ -1,5 +1,6 @@
 package com.dangol.dangolsonnimbackend.store.dto;
 
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -38,7 +39,7 @@ public class StoreSignupRequestDTO {
     private String officeHours;
 
     @NotNull(message = "카테고리는 Null 일 수 없습니다.")
-    private Long categoryId;
+    private CategoryType categoryType;
 
     @NotNull(message = "사업자번호는 Null 일 수 없습니다.")
     private String registerNumber;
