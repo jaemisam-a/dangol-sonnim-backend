@@ -1,8 +1,10 @@
 package com.dangol.dangolsonnimbackend.boss.controller;
 
-import com.dangol.dangolsonnimbackend.boss.dto.*;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossFindEmailResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossSigninResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.*;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

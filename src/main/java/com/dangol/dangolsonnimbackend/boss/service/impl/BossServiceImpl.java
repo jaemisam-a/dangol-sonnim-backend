@@ -1,7 +1,10 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.*;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossFindEmailResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossSigninResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.*;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
