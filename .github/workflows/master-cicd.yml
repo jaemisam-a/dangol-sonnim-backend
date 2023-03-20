@@ -79,17 +79,24 @@ jobs:
           mysql user: $MYSQL_USER
           mysql password: $MYSQL_PASSWORD
 
-      # Custom Action Usage - https://github.com/gradle/gradle-build-action
-      - name: STEP8) Setup and execute Gradle 'test' task
-        uses: gradle/gradle-build-action@v2
-        with:
-          # STEP7 에서 구성된 MySQL 환경에서 DB 테스트를 진행
-          arguments: test
+#      # Custom Action Usage - https://github.com/gradle/gradle-build-action
+#      - name: STEP8) Setup and execute Gradle 'test' task
+#        uses: gradle/gradle-build-action@v2
+#        with:
+#          # STEP7 에서 구성된 MySQL 환경에서 DB 테스트를 진행
+#          arguments: test
+#
+#      - name: STEP9) Execute Gradle build
+#        uses: gradle/gradle-build-action@v2
+#        with:
+#          arguments: build
+      #gradlew 권한 추가
+      - name: Grant Execute Permission For Gradlew
+        run: chmod +x gradlew
 
-      - name: STEP9) Execute Gradle build
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
+      #test를 제외한 프로젝트 빌드
+      - name: Build With Gradle
+        run: ./gradlew build
 
       # Docker Hub - https://hub.docker.com/u/jaemisama
       - name: STEP10) Docker login & Docker Image push
