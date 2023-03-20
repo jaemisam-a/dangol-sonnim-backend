@@ -32,4 +32,8 @@ public class Category {
     public void addStore(Store store) {
         this.store.add(store);
     }
+
+    public void removeStore(Store store) {
+        this.store.remove(store);
+    }
 }
