@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_subscribe")
@@ -46,6 +48,10 @@ public abstract class Subscribe {
 
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
+
+    @Column
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Benefit> benefits = new ArrayList<>();
 
     protected Subscribe(String name, BigDecimal price, String intro,
                      Boolean isTop, Store store){
