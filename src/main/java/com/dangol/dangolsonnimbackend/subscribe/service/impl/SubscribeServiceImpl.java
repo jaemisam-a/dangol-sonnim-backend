@@ -28,7 +28,6 @@ public class SubscribeServiceImpl implements SubscribeService {
     public SubscribeServiceImpl(SubscribeRepository<Subscribe> subscribeRepository, StoreRepository storeRepository, BenefitRepository benefitRepository){
         this.subscribeRepository = subscribeRepository;
         this.storeRepository = storeRepository;
-        this.benefitRepository = benefitRepository;
     }
 
     @Transactional
