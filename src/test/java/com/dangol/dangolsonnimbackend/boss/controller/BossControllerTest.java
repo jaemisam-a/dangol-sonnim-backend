@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.controller;
 
-import com.dangol.dangolsonnimbackend.boss.dto.*;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.*;
+import com.dangol.dangolsonnimbackend.boss.dto.request.*;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
