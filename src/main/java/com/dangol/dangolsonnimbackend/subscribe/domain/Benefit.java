@@ -18,7 +18,6 @@ public class Benefit {
     private Long id;
 
     @Column
-    @Lob
     private String description;
 
     public Benefit(String description) {
