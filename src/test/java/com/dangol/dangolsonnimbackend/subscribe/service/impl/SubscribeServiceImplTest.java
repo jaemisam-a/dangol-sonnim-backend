@@ -40,10 +40,10 @@ class SubscribeServiceImplTest {
     private SubscribeRepository<Subscribe> subscribeRepository;
     @Autowired
     private SubscribeService subscribeService;
-    private Store store;
     @Autowired
     private CategoryRepository categoryRepository;
-    private List<BenefitDTO> benefitDTOList;
+    private SubscribeRequestDTO monthlySubscribeRequestDTO;
+    private SubscribeRequestDTO countSubscribeRequestDTO;
 
     @BeforeEach
     void setup(){
@@ -62,23 +62,19 @@ class SubscribeServiceImplTest {
             .registerName("단골손님")
             .categoryType(CategoryType.KOREAN)
             .build();
-        store = storeRepository.save(new Store(signupRequestDTO));
+        Store store = storeRepository.save(new Store(signupRequestDTO));
 
         Category category = new Category();
         category.setCategoryType(CategoryType.KOREAN);
         categoryRepository.save(category);
 
-        benefitDTOList = List.of(
+        List<BenefitDTO> benefitDTOList = List.of(
                 new BenefitDTO("Benefit 1"),
                 new BenefitDTO("Benefit 2"),
                 new BenefitDTO("Benefit 3")
         );
-    }
 
-    @Test
-    void givenSubscribeRequestDTO_whenCreate_thenCreateMonthlySubscribe() {
-        // given
-        SubscribeRequestDTO subscribeRequestDTO = SubscribeRequestDTO.builder()
+        monthlySubscribeRequestDTO = SubscribeRequestDTO.builder()
                 .type(SubscribeType.MONTHLY)
                 .storeId(store.getId())
                 .name("SubscribeName")
@@ -87,9 +83,24 @@ class SubscribeServiceImplTest {
                 .isTop(true)
                 .benefits(benefitDTOList)
                 .build();
+        countSubscribeRequestDTO = SubscribeRequestDTO.builder()
+                .type(SubscribeType.COUNT)
+                .storeId(store.getId())
+                .name("SubscribeName")
+                .price(BigDecimal.valueOf(12000))
+                .intro("SubscribeIntro")
+                .isTop(true)
+                .benefits(benefitDTOList)
+                .useCount(100)
+                .build();
+    }
+
+    @Test
+    void givenSubscribeRequestDTO_whenCreate_thenCreateMonthlySubscribe() {
+        // given
 
         // when
-        SubscribeResponseDTO responseDTO = subscribeService.create(subscribeRequestDTO);
+        SubscribeResponseDTO responseDTO = subscribeService.create(monthlySubscribeRequestDTO);
 
         // then
         Optional<Subscribe> optionalSubscribe = subscribeRepository.findById(responseDTO.getSubscribeId());
@@ -103,25 +114,29 @@ class SubscribeServiceImplTest {
     void givenSubscribeRequestDTO_whenCreate_thenCreateCountSubscribe() {
         // given
 
-        SubscribeRequestDTO subscribeRequestDTO = SubscribeRequestDTO.builder()
-                .type(SubscribeType.COUNT)
-                .storeId(store.getId())
-                .name("SubscribeName")
-                .intro("SubscribeIntro")
-                .isTop(true)
-                .useCount(5)
-                .price(BigDecimal.valueOf(12000))
-                .benefits(benefitDTOList)
-                .build();
-
         // when
-        SubscribeResponseDTO responseDTO = subscribeService.create(subscribeRequestDTO);
+        SubscribeResponseDTO responseDTO = subscribeService.create(countSubscribeRequestDTO);
 
         // then
         Optional<Subscribe> optionalSubscribe = subscribeRepository.findById(responseDTO.getSubscribeId());
         CountSubscribe createdSubscribe = (CountSubscribe) optionalSubscribe.orElseThrow(
                 () -> new NotFoundException(ErrorCodeMessage.SUBSCRIBE_NOT_FOUND));
         assertNotNull(createdSubscribe);
-        assertEquals(subscribeRequestDTO.getUseCount(), createdSubscribe.getUseCount());
+        assertEquals(countSubscribeRequestDTO.getUseCount(), createdSubscribe.getUseCount());
+    }
+
+    @Test
+    void givenSubscribeId_whenGetSubscribe_thenReturnSubscribeResponseDTO(){
+        // given
+        Long subscribeId = subscribeService.create(countSubscribeRequestDTO).getSubscribeId();
+        // when
+        SubscribeResponseDTO responseDTO = subscribeService.getSubscribe(subscribeId);
+
+        // then
+        Optional<Subscribe> optionalSubscribe = subscribeRepository.findById(responseDTO.getSubscribeId());
+        CountSubscribe createdSubscribe = (CountSubscribe) optionalSubscribe.orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.SUBSCRIBE_NOT_FOUND));
+        assertNotNull(createdSubscribe);
+        assertEquals(countSubscribeRequestDTO.getUseCount(), createdSubscribe.getUseCount());
     }
 }
