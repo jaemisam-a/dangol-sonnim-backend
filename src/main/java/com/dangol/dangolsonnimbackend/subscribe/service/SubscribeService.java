@@ -8,4 +8,6 @@ import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 public interface SubscribeService {
     SubscribeResponseDTO create(SubscribeRequestDTO dto);
     Subscribe classify(SubscribeRequestDTO dto, Store store);
+
+    SubscribeResponseDTO getSubscribe(Long subscribeId);
 }
