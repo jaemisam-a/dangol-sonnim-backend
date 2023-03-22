@@ -64,8 +64,6 @@ class SubscribeControllerTest {
     @Autowired
     private SubscribeService subscribeService;
     private SubscribeRequestDTO subscribeRequestDTO;
-    private Long storeId;
-    private List<BenefitDTO> benefitDTOList;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDocumentation){
@@ -94,7 +92,7 @@ class SubscribeControllerTest {
                 .categoryType(CategoryType.KOREAN)
                 .build();
 
-        benefitDTOList = List.of(
+        List<BenefitDTO> benefitDTOList = List.of(
                 new BenefitDTO("Benefit 1"),
                 new BenefitDTO("Benefit 2"),
                 new BenefitDTO("Benefit 3")
@@ -104,7 +102,7 @@ class SubscribeControllerTest {
         category.setCategoryType(CategoryType.KOREAN);
         categoryRepository.save(category);
 
-        storeId = storeService.signup(signupRequestDTO).getId();
+        Long storeId = storeService.signup(signupRequestDTO).getId();
 
         subscribeRequestDTO = SubscribeRequestDTO.builder()
                 .isTop(true)
