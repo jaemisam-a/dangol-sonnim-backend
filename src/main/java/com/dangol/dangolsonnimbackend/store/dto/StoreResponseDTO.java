@@ -1,6 +1,8 @@
 package com.dangol.dangolsonnimbackend.store.dto;
 
+import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +35,8 @@ public class StoreResponseDTO {
 
     private String registerName;
 
+    private CategoryType categoryType;
+
     // TODO. 태그 및 이미지 필드 추가
 
     public StoreResponseDTO(Store store) {
@@ -47,5 +51,6 @@ public class StoreResponseDTO {
         this.detailedAddress = store.getDetailedAddress();
         this.registerNumber = store.getRegisterNumber();
         this.registerName = store.getRegisterName();
+        this.categoryType = store.getCategory().getCategoryType();
     }
 }
