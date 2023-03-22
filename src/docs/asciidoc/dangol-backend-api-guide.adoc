@@ -158,6 +158,7 @@ include::{snippets}/store/update/http-response.adoc[]
 
 === 구독권 API
 새로운 구독권을 등록합니다.
+
 ==== 1. 구독권 등록
 
 - Request
@@ -166,6 +167,7 @@ include::{snippets}/subscribe/create/request-fields.adoc[]
 
 - Response
 include::{snippets}/subscribe/create/http-response.adoc[]
+
 ==== 2. 구독권 조회
 
 - Request
@@ -174,3 +176,12 @@ include::{snippets}/subscribe/get/path-parameters.adoc[]
 
 - Response
 include::{snippets}/subscribe/get/http-response.adoc[]
+
+==== 3. 구독권 삭제
+
+- Request
+include::{snippets}/subscribe/delete/http-request.adoc[]
+include::{snippets}/subscribe/get/path-parameters.adoc[]
+
+- Response
+include::{snippets}/subscribe/delete/http-response.adoc[]
