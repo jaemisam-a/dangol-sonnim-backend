@@ -86,7 +86,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     // 액세스 토큰으로 유저 정보 찾기 & 인증 메소드
-    public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("checkAccessTokenAndAuthentication() 호출");
         tokenProvider.extractAccessToken(request)
                 .filter(tokenProvider::validateToken)
