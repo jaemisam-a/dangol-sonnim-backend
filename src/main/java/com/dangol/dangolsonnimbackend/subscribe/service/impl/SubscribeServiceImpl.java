@@ -67,4 +67,9 @@ public class SubscribeServiceImpl implements SubscribeService {
                 () -> new NotFoundException(ErrorCodeMessage.SUBSCRIBE_NOT_FOUND)
         ).toResponseDTO();
     }
+
+    @Transactional
+    public void deleteSubscribe(Long subscribeId) {
+        subscribeRepository.deleteById(subscribeId);
+    }
 }
