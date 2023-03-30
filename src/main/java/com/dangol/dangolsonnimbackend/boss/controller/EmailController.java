@@ -48,7 +48,7 @@ public class EmailController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/valid")
+    @PostMapping("/valid")
     public ResponseEntity<AuthKeyResponseDTO> isValidAuthCode(@Valid @RequestBody IsValidAuthCodeRequestDTO requestDTO){
         AuthKeyResponseDTO responseDTO = emailService.isValidAuthCode(requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
