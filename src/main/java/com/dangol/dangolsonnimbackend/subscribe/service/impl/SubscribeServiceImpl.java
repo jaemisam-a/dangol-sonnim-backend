@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.subscribe.service.impl;
 
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
@@ -58,5 +59,12 @@ public class SubscribeServiceImpl implements SubscribeService {
             default:
                 throw new BadRequestException(ErrorCodeMessage.INVALID_SUBSCRIBE_TYPE);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public SubscribeResponseDTO getSubscribe(Long subscribeId) {
+        return subscribeRepository.findById(subscribeId).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.SUBSCRIBE_NOT_FOUND)
+        ).toResponseDTO();
     }
 }
