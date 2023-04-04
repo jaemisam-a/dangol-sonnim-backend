@@ -3,9 +3,12 @@ package com.dangol.dangolsonnimbackend.store.domain;
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Entity
@@ -66,6 +69,10 @@ public class Store {
 
     @Column(nullable = false)
     private String registerName;
+
+    @Column
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subscribe> subscribeList = new ArrayList<>();
 
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();

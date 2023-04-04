@@ -173,3 +173,13 @@ include::{snippets}/store/update/http-request.adoc[]
 include::{snippets}/store/update/request-fields.adoc[]
 - Response
 include::{snippets}/store/update/http-response.adoc[]
+
+=== 구독권 API
+새로운 구독권을 등록합니다.
+
+- Request
+include::{snippets}/subscribe/create/http-request.adoc[]
+include::{snippets}/subscribe/create/request-fields.adoc[]
+
+- Response
+include::{snippets}/subscribe/create/http-response.adoc[]
