@@ -58,7 +58,7 @@ public class Store {
     @JoinColumn(name="boss_id")
     private Boss boss;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category")
     @ToString.Exclude
     private Category category;
@@ -105,7 +105,7 @@ public class Store {
         this.category.addStore(this);
     }
 
-    public Optional<Store> update(StoreUpdateDTO dto) {
+    public Optional<Store> update(StoreUpdateDTO dto, Optional<Category> category) {
         dto.getName().ifPresent(name -> this.name = name);
         dto.getPhoneNumber().ifPresent(phoneNumber -> this.phoneNumber = phoneNumber);
         dto.getNewAddress().ifPresent(newAddress -> this.newAddress = newAddress);
@@ -117,6 +117,7 @@ public class Store {
         dto.getComments().ifPresent(comments -> this.comments = comments);
         dto.getOfficeHours().ifPresent(officeHours -> this.officeHours = officeHours);
         dto.getRegisterName().ifPresent(registerName -> this.registerName = registerName);
+        category.ifPresent(newCategory -> updateCategory(newCategory));
 
         return Optional.of(this);
     }

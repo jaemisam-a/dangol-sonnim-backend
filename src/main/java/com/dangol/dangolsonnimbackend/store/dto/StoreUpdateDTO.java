@@ -1,6 +1,9 @@
 package com.dangol.dangolsonnimbackend.store.dto;
 
-import lombok.*;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
@@ -34,6 +37,8 @@ public class StoreUpdateDTO {
 
     private Optional<String> registerName = Optional.empty();
 
+    private Optional<CategoryType> categoryType = Optional.empty();
+
     private StoreUpdateDTO() { }
 
     public StoreUpdateDTO(String registerNumber) {
@@ -52,4 +57,5 @@ public class StoreUpdateDTO {
     public StoreUpdateDTO officeHours(String officeHours) { this.officeHours = Optional.of(officeHours); return this; }
     public StoreUpdateDTO registerNumber(String registerNumber) { this.registerNumber = registerNumber; return this; }
     public StoreUpdateDTO registerName(String registerName) { this.registerName = Optional.of(registerName); return this; }
+    public StoreUpdateDTO categoryType(CategoryType categoryType) { this.categoryType = Optional.of(categoryType); return this; }
 }
