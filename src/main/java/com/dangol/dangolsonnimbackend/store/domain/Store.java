@@ -6,7 +6,9 @@ import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -67,6 +69,14 @@ public class Store {
     @Column(nullable = false)
     private String registerName;
 
+    @ManyToMany
+    @JoinTable(
+            name = "store_tag",
+            joinColumns = @JoinColumn(name = "store_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
         this.phoneNumber = dto.getPhoneNumber();
@@ -113,5 +123,10 @@ public class Store {
         category.ifPresent(newCategory -> updateCategory(newCategory));
 
         return Optional.of(this);
+    }
+
+    public void setTags(Set<Tag> tags){
+        this.tags.clear();
+        this.tags = tags;
     }
 }
