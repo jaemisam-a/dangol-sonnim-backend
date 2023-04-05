@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -77,7 +78,8 @@ public class StoreControllerTest {
             fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
             fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
-            fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명")
+            fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
+            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그")
     };
 
     FieldDescriptor[] findResponseJsonField = new FieldDescriptor[] {
@@ -94,7 +96,8 @@ public class StoreControllerTest {
 //            fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
             fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
-            fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명")
+            fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
+            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그")
     };
 
     FieldDescriptor[] updateRequestJsonField = new FieldDescriptor[] {
@@ -110,7 +113,8 @@ public class StoreControllerTest {
             fieldWithPath("officeHours").type(JsonFieldType.STRING).optional().description("가게 영업시간"),
             fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
-            fieldWithPath("registerName").type(JsonFieldType.STRING).optional().description("가게 사업자명")
+            fieldWithPath("registerName").type(JsonFieldType.STRING).optional().description("가게 사업자명"),
+            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그")
     };
 
     @BeforeEach
@@ -137,6 +141,7 @@ public class StoreControllerTest {
                 .categoryType(CategoryType.KOREAN)
                 .registerNumber("1234567890")
                 .registerName("단골손님")
+                .tags(List.of("태그1", "태그2"))
                 .build();
 
         categoryRepository.saveAndFlush(new Category(CategoryType.KOREAN));
@@ -160,6 +165,8 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.bname2").value(dto.getBname2()))
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
                 .andExpect(jsonPath("$.categoryType").value(dto.getCategoryType().toString()))
+                .andExpect(jsonPath("$.tags[0]").value(dto.getTags().get(0)))
+                .andExpect(jsonPath("$.tags[1]").value(dto.getTags().get(1)))
                 .andDo(document("store/create",
                         requestFields(signUpRequestJsonField)
                 ));
@@ -186,6 +193,8 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.bname2").value(dto.getBname2()))
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
                 .andExpect(jsonPath("$.categoryType").value(dto.getCategoryType().toString()))
+                .andExpect(jsonPath("$.tags[0]").value(dto.getTags().get(0)))
+                .andExpect(jsonPath("$.tags[1]").value(dto.getTags().get(1)))
                 .andDo(document("store/find",
                         requestParameters(
                                 parameterWithName("id").description("가게 아이디"),
@@ -206,6 +215,7 @@ public class StoreControllerTest {
         updateDTO.setName(Optional.of("단골손님" + new Random().nextInt()));
         updateDTO.setSido(Optional.of("경기도"));
         updateDTO.setCategoryType(Optional.of(CategoryType.CHINESE));
+        updateDTO.setTags(List.of("변경 태그1"));
 
         mockMvc.perform(patch("/api/v1/store/update")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -215,6 +225,7 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.name").value(updateDTO.getName().get()))
                 .andExpect(jsonPath("$.sido").value(updateDTO.getSido().get()))
                 .andExpect(jsonPath("$.categoryType").value(updateDTO.getCategoryType().get().toString()))
+                .andExpect(jsonPath("$.tags[0]").value(updateDTO.getTags().get(0)))
                 .andDo(document("store/update",
                         requestFields(updateRequestJsonField)
                 ));
