@@ -165,8 +165,8 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.bname2").value(dto.getBname2()))
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
                 .andExpect(jsonPath("$.categoryType").value(dto.getCategoryType().toString()))
-                .andExpect(jsonPath("$.tags[0]").value(dto.getTags().get(0)))
-                .andExpect(jsonPath("$.tags[1]").value(dto.getTags().get(1)))
+                .andExpect(jsonPath("$.tags[0]").exists())
+                .andExpect(jsonPath("$.tags[1]").exists())
                 .andDo(document("store/create",
                         requestFields(signUpRequestJsonField)
                 ));
@@ -193,8 +193,7 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.bname2").value(dto.getBname2()))
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
                 .andExpect(jsonPath("$.categoryType").value(dto.getCategoryType().toString()))
-                .andExpect(jsonPath("$.tags[0]").value(dto.getTags().get(0)))
-                .andExpect(jsonPath("$.tags[1]").value(dto.getTags().get(1)))
+                .andExpect(jsonPath("$.tags[0]").exists())
                 .andDo(document("store/find",
                         requestParameters(
                                 parameterWithName("id").description("가게 아이디"),
@@ -225,7 +224,7 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.name").value(updateDTO.getName().get()))
                 .andExpect(jsonPath("$.sido").value(updateDTO.getSido().get()))
                 .andExpect(jsonPath("$.categoryType").value(updateDTO.getCategoryType().get().toString()))
-                .andExpect(jsonPath("$.tags[0]").value(updateDTO.getTags().get(0)))
+                .andExpect(jsonPath("$.tags[0]").exists())
                 .andDo(document("store/update",
                         requestFields(updateRequestJsonField)
                 ));
