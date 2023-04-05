@@ -30,8 +30,8 @@ public class StoreController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<StoreResponseDTO> signup(@Valid @RequestBody StoreSignupRequestDTO dto) {
-        StoreResponseDTO res = storeService.signup(dto);
+    public ResponseEntity<StoreResponseDTO> create(@Valid @RequestBody StoreSignupRequestDTO dto) {
+        StoreResponseDTO res = storeService.create(dto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

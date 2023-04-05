@@ -1,9 +1,11 @@
 package com.dangol.dangolsonnimbackend.store.controller;
 
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
+import com.dangol.dangolsonnimbackend.store.repository.CategoryRepository;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +59,9 @@ public class StoreControllerTest {
     private StoreSignupRequestDTO dto;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private WebApplicationContext context;
 
     FieldDescriptor[] signUpRequestJsonField = new FieldDescriptor[] {
@@ -70,8 +75,7 @@ public class StoreControllerTest {
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).optional().description("가게 상세주소"),
             fieldWithPath("comments").type(JsonFieldType.STRING).description("가게 한줄평"),
             fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
-            // TODO. 카테고리 정보에 대한 비즈니스 로직 구현 완료 시 ignore 삭제
-            fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보").ignored(),
+            fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
             fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명")
     };
@@ -88,6 +92,7 @@ public class StoreControllerTest {
             fieldWithPath("bname2").type(JsonFieldType.STRING).description("가게 주소 (동/리)"),
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).description("가게 상세주소"),
 //            fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
+            fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
             fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명")
     };
@@ -103,6 +108,7 @@ public class StoreControllerTest {
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).optional().description("가게 상세주소"),
             fieldWithPath("comments").type(JsonFieldType.STRING).optional().description("가게 한줄평"),
             fieldWithPath("officeHours").type(JsonFieldType.STRING).optional().description("가게 영업시간"),
+            fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
             fieldWithPath("registerName").type(JsonFieldType.STRING).optional().description("가게 사업자명")
     };
@@ -132,10 +138,12 @@ public class StoreControllerTest {
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .build();
+
+        categoryRepository.saveAndFlush(new Category(CategoryType.KOREAN));
+        categoryRepository.saveAndFlush(new Category(CategoryType.CHINESE));
     }
 
     @Test
-    @Transactional
     @DisplayName("새로운 가게 정보 생성을 요청하면 정상적으로 생성이 된다.")
     void givenSignupDto_whenSignup_thenCreateNewStore() throws Exception {
         mockMvc.perform(post("/api/v1/store/create")
@@ -151,19 +159,20 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.bname1").value(dto.getBname1()))
                 .andExpect(jsonPath("$.bname2").value(dto.getBname2()))
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
+                .andExpect(jsonPath("$.categoryType").value(dto.getCategoryType().toString()))
                 .andDo(document("store/create",
                         requestFields(signUpRequestJsonField)
                 ));
 
         // 재등록 시에 이미 존재하는 사업자 번호로 반환
-        assertThrows(BadRequestException.class, () -> storeService.signup(dto));
+        assertThrows(BadRequestException.class, () -> storeService.create(dto));
     }
 
     @Test
     @Transactional
     @DisplayName("특정 가게 아이디 값을 통해 가게를 검색할 수 있다.")
     void givenStoreId_whenFindById_thenReturnStore() throws Exception {
-        Long id = storeService.signup(dto).getId();
+        Long id = storeService.create(dto).getId();
 
         mockMvc.perform(get("/api/v1/store/find?id="+ id)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -176,6 +185,7 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.bname1").value(dto.getBname1()))
                 .andExpect(jsonPath("$.bname2").value(dto.getBname2()))
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
+                .andExpect(jsonPath("$.categoryType").value(dto.getCategoryType().toString()))
                 .andDo(document("store/find",
                         requestParameters(
                                 parameterWithName("id").description("가게 아이디"),
@@ -189,12 +199,13 @@ public class StoreControllerTest {
     @Transactional
     @DisplayName("특정 가게 정보를 업데이트하여 정보를 수정할 수 있다.")
     void givenStore_whenUpdate_thenUpdateStore() throws Exception {
-        String registerNumber = storeService.signup(dto).getRegisterNumber();
+        String registerNumber = storeService.create(dto).getRegisterNumber();
 
         StoreUpdateDTO updateDTO = new StoreUpdateDTO(registerNumber);
 
         updateDTO.setName(Optional.of("단골손님" + new Random().nextInt()));
         updateDTO.setSido(Optional.of("경기도"));
+        updateDTO.setCategoryType(Optional.of(CategoryType.CHINESE));
 
         mockMvc.perform(patch("/api/v1/store/update")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -203,6 +214,7 @@ public class StoreControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(updateDTO.getName().get()))
                 .andExpect(jsonPath("$.sido").value(updateDTO.getSido().get()))
+                .andExpect(jsonPath("$.categoryType").value(updateDTO.getCategoryType().get().toString()))
                 .andDo(document("store/update",
                         requestFields(updateRequestJsonField)
                 ));

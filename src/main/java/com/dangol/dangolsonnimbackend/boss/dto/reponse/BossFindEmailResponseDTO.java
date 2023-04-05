@@ -1,4 +1,4 @@
-package com.dangol.dangolsonnimbackend.boss.dto;
+package com.dangol.dangolsonnimbackend.boss.dto.reponse;
 
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;

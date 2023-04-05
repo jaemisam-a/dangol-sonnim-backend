@@ -5,7 +5,7 @@ import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
 
 public interface StoreService {
-    StoreResponseDTO signup(StoreSignupRequestDTO dto);
+    StoreResponseDTO create(StoreSignupRequestDTO dto);
     StoreResponseDTO findById(Long id);
     StoreResponseDTO updateStoreByDto(StoreUpdateDTO dto);
 }
