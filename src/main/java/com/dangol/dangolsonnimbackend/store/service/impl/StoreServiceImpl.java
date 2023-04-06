@@ -90,14 +90,12 @@ public class StoreServiceImpl implements StoreService {
      * @return 변경된 정보
      */
     @Override
-    public StoreResponseDTO findById(Long id) {
-        Optional<Store> store = storeQueryRepository.findById(id);
+    public StoreDetailResponseDTO findById(Long id) {
+        Store store = storeQueryRepository.findById(id).orElseThrow(
+                () -> new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND)
+        );
 
-        if(store.isEmpty())
-            throw new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND);
-
-        return store.map(StoreResponseDTO::new)
-                .orElseThrow(() -> new InternalServerException(ErrorCodeMessage.RESPONSE_CREATE_ERROR));
+        return new StoreDetailResponseDTO(store);
     }
 
     /**

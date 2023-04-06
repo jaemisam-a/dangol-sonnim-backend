@@ -70,6 +70,9 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     @Transactional
     public void deleteSubscribe(Long subscribeId) {
+        Subscribe subscribe = subscribeRepository.findById(subscribeId).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.SUBSCRIBE_NOT_FOUND));
+        subscribe.getStore().getSubscribeList().remove(subscribe);
         subscribeRepository.deleteById(subscribeId);
     }
 }

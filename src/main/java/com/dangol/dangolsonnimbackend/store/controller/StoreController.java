@@ -39,9 +39,9 @@ public class StoreController {
                 .body(res);
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<StoreResponseDTO> findById(@RequestParam Map<String, String> params) {
-        StoreResponseDTO res = storeService.findById(Long.valueOf(params.get("id")));
+    @GetMapping("/find/{storeId}")
+    public ResponseEntity<StoreDetailResponseDTO> findById(@PathVariable Long storeId) {
+        StoreDetailResponseDTO res = storeService.findById(storeId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

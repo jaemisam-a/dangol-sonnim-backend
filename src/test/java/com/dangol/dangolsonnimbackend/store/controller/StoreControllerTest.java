@@ -6,10 +6,18 @@ import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
+import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.domain.StoreImage;
 import com.dangol.dangolsonnimbackend.store.dto.*;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.repository.CategoryRepository;
+import com.dangol.dangolsonnimbackend.store.repository.StoreImageRepository;
+import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
+import com.dangol.dangolsonnimbackend.store.service.MenuService;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
+import com.dangol.dangolsonnimbackend.subscribe.dto.BenefitDTO;
+import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
+import com.dangol.dangolsonnimbackend.subscribe.service.SubscribeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.request.RequestDocumentation;
@@ -44,6 +53,8 @@ import java.util.Optional;
 import java.util.Random;
 
 import static com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage.STORE_NOT_FOUND;
+import static com.dangol.dangolsonnimbackend.subscribe.enumeration.SubscribeType.COUNT;
+import static com.dangol.dangolsonnimbackend.subscribe.enumeration.SubscribeType.MONTHLY;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -87,7 +98,15 @@ public class StoreControllerTest {
     @Autowired
     private BossService bossService;
     @Autowired
+    private MenuService menuService;
+    @Autowired
+    private SubscribeService subscribeService;
+    @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private StoreImageRepository storeImageRepository;
+    @Autowired
+    private StoreRepository storeRepository;
 
     FieldDescriptor[] signUpRequestJsonField = new FieldDescriptor[] {
             fieldWithPath("name").type(JsonFieldType.STRING).description("가게 이름"),
@@ -124,6 +143,41 @@ public class StoreControllerTest {
             fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그"),
             fieldWithPath("businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
             fieldWithPath("businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간")
+    };
+
+    FieldDescriptor[] findDetailResponseJsonField = new FieldDescriptor[]{
+            fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 아이디"),
+            fieldWithPath("name").type(JsonFieldType.STRING).description("가게 이름"),
+            fieldWithPath("newAddress").type(JsonFieldType.STRING).description("가게 주소"),
+            fieldWithPath("comments").type(JsonFieldType.STRING).description("가게 한줄평"),
+            fieldWithPath("sido").type(JsonFieldType.STRING).description("가게 주소 (시/도)"),
+            fieldWithPath("sigungu").type(JsonFieldType.STRING).description("가게 주소 (시/군/구)"),
+            fieldWithPath("bname1").type(JsonFieldType.STRING).description("가게 주소 (읍/면)"),
+            fieldWithPath("bname2").type(JsonFieldType.STRING).description("가게 주소 (동/리)"),
+            fieldWithPath("detailedAddress").type(JsonFieldType.STRING).description("가게 상세주소"),
+            fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
+            fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
+            fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
+            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그"),
+            fieldWithPath("businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
+            fieldWithPath("businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간"),
+            fieldWithPath("menuResponseDTOList[].storeId").type(JsonFieldType.NUMBER).description("메뉴가 속한 가게 ID"),
+            fieldWithPath("menuResponseDTOList[].menuId").type(JsonFieldType.NUMBER).description("메뉴 ID"),
+            fieldWithPath("menuResponseDTOList[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
+            fieldWithPath("menuResponseDTOList[].price").type(JsonFieldType.NUMBER).description("메뉴 가격"),
+            fieldWithPath("menuResponseDTOList[].imageUrl").type(JsonFieldType.STRING).description("메뉴 이미지 URL"),
+            fieldWithPath("subscribeResponseDTOList[].type").type(JsonFieldType.STRING).description("구독 타입"),
+            fieldWithPath("subscribeResponseDTOList[].subscribeId").type(JsonFieldType.NUMBER).description("구독 ID"),
+            fieldWithPath("subscribeResponseDTOList[].storeId").type(JsonFieldType.NUMBER).description("구독이 속한 가게 ID"),
+            fieldWithPath("subscribeResponseDTOList[].name").type(JsonFieldType.STRING).description("구독 이름"),
+            fieldWithPath("subscribeResponseDTOList[].price").type(JsonFieldType.NUMBER).description("구독 가격"),
+            fieldWithPath("subscribeResponseDTOList[].intro").type(JsonFieldType.STRING).description("구독 소개"),
+            fieldWithPath("subscribeResponseDTOList[].isTop").type(JsonFieldType.BOOLEAN).description("구독 우선순위 여부"),
+            fieldWithPath("subscribeResponseDTOList[].useCount").type(JsonFieldType.NUMBER).optional().description("이용 횟수"),
+            fieldWithPath("subscribeResponseDTOList[].createAt").type(JsonFieldType.STRING).description("구독 생성 일시"),
+            fieldWithPath("subscribeResponseDTOList[].modifiedAt").type(JsonFieldType.STRING).description("구독 수정 일시"),
+            fieldWithPath("subscribeResponseDTOList[].benefits[].description").type(JsonFieldType.STRING).description("혜택 설명"),
+            fieldWithPath("storeImageUrlList").type(JsonFieldType.ARRAY).description("가게 이미지 URL 리스트")
     };
 
     FieldDescriptor[] updateRequestJsonField = new FieldDescriptor[] {
@@ -224,9 +278,55 @@ public class StoreControllerTest {
     @DisplayName("특정 가게 아이디 값을 통해 가게를 검색할 수 있다.")
     void givenStoreId_whenFindById_thenReturnStore() throws Exception {
         Long id = storeService.create(dto, BOSS_TEST_EMAIL).getId();
+        Store store = storeRepository.findById(id).get();
+        // 메뉴 생성
+        MenuRequestDTO menuRequestDTO1 = MenuRequestDTO.builder()
+                .name("김치찌개")
+                .price(BigDecimal.valueOf(12000))
+                .storeId(id)
+                .multipartFile(null)
+                .build();
+        MenuRequestDTO menuRequestDTO2 = MenuRequestDTO.builder()
+                .name("부대찌개")
+                .price(BigDecimal.valueOf(10000))
+                .storeId(id)
+                .multipartFile(null)
+                .build();
+        menuService.create(menuRequestDTO1);
+        menuService.create(menuRequestDTO2);
 
-        mockMvc.perform(get("/api/v1/store/find?id="+ id)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        // 구독권 생성
+        SubscribeRequestDTO subscribeRequestDTO1 = SubscribeRequestDTO.builder()
+                .isTop(true)
+                .useCount(5)
+                .type(COUNT)
+                .storeId(id)
+                .price(BigDecimal.valueOf(12000))
+                .intro("INTRO TEST")
+                .name("NAME TEST")
+                .benefits(List.of(new BenefitDTO("혜택 1"), new BenefitDTO("혜택 2")))
+                .build();
+
+        SubscribeRequestDTO subscribeRequestDTO2 = SubscribeRequestDTO.builder()
+                .isTop(true)
+                .type(MONTHLY)
+                .storeId(id)
+                .price(BigDecimal.valueOf(10000))
+                .intro("INTRO TEST")
+                .name("NAME TEST")
+                .benefits(List.of(new BenefitDTO("혜택 3"), new BenefitDTO("혜택 4")))
+                .build();
+
+        subscribeService.create(subscribeRequestDTO1);
+        subscribeService.create(subscribeRequestDTO2);
+
+        // 가게 이미지 저장
+        StoreImage storeImage1 = storeImageRepository.save(new StoreImage(store,"이미지1 URL"));
+        StoreImage storeImage2 = storeImageRepository.save(new StoreImage(store,"이미지2 URL"));
+        store.getStoreImages().add(storeImage1);
+        store.getStoreImages().add(storeImage2);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/store/find/{storeId}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value(dto.getName()))
@@ -242,12 +342,13 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.businessHours[0].hours").value(dto.getBusinessHours().get(0).getHours()))
                 .andExpect(jsonPath("$.businessHours[1].weeks").value(dto.getBusinessHours().get(1).getWeeks()))
                 .andExpect(jsonPath("$.businessHours[1].hours").value(dto.getBusinessHours().get(1).getHours()))
+                .andExpect(jsonPath("$.menuResponseDTOList").exists())
+                .andExpect(jsonPath("$.subscribeResponseDTOList").exists())
+                .andExpect(jsonPath("$.storeImageUrlList").exists())
                 .andDo(document("store/find",
-                        requestParameters(
-                                parameterWithName("id").description("가게 아이디"),
-                                parameterWithName("_csrf").description("CSRF 토큰 정보")),
-                        responseFields(findResponseJsonField)
-
+                        pathParameters(
+                                parameterWithName("storeId").description("가게 아이디")),
+                        responseFields(findDetailResponseJsonField)
                 ));
     }
 
