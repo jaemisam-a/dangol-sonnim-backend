@@ -1,7 +1,12 @@
 package com.dangol.dangolsonnimbackend.subscribe.repository;
 
+import com.dangol.dangolsonnimbackend.boss.domain.Boss;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.store.repository.CategoryRepository;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.subscribe.domain.CountSubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
@@ -23,9 +28,27 @@ class CountSubscribeRepositoryTest {
     @Autowired
     private StoreRepository storeRepository;
 
+    private static final String BOSS_TEST_NAME = "GilDong";
+    private static final String BOSS_TEST_EMAIL = "test@example.com";
+    private static final String BOSS_TEST_PASSWORD = "password";
+    private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
+    private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+    @Autowired
+    private BossService bossService;
+    @Autowired
+    private CategoryRepository categoryRepository;
     @Test
     void givenCountSubscribe_whenSaveCountSubscribe_thenSuccess() {
         // given
+        BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();
+        bossSignupRequestDTO.setName(BOSS_TEST_NAME);
+        bossSignupRequestDTO.setEmail(BOSS_TEST_EMAIL);
+        bossSignupRequestDTO.setPassword(BOSS_TEST_PASSWORD);
+        bossSignupRequestDTO.setPhoneNumber(BOSS_TEST_PHONE_NUMBER);
+        bossSignupRequestDTO.setMarketingAgreement(BOSS_TEST_MARKETING_AGREEMENT);
+        bossService.signup(bossSignupRequestDTO);
+        Boss boss = bossService.findByEmail(BOSS_TEST_EMAIL);
+
         StoreSignupRequestDTO dto = StoreSignupRequestDTO.builder()
                 .name("단골손님")
                 .phoneNumber("01012345678")
@@ -40,7 +63,12 @@ class CountSubscribeRepositoryTest {
                 .registerName("단골손님")
                 .tags(List.of("태그1", "태그2"))
                 .build();
-        Store store = storeRepository.save(new Store(dto));
+        Category category = new Category();
+        category.setCategoryType(dto.getCategoryType());
+        categoryRepository.save(category);
+
+        Store store = new Store(dto, category, boss);
+        storeRepository.save(store);
 
         Integer useCount = 10;
         SubscribeRequestDTO subscribeRequestDTO = SubscribeRequestDTO.builder()

@@ -44,8 +44,6 @@ class CategoryRepositoryTest {
     private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
     private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
     @Autowired
-    private StoreService storeService;
-    @Autowired
     private BossService bossService;
 
     @BeforeEach
