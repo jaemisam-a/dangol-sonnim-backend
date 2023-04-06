@@ -6,8 +6,10 @@ import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.InternalServerException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
+import com.dangol.dangolsonnimbackend.store.domain.BusinessHour;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
@@ -20,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,7 +69,14 @@ public class StoreServiceImpl implements StoreService {
         storeRepository.save(store);
 
         // 태그를 추가해주는 과정입니다.
-        store.setTags(tagService.getOrCreateTags(dto.getTags()));
+        store.setTags(tagService.getOrCreateTags(Optional.ofNullable(dto.getTags()).orElse(Collections.emptyList())));
+        // BusinessHour 생성
+        List<BusinessHour> businessHours = new ArrayList<>();
+        for (BusinessHourRequestDTO businessHourRequestDTO : dto.getBusinessHours()) {
+            BusinessHour businessHour = new BusinessHour(businessHourRequestDTO, store);
+            businessHours.add(businessHour);
+        }
+        store.setBusinessHours(businessHours);
 
         return new StoreResponseDTO(store);
     }
@@ -105,6 +116,15 @@ public class StoreServiceImpl implements StoreService {
 
         if (dto.getTags() != null && !dto.getTags().isEmpty()) {
             store.get().setTags(tagService.getOrCreateTags(dto.getTags()));
+        }
+
+        if (dto.getBusinessHours() != null && !dto.getBusinessHours().isEmpty()) {
+            List<BusinessHour> businessHours = new ArrayList<>();
+            for (BusinessHourRequestDTO businessHourRequestDTO : dto.getBusinessHours()) {
+                BusinessHour businessHour = new BusinessHour(businessHourRequestDTO, store.get());
+                businessHours.add(businessHour);
+            }
+            store.get().setBusinessHours(businessHours);
         }
 
         return store
