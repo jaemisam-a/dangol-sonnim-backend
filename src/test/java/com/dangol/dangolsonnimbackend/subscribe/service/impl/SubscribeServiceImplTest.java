@@ -7,8 +7,8 @@ import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.repository.CategoryRepository;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.subscribe.domain.CountSubscribe;
@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -76,10 +75,11 @@ class SubscribeServiceImplTest {
                 .bname1("단골동")
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
-                .officeHours("08:00~10:00")
                 .registerNumber("123-456-789")
                 .registerName("단골손님")
                 .tags(List.of("태그1", "태그2"))
+                .businessHours(List.of(new BusinessHourRequestDTO("월~수", "10:00~12:00"),
+                        new BusinessHourRequestDTO("토,일", "10:00~12:00")))
                 .build();
 
         Category category = new Category();

@@ -31,8 +31,6 @@ public class StoreUpdateDTO {
 
     private Optional<String> comments = Optional.empty();
 
-    private Optional<String> officeHours = Optional.empty();
-
     @NotNull
     private String registerNumber;
 
@@ -41,6 +39,7 @@ public class StoreUpdateDTO {
     private Optional<CategoryType> categoryType = Optional.empty();
 
     private List<String> tags;
+    private List<BusinessHourRequestDTO> businessHours;
 
     private StoreUpdateDTO() { }
 
@@ -57,7 +56,6 @@ public class StoreUpdateDTO {
     public StoreUpdateDTO bname2(String bname2) { this.bname2 = Optional.of(bname2); return this; }
     public StoreUpdateDTO detailedAddress(String detailedAddress) { this.detailedAddress = Optional.of(detailedAddress); return this;}
     public StoreUpdateDTO comments(String comments) { this.comments = Optional.of(comments); return this; }
-    public StoreUpdateDTO officeHours(String officeHours) { this.officeHours = Optional.of(officeHours); return this; }
     public StoreUpdateDTO registerNumber(String registerNumber) { this.registerNumber = registerNumber; return this; }
     public StoreUpdateDTO registerName(String registerName) { this.registerName = Optional.of(registerName); return this; }
     public StoreUpdateDTO categoryType(CategoryType categoryType) { this.categoryType = Optional.of(categoryType); return this; }

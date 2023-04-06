@@ -4,10 +4,7 @@ import com.amazonaws.util.IOUtils;
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.store.domain.Menu;
-import com.dangol.dangolsonnimbackend.store.dto.MenuRequestDTO;
-import com.dangol.dangolsonnimbackend.store.dto.MenuResponseDTO;
-import com.dangol.dangolsonnimbackend.store.dto.MenuUpdateRequestDTO;
-import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.store.dto.*;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.repository.MenuRepository;
 import com.dangol.dangolsonnimbackend.store.repository.dsl.MenuQueryRepository;
@@ -127,11 +124,12 @@ class MenuControllerTest {
                 .bname2("")
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
-                .officeHours("08:00~10:00")
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .categoryType(CategoryType.KOREAN)
                 .tags(List.of("태그1", "태그2"))
+                .businessHours(List.of(new BusinessHourRequestDTO("월~수", "10:00~12:00"),
+                        new BusinessHourRequestDTO("토,일", "10:00~12:00")))
                 .build();
 
         return storeService.create(dto, BOSS_TEST_EMAIL).getId();

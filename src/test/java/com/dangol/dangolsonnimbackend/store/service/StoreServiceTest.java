@@ -1,15 +1,14 @@
 package com.dangol.dangolsonnimbackend.store.service;
 
-import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
+import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.repository.CategoryRepository;
-import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.store.repository.dsl.StoreQueryRepository;
 import com.dangol.dangolsonnimbackend.store.service.impl.StoreServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,11 +57,12 @@ public class StoreServiceTest {
                 .bname2("")
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
-                .officeHours("08:00~10:00")
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .categoryType(CategoryType.KOREAN)
                 .tags(List.of("태그1", "태그2"))
+                .businessHours(List.of(new BusinessHourRequestDTO("월~수", "10:00~12:00"),
+                        new BusinessHourRequestDTO("토,일", "10:00~12:00")))
                 .build();
 
         BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();

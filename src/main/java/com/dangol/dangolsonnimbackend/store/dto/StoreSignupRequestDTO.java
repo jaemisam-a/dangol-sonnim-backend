@@ -36,9 +36,6 @@ public class StoreSignupRequestDTO {
     @NotNull(message = "한줄소개는 Null 일 수 없습니다.")
     private String comments;
 
-    @NotNull(message = "영업시간은 Null 일 수 없습니다.")
-    private String officeHours;
-
     @NotNull(message = "카테고리는 Null 일 수 없습니다.")
     private CategoryType categoryType;
 
@@ -48,6 +45,9 @@ public class StoreSignupRequestDTO {
     @NotNull(message = "사업자명은 Null 일 수 없습니다.")
     private String registerName;
 
+    @NotNull(message = "태그는 Null 일 수 없습니다.")
     private List<String> tags;
 
+    @NotNull(message = "영업시간은 Null 일 수 없습니다.")
+    private List<BusinessHourRequestDTO> businessHours;
 }

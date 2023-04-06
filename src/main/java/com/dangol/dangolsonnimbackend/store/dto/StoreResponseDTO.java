@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -41,8 +40,7 @@ public class StoreResponseDTO {
 
     private CategoryType categoryType;
     private List<String> tags;
-
-    // TODO. 태그 및 이미지 필드 추가
+    private List<BusinessHourRequestDTO> businessHours;
 
     public StoreResponseDTO(Store store) {
         this.id = store.getId();
@@ -58,5 +56,7 @@ public class StoreResponseDTO {
         this.registerName = store.getRegisterName();
         this.categoryType = store.getCategory().getCategoryType();
         this.tags = store.getTags().stream().map(Tag::getName).collect(Collectors.toList());
+        this.businessHours = store.getBusinessHours().stream().map(BusinessHourRequestDTO::new)
+                .collect(Collectors.toList());
     }
 }
