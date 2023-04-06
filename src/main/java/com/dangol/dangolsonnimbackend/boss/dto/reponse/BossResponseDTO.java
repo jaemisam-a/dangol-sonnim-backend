@@ -1,4 +1,4 @@
-package com.dangol.dangolsonnimbackend.boss.dto;
+package com.dangol.dangolsonnimbackend.boss.dto.reponse;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import lombok.AllArgsConstructor;

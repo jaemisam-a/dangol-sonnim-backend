@@ -1,11 +1,13 @@
 package com.dangol.dangolsonnimbackend.store.repository.dsl;
 
+import com.dangol.dangolsonnimbackend.boss.domain.QBoss;
 import com.dangol.dangolsonnimbackend.store.domain.QStore;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -53,5 +55,13 @@ public class StoreQueryRepository {
                 queryFactory.selectFrom(QStore.store)
                 .where(QStore.store.registerNumber.eq(registerNumber))
                 .fetchOne());
+    }
+
+    public Optional<List<Store>> findMyStore(String email) {
+        return Optional.ofNullable(
+                queryFactory.selectFrom(QStore.store)
+                        .leftJoin(QStore.store.boss, QBoss.boss).fetchJoin()
+                        .where(QStore.store.boss.email.eq(email))
+                        .fetch());
     }
 }

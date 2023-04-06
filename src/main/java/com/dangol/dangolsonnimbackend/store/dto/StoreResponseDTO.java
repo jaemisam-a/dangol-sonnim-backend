@@ -1,10 +1,16 @@
 package com.dangol.dangolsonnimbackend.store.dto;
 
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.domain.Tag;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -33,6 +39,9 @@ public class StoreResponseDTO {
 
     private String registerName;
 
+    private CategoryType categoryType;
+    private List<String> tags;
+
     // TODO. 태그 및 이미지 필드 추가
 
     public StoreResponseDTO(Store store) {
@@ -47,5 +56,7 @@ public class StoreResponseDTO {
         this.detailedAddress = store.getDetailedAddress();
         this.registerNumber = store.getRegisterNumber();
         this.registerName = store.getRegisterName();
+        this.categoryType = store.getCategory().getCategoryType();
+        this.tags = store.getTags().stream().map(Tag::getName).collect(Collectors.toList());
     }
 }

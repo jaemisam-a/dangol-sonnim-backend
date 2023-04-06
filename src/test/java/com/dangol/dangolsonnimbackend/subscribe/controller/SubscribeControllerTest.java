@@ -1,5 +1,7 @@
 package com.dangol.dangolsonnimbackend.subscribe.controller;
 
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
@@ -64,6 +66,13 @@ class SubscribeControllerTest {
     @Autowired
     private SubscribeService subscribeService;
     private SubscribeRequestDTO subscribeRequestDTO;
+    private static final String BOSS_TEST_NAME = "GilDong";
+    private static final String BOSS_TEST_EMAIL = "test@example.com";
+    private static final String BOSS_TEST_PASSWORD = "password";
+    private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
+    private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+    @Autowired
+    private BossService bossService;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDocumentation){
@@ -90,6 +99,7 @@ class SubscribeControllerTest {
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .categoryType(CategoryType.KOREAN)
+                .tags(List.of("태그1", "태그2"))
                 .build();
 
         List<BenefitDTO> benefitDTOList = List.of(
@@ -98,12 +108,15 @@ class SubscribeControllerTest {
                 new BenefitDTO("Benefit 3")
         );
 
-        Category category = new Category();
-        category.setCategoryType(CategoryType.KOREAN);
-        categoryRepository.save(category);
+        BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();
+        bossSignupRequestDTO.setName(BOSS_TEST_NAME);
+        bossSignupRequestDTO.setEmail(BOSS_TEST_EMAIL);
+        bossSignupRequestDTO.setPassword(BOSS_TEST_PASSWORD);
+        bossSignupRequestDTO.setPhoneNumber(BOSS_TEST_PHONE_NUMBER);
+        bossSignupRequestDTO.setMarketingAgreement(BOSS_TEST_MARKETING_AGREEMENT);
+        bossService.signup(bossSignupRequestDTO);
 
-        Long storeId = storeService.signup(signupRequestDTO).getId();
-
+        Long storeId = storeService.create(signupRequestDTO, BOSS_TEST_EMAIL).getId();
         subscribeRequestDTO = SubscribeRequestDTO.builder()
                 .isTop(true)
                 .useCount(5)
