@@ -69,6 +69,10 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void delete(Long menuId) {
+        Menu menu = menuQueryRepository.findById(menuId).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.MENU_NOT_FOUND)
+        );
+        menu.getStore().getMenuList().remove(menu);
         menuRepository.deleteById(menuId);
     }
 
