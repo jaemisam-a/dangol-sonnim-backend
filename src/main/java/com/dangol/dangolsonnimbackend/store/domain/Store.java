@@ -72,8 +72,8 @@ public class Store {
     private String registerName;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Menu> menuList;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Menu> menuList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -88,12 +88,12 @@ public class Store {
     private Set<Tag> tags = new HashSet<>();
     
     @Column
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("id asc")
     private List<Subscribe> subscribeList = new ArrayList<>();
 
     @Column
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id asc")
     private List<StoreImage> storeImages = new ArrayList<>();
 
