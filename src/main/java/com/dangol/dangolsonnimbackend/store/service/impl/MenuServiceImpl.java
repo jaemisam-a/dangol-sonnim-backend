@@ -40,7 +40,9 @@ public class MenuServiceImpl implements MenuService {
                 () -> new NotFoundException(ErrorCodeMessage.STORE_NOT_FOUND)
         );
         String s3FileUrl = uploadFileIfPresent(dto.getMultipartFile());
-        return new MenuResponseDTO(menuRepository.save(new Menu(dto.getName(), s3FileUrl, store, dto.getPrice())));
+        Menu menu = menuRepository.save(new Menu(dto.getName(), s3FileUrl, store, dto.getPrice()));
+        store.getMenuList().add(menu);
+        return new MenuResponseDTO(menu);
     }
 
     @Override
