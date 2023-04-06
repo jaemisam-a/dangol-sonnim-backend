@@ -2,9 +2,7 @@ package com.dangol.dangolsonnimbackend.store.controller;
 
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
-import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
-import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.dangol.dangolsonnimbackend.store.dto.*;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,5 +70,14 @@ public class StoreController {
         } catch (JacksonException e) {
             throw new BadRequestException(ErrorCodeMessage.REQUEST_NOT_INVALID);
         }
+    }
+
+    @PostMapping("/image-upload")
+    public ResponseEntity<Void> imageUpload(@Valid @ModelAttribute StoreImageUploadRequestDTO dto) {
+        storeService.imageUpload(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }
