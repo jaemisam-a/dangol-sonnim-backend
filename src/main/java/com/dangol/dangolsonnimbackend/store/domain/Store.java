@@ -54,9 +54,6 @@ public class Store {
     @Column(nullable = false)
     private String comments;
 
-    @Column(nullable = false)
-    private String officeHours;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "boss_id", nullable = false)
     @JsonIgnore
@@ -77,6 +74,10 @@ public class Store {
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Menu> menuList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<BusinessHour> businessHours;
   
     @ManyToMany
     @JoinTable(
@@ -88,6 +89,7 @@ public class Store {
     
     @Column
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
     private List<Subscribe> subscribeList = new ArrayList<>();
 
     public Store(StoreSignupRequestDTO dto) {
@@ -100,7 +102,6 @@ public class Store {
         this.bname2 = dto.getBname2();
         this.detailedAddress = dto.getDetailedAddress();
         this.comments = dto.getComments();
-        this.officeHours = dto.getOfficeHours();
         this.registerName = dto.getRegisterName();
         this.registerNumber = dto.getRegisterNumber();
     }
@@ -133,7 +134,6 @@ public class Store {
         dto.getBname2().ifPresent(bname2 -> this.bname2 = bname2);
         dto.getDetailedAddress().ifPresent(detailedAddress -> this.detailedAddress = detailedAddress);
         dto.getComments().ifPresent(comments -> this.comments = comments);
-        dto.getOfficeHours().ifPresent(officeHours -> this.officeHours = officeHours);
         dto.getRegisterName().ifPresent(registerName -> this.registerName = registerName);
         category.ifPresent(newCategory -> updateCategory(newCategory));
 
@@ -141,7 +141,10 @@ public class Store {
     }
 
     public void setTags(Set<Tag> tags){
-        this.tags.clear();
         this.tags = tags;
+    }
+
+    public void setBusinessHours(List<BusinessHour> businessHours) {
+        this.businessHours = businessHours;
     }
 }
