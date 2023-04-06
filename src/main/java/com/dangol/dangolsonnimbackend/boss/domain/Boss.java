@@ -2,8 +2,8 @@ package com.dangol.dangolsonnimbackend.boss.domain;
 
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossUpdateRequestDTO;
-import com.dangol.dangolsonnimbackend.store.domain.Menu;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossRegisterAccountRequestDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,6 +55,9 @@ public class Boss {
     @JsonIgnore
     @OneToMany(mappedBy = "boss", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Store> storeList = new ArrayList<>();
+    private String accountHolder;
+    private String account;
+    private String bank;
 
     public Boss(BossSignupRequestDTO dto) {
         this.name = dto.getName();
@@ -62,14 +65,26 @@ public class Boss {
         this.phoneNumber = dto.getPhoneNumber();
         this.email = dto.getEmail();
         this.marketingAgreement = dto.getMarketingAgreement();
+        this.bank = "";
+        this.account = "";
+        this.accountHolder = "";
     }
 
     public void updateInfo(BossUpdateRequestDTO dto) {
         this.phoneNumber = dto.getPhoneNumber() != null ? dto.getPhoneNumber() : this.phoneNumber;
         this.marketingAgreement = dto.getMarketingAgreement() != null ? dto.getMarketingAgreement() : this.marketingAgreement;
+        this.account = dto.getAccount() != null ? dto.getAccount() : this.getAccount();
+        this.accountHolder = dto.getAccountHolder() != null ? dto.getAccountHolder() : this.getAccountHolder();
+        this.bank = dto.getBank() != null ? dto.getBank() : this.getBank();
     }
 
     public void updatePassword(String encodedPassword){
         this.password = encodedPassword;
+    }
+
+    public void registerAccount(BossRegisterAccountRequestDTO dto){
+        this.account = dto.getAccount();
+        this.accountHolder = dto.getAccountHolder();
+        this.bank = dto.getBank();
     }
 }
