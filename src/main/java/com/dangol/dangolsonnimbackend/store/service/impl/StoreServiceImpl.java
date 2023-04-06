@@ -8,7 +8,6 @@ import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
-import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.store.repository.dsl.CategoryQueryRepository;
 import com.dangol.dangolsonnimbackend.store.repository.dsl.StoreQueryRepository;
@@ -25,12 +24,14 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final StoreQueryRepository storeQueryRepository;
     private final CategoryQueryRepository categoryQueryRepository;
+    private final TagServiceImpl tagService;
 
     @Autowired
-    public StoreServiceImpl(StoreRepository storeRepository, StoreQueryRepository storeQueryRepository, CategoryQueryRepository categoryQueryRepository) {
+    public StoreServiceImpl(StoreRepository storeRepository, StoreQueryRepository storeQueryRepository, CategoryQueryRepository categoryQueryRepository, TagServiceImpl tagService) {
         this.storeRepository = storeRepository;
         this.storeQueryRepository = storeQueryRepository;
         this.categoryQueryRepository = categoryQueryRepository;
+        this.tagService = tagService;
     }
 
     /**
@@ -51,6 +52,9 @@ public class StoreServiceImpl implements StoreService {
 
         Store store = new Store(dto, category);
         storeRepository.save(store);
+
+        // 태그를 추가해주는 과정입니다.
+        store.setTags(tagService.getOrCreateTags(dto.getTags()));
 
         return new StoreResponseDTO(store);
     }
@@ -86,6 +90,10 @@ public class StoreServiceImpl implements StoreService {
 
         if(store.isEmpty())
             throw new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND);
+
+        if (dto.getTags() != null && !dto.getTags().isEmpty()) {
+            store.get().setTags(tagService.getOrCreateTags(dto.getTags()));
+        }
 
         return store
                 .filter(o -> o.getRegisterNumber() != null)

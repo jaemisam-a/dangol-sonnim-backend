@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +52,7 @@ public class StoreServiceTest {
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .categoryType(CategoryType.KOREAN)
+                .tags(List.of("태그1", "태그2"))
                 .build();
 
         categoryRepository.saveAndFlush(new Category(CategoryType.KOREAN));
