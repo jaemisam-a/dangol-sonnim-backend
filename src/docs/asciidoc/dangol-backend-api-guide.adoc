@@ -154,6 +154,37 @@ include::{snippets}/boss/register-account/http-response.adoc[]
 === 손님 API
 
 === 가게 API
+
+|===
+| 카테고리 | categoryType
+
+| `한식`
+| KOREAN.
+
+| `일식`
+| JAPANESE
+
+| `중식`
+| CHINESE
+
+| `양식`
+| WESTERN
+
+| `분식`
+| BUNSIK
+
+| `카페`
+| CAFE
+|===
+
+카테고리
+,
+,
+,
+,
+,
+
+
 ==== 1. 가게 등록
 새로운 가게 정보를 등록합니다.
 
@@ -337,13 +368,20 @@ include::{snippets}/menu/delete/http-request.adoc[]
 include::{snippets}/menu/delete/http-response.adoc[]
 
 === 구독권 API
-새로운 구독권을 등록합니다.
 
-횟수 구독권 : COUNT
+|===
+| 구독권 종류 | type
 
-정기 구독권 : MONTHLY
+| `횟수 차감 구독권`
+| COUNT
+
+| `정기 구독권`
+| MONTHLY
+
+|===
 
 ==== 1. 구독권 등록
+새로운 구독권을 등록합니다.
 
 - Request
 include::{snippets}/subscribe/create/http-request.adoc[]
@@ -353,6 +391,7 @@ include::{snippets}/subscribe/create/request-fields.adoc[]
 include::{snippets}/subscribe/create/http-response.adoc[]
 
 ==== 2. 구독권 조회
+구독권을 조회합니다.
 
 - Request
 include::{snippets}/subscribe/get/http-request.adoc[]
@@ -362,6 +401,7 @@ include::{snippets}/subscribe/get/path-parameters.adoc[]
 include::{snippets}/subscribe/get/http-response.adoc[]
 
 ==== 3. 구독권 삭제
+구독권을 삭제합니다.
 
 - Request
 include::{snippets}/subscribe/delete/http-request.adoc[]
