@@ -2,7 +2,7 @@ package com.dangol.dangolsonnimbackend.boss.domain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dangol.dangolsonnimbackend.boss.dto.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import org.junit.jupiter.api.Test;
 
 class BossTest {

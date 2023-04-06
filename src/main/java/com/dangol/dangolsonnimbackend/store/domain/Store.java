@@ -3,13 +3,16 @@ package com.dangol.dangolsonnimbackend.store.domain;
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -54,11 +57,12 @@ public class Store {
     @Column(nullable = false)
     private String officeHours;
 
-    @OneToOne
-    @JoinColumn(name="boss_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "boss_id", nullable = false)
+    @JsonIgnore
     private Boss boss;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category")
     @ToString.Exclude
     private Category category;
@@ -70,6 +74,18 @@ public class Store {
     @Column(nullable = false)
     private String registerName;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Menu> menuList;
+  
+    @ManyToMany
+    @JoinTable(
+            name = "store_tag",
+            joinColumns = @JoinColumn(name = "store_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+    
     @Column
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subscribe> subscribeList = new ArrayList<>();
@@ -89,10 +105,12 @@ public class Store {
         this.registerNumber = dto.getRegisterNumber();
     }
 
-    public Store(StoreSignupRequestDTO dto, Category category) {
+    public Store(StoreSignupRequestDTO dto, Category category, Boss boss) {
         this(dto);
         this.category = category;
         this.category.addStore(this);
+        this.boss = boss;
+        this.boss.getStoreList().add(this);
     }
 
     public void updateName(String name) {
@@ -105,7 +123,7 @@ public class Store {
         this.category.addStore(this);
     }
 
-    public Optional<Store> update(StoreUpdateDTO dto) {
+    public Optional<Store> update(StoreUpdateDTO dto, Optional<Category> category) {
         dto.getName().ifPresent(name -> this.name = name);
         dto.getPhoneNumber().ifPresent(phoneNumber -> this.phoneNumber = phoneNumber);
         dto.getNewAddress().ifPresent(newAddress -> this.newAddress = newAddress);
@@ -117,7 +135,13 @@ public class Store {
         dto.getComments().ifPresent(comments -> this.comments = comments);
         dto.getOfficeHours().ifPresent(officeHours -> this.officeHours = officeHours);
         dto.getRegisterName().ifPresent(registerName -> this.registerName = registerName);
+        category.ifPresent(newCategory -> updateCategory(newCategory));
 
         return Optional.of(this);
+    }
+
+    public void setTags(Set<Tag> tags){
+        this.tags.clear();
+        this.tags = tags;
     }
 }

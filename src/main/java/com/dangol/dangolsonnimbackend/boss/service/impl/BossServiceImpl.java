@@ -1,7 +1,10 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.*;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossFindEmailResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossSigninResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.*;
 import com.dangol.dangolsonnimbackend.boss.repository.BossRepository;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
@@ -92,7 +95,7 @@ public class BossServiceImpl implements BossService {
 
     private void validateSignup(BossSignupRequestDTO dto) {
         if (bossQueryRepository.existsByEmail(dto.getEmail())) {
-            throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);
+            throw new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND);
         }
         if (bossQueryRepository.existsByPhoneNumber(dto.getPhoneNumber())) {
             throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);

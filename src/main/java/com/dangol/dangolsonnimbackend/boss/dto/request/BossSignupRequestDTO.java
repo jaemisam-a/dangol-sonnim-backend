@@ -1,4 +1,4 @@
-package com.dangol.dangolsonnimbackend.boss.dto;
+package com.dangol.dangolsonnimbackend.boss.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

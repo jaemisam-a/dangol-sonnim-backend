@@ -1,8 +1,14 @@
 package com.dangol.dangolsonnimbackend.store.service;
 
+import com.dangol.dangolsonnimbackend.boss.domain.Boss;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
+import com.dangol.dangolsonnimbackend.store.repository.CategoryRepository;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.store.repository.dsl.StoreQueryRepository;
 import com.dangol.dangolsonnimbackend.store.service.impl.StoreServiceImpl;
@@ -13,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,15 +29,22 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 public class StoreServiceTest {
     @Autowired
-    private StoreRepository storeRepository;
-
-    @Autowired
     private StoreQueryRepository storeQueryRepository;
 
     @Autowired
     private StoreServiceImpl storeService;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     private StoreSignupRequestDTO dto;
+    private static final String BOSS_TEST_NAME = "GilDong";
+    private static final String BOSS_TEST_EMAIL = "test@example.com";
+    private static final String BOSS_TEST_PASSWORD = "password";
+    private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
+    private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+    @Autowired
+    private BossService bossService;
 
     @BeforeEach
     public void setup() {
@@ -47,40 +61,56 @@ public class StoreServiceTest {
                 .officeHours("08:00~10:00")
                 .registerNumber("1234567890")
                 .registerName("단골손님")
+                .categoryType(CategoryType.KOREAN)
+                .tags(List.of("태그1", "태그2"))
                 .build();
+
+        BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();
+        bossSignupRequestDTO.setName(BOSS_TEST_NAME);
+        bossSignupRequestDTO.setEmail(BOSS_TEST_EMAIL);
+        bossSignupRequestDTO.setPassword(BOSS_TEST_PASSWORD);
+        bossSignupRequestDTO.setPhoneNumber(BOSS_TEST_PHONE_NUMBER);
+        bossSignupRequestDTO.setMarketingAgreement(BOSS_TEST_MARKETING_AGREEMENT);
+        bossService.signup(bossSignupRequestDTO);
     }
 
     @Test
     @DisplayName("새로운 가게 정보를 전달받으면 가게를 생성하도록 한다.")
-    public void givenRequestDto_whenSignup_thenSaveStore() {
-        StoreResponseDTO response = storeService.signup(dto);
+    void givenRequestDto_whenSignup_thenSaveStore() {
+        StoreResponseDTO response = storeService.create(dto, BOSS_TEST_EMAIL);
 
         assertEquals(response.getName(), dto.getName());
         assertEquals(response.getNewAddress(), dto.getNewAddress());
+        assertEquals(response.getCategoryType(), dto.getCategoryType());
     }
 
     @Test
     @DisplayName("가게 ID 값을 전달받으면 가게를 정상적으로 조회할 수 있다")
-    public void givenStoreId_whenFindById_thenReturnStore() {
-        StoreResponseDTO response = storeService.signup(dto);
+    void givenStoreId_whenFindById_thenReturnStore() {
+        StoreResponseDTO response = storeService.create(dto, BOSS_TEST_EMAIL);
 
         assertTrue(storeQueryRepository.findById(response.getId()).isPresent());
     }
 
     @Test
     @DisplayName("수정할 가게 정보를 전달받으면 가게를 수정하도록 한다.")
-    public void givenUpdateDto_whenFindByRegisterNumber_thenUpdateStore() {
-        storeService.signup(dto);
+    void givenUpdateDto_whenFindByRegisterNumber_thenUpdateStore() {
+        storeService.create(dto, BOSS_TEST_EMAIL);
+        Category category = new Category();
+        category.setCategoryType(CategoryType.CHINESE);
+        categoryRepository.save(category);
 
         StoreUpdateDTO updateDto =
                 new StoreUpdateDTO(dto.getRegisterNumber())
                         .name("단골손님" + new Random().nextInt())
-                        .sido("부산광역시");
+                        .sido("부산광역시")
+                        .categoryType(CategoryType.CHINESE);
 
         StoreResponseDTO response = storeService.updateStoreByDto(updateDto);
 
         assertNotEquals(dto.getName(), storeQueryRepository.findById(response.getId()).get().getName());
         assertNotEquals(dto.getSido(), storeQueryRepository.findById(response.getId()).get().getSido());
+        assertEquals(CategoryType.CHINESE, response.getCategoryType());
     }
 
 }

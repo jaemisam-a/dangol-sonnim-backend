@@ -31,4 +31,10 @@ public class SubscribeController {
         SubscribeResponseDTO responseDTO = subscribeService.getSubscribe(subscribeId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
+
+    @DeleteMapping("/{subscribeId}")
+    public ResponseEntity<Void> deleteSubscribe(@PathVariable Long subscribeId){
+        subscribeService.deleteSubscribe(subscribeId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

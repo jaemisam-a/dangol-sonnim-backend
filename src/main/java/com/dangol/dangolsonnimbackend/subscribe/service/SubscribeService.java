@@ -10,4 +10,6 @@ public interface SubscribeService {
     Subscribe classify(SubscribeRequestDTO dto, Store store);
 
     SubscribeResponseDTO getSubscribe(Long subscribeId);
+
+    void deleteSubscribe(Long subscribeId);
 }

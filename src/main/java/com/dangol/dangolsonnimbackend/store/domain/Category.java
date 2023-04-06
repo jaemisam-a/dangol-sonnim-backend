@@ -29,6 +29,10 @@ public class Category {
     @ToString.Exclude
     private List<Store> store = new ArrayList<>();
 
+    public Category(CategoryType categoryType) {
+        this.categoryType = categoryType;
+    }
+
     public void addStore(Store store) {
         this.store.add(store);
     }
