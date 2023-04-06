@@ -92,6 +92,11 @@ public class Store {
     @OrderBy("id asc")
     private List<Subscribe> subscribeList = new ArrayList<>();
 
+    @Column
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id asc")
+    private List<StoreImage> storeImages = new ArrayList<>();
+
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
         this.phoneNumber = dto.getPhoneNumber();
@@ -147,4 +152,5 @@ public class Store {
     public void setBusinessHours(List<BusinessHour> businessHours) {
         this.businessHours = businessHours;
     }
+    public void setStoreImages(List<StoreImage> storeImages) {this.storeImages = storeImages;}
 }
