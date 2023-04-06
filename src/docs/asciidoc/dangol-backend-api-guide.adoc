@@ -196,7 +196,7 @@ include::{snippets}/store/create/request-fields.adoc[]
 include::{snippets}/store/create/http-response.adoc[]
 
 ==== 2. 가게 조회
-현재 가게 정보를 조회합니다.
+가게 정보를 상세 조회합니다.
 
 - Request
 include::{snippets}/store/find/http-request.adoc[]
