@@ -339,6 +339,10 @@ include::{snippets}/menu/delete/http-response.adoc[]
 === 구독권 API
 새로운 구독권을 등록합니다.
 
+횟수 구독권 : COUNT
+
+정기 구독권 : MONTHLY
+
 ==== 1. 구독권 등록
 
 - Request
