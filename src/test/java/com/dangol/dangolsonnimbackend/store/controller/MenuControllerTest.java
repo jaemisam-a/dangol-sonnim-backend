@@ -33,6 +33,7 @@ import javax.transaction.Transactional;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -113,6 +114,7 @@ class MenuControllerTest {
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .categoryType(CategoryType.KOREAN)
+                .tags(List.of("태그1", "태그2"))
                 .build();
 
         return storeService.create(dto).getId();
