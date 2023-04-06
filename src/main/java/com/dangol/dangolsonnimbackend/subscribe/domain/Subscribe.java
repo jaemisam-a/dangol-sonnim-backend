@@ -1,7 +1,6 @@
 package com.dangol.dangolsonnimbackend.subscribe.domain;
 
 import com.dangol.dangolsonnimbackend.store.domain.Store;
-import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
