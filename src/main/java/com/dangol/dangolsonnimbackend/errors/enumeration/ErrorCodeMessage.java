@@ -24,7 +24,8 @@ public enum ErrorCodeMessage {
     RESPONSE_CREATE_ERROR("응답 데이터를 생성하던 도중 에러가 발생하였습니다."),
     EMAIL_SEND_FAILURE("이메일 전송에 실패하였습니다."),
     FILE_UPLOAD_FAIL("파일 업로드에 실패했습니다."),
-    FILE_DELETE_FAIL("파일 삭제에 실패했습니다.");
+    FILE_DELETE_FAIL("파일 삭제에 실패했습니다."),
+    MENU_NOT_FOUND("존재하지 않는 메뉴입니다.");
 
     private final String message;
 }
