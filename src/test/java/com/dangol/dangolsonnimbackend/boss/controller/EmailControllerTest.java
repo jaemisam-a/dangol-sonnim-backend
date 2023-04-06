@@ -87,7 +87,7 @@ class EmailControllerTest {
         emailService.create(EMAIL, AUTH_CODE);
         IsValidAuthCodeRequestDTO requestDTO = new IsValidAuthCodeRequestDTO(EMAIL, AUTH_CODE);
 
-        mockMvc.perform(get(BASE_URL + "/valid")
+        mockMvc.perform(post(BASE_URL + "/valid")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDTO)))
                 .andExpect(jsonPath("$.isValid").value(true))

@@ -3,10 +3,13 @@ package com.dangol.dangolsonnimbackend.store.domain;
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -76,6 +79,10 @@ public class Store {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags = new HashSet<>();
+    
+    @Column
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subscribe> subscribeList = new ArrayList<>();
 
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
