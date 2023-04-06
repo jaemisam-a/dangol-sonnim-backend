@@ -21,7 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class EmailController {
     private final Map<String, Integer> requestCountMap = new ConcurrentHashMap<>();
-    private static final int MAX_REQUEST_COUNT = 5;
+    // TODO 클라이언트 테스트 완료시 MAX_REQUEST_COUNT 요청 제한 수정
+    private static final int MAX_REQUEST_COUNT = 100;
     private static final int DEFAULT_REQUEST_COUNT = 0;
     private static final int INCREASE_REQUEST_COUNT = 1;
     private final EmailService emailService;
@@ -48,7 +49,7 @@ public class EmailController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/valid")
+    @PostMapping("/valid")
     public ResponseEntity<AuthKeyResponseDTO> isValidAuthCode(@Valid @RequestBody IsValidAuthCodeRequestDTO requestDTO){
         AuthKeyResponseDTO responseDTO = emailService.isValidAuthCode(requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);

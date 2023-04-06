@@ -8,7 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -22,8 +23,9 @@ public class SubscribeResponseDTO {
     private String intro;
     private Boolean isTop;
     private Integer useCount;
-    private LocalDateTime createAt;
-    private LocalDateTime modifiedAt;
+    private String createAt;
+    private String modifiedAt;
+    private List<BenefitDTO> benefits;
 
     public SubscribeResponseDTO(CountSubscribe subscribe){
         this.type = SubscribeType.COUNT;
@@ -34,8 +36,9 @@ public class SubscribeResponseDTO {
         this.intro = subscribe.getIntro();
         this.isTop = subscribe.getIsTop();
         this.useCount = subscribe.getUseCount();
-        this.createAt = subscribe.getCreatedAt();
-        this.modifiedAt = subscribe.getModifiedAt();
+        this.createAt = String.valueOf(subscribe.getCreatedAt());
+        this.modifiedAt = String.valueOf(subscribe.getModifiedAt());
+        this.benefits = subscribe.getBenefits().stream().map(BenefitDTO::new).collect(Collectors.toList());
     }
 
     public SubscribeResponseDTO(MonthlySubscribe subscribe){
@@ -46,7 +49,8 @@ public class SubscribeResponseDTO {
         this.name = subscribe.getName();
         this.intro = subscribe.getIntro();
         this.isTop = subscribe.getIsTop();
-        this.createAt = subscribe.getCreatedAt();
-        this.modifiedAt = subscribe.getModifiedAt();
+        this.createAt = String.valueOf(subscribe.getCreatedAt());
+        this.modifiedAt = String.valueOf(subscribe.getModifiedAt());
+        this.benefits = subscribe.getBenefits().stream().map(BenefitDTO::new).collect(Collectors.toList());
     }
 }

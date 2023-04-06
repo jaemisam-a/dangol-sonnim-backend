@@ -4,11 +4,15 @@ import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -72,6 +76,18 @@ public class Store {
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Menu> menuList;
+  
+    @ManyToMany
+    @JoinTable(
+            name = "store_tag",
+            joinColumns = @JoinColumn(name = "store_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+    
+    @Column
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subscribe> subscribeList = new ArrayList<>();
 
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
@@ -119,5 +135,10 @@ public class Store {
         category.ifPresent(newCategory -> updateCategory(newCategory));
 
         return Optional.of(this);
+    }
+
+    public void setTags(Set<Tag> tags){
+        this.tags.clear();
+        this.tags = tags;
     }
 }

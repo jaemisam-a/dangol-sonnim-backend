@@ -16,7 +16,6 @@ public class IsValidAuthCodeRequestDTO {
     @NotNull(message = "이메일은 Null 일 수 없습니다.")
     @Email
     private String email;
-
     @NotNull
     private String authCode;
 }

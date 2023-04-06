@@ -213,3 +213,22 @@ include::{snippets}/menu/update/http-response.adoc[]
 include::{snippets}/menu/delete/http-request.adoc[]
 - Response
 include::{snippets}/menu/delete/http-response.adoc[]
+
+=== 구독권 API
+새로운 구독권을 등록합니다.
+==== 1. 구독권 등록
+
+- Request
+include::{snippets}/subscribe/create/http-request.adoc[]
+include::{snippets}/subscribe/create/request-fields.adoc[]
+
+- Response
+include::{snippets}/subscribe/create/http-response.adoc[]
+==== 2. 구독권 조회
+
+- Request
+include::{snippets}/subscribe/get/http-request.adoc[]
+include::{snippets}/subscribe/get/path-parameters.adoc[]
+
+- Response
+include::{snippets}/subscribe/get/http-response.adoc[]

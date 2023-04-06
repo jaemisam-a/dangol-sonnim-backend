@@ -4,6 +4,7 @@ import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
 @Setter
@@ -46,5 +47,7 @@ public class StoreSignupRequestDTO {
 
     @NotNull(message = "사업자명은 Null 일 수 없습니다.")
     private String registerName;
+
+    private List<String> tags;
 
 }

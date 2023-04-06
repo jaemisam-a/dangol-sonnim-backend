@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -38,6 +39,8 @@ public class StoreUpdateDTO {
     private Optional<String> registerName = Optional.empty();
 
     private Optional<CategoryType> categoryType = Optional.empty();
+
+    private List<String> tags;
 
     private StoreUpdateDTO() { }
 
