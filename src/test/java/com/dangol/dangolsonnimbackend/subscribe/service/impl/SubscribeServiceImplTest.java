@@ -161,4 +161,15 @@ class SubscribeServiceImplTest {
         assertNotNull(createdSubscribe);
         assertEquals(countSubscribeRequestDTO.getUseCount(), createdSubscribe.getUseCount());
     }
+
+    @Test
+    void givenSubscribeId_whenDeleteSubscribe_thenSuccess(){
+        // given
+        Long subscribeId = subscribeService.create(countSubscribeRequestDTO).getSubscribeId();
+        // when
+        subscribeService.deleteSubscribe(subscribeId);
+        // then
+
+        assertNull(subscribeRepository.findById(subscribeId).orElse(null));
+    }
 }

@@ -243,3 +243,13 @@ include::{snippets}/subscribe/get/path-parameters.adoc[]
 
 - Response
 include::{snippets}/subscribe/get/http-response.adoc[]
+
+==== 3. 구독권 삭제
+
+- Request
+include::{snippets}/subscribe/delete/http-request.adoc[]
+include::{snippets}/subscribe/delete/path-parameters.adoc[]
+
+- Response
+include::{snippets}/subscribe/delete/http-response.adoc[]
+

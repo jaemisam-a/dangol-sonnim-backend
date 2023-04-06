@@ -215,4 +215,17 @@ class SubscribeControllerTest {
                                 fieldWithPath("benefits[].description").type(JsonFieldType.STRING).description("구독권 혜택")
                         )));
     }
+
+    @Test
+    void givenSubscribeId_whenDeleteSubscribe_thenSuccess() throws Exception{
+        SubscribeResponseDTO subscribeResponseDTO = subscribeService.create(subscribeRequestDTO);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(BASE_URL + "/{subscribeId}", subscribeResponseDTO.getSubscribeId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(document("subscribe/delete",
+                        pathParameters(
+                                parameterWithName("subscribeId").description("구독권 아이디")
+                        )));
+    }
 }
