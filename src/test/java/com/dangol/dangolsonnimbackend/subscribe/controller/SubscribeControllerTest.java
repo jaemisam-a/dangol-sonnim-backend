@@ -103,7 +103,7 @@ class SubscribeControllerTest {
         categoryRepository.save(category);
 
         Long storeId = storeService.create(signupRequestDTO).getId();
-        SubscribeRequestDTO subscribeRequestDTO = SubscribeRequestDTO.builder()
+        subscribeRequestDTO = SubscribeRequestDTO.builder()
                 .isTop(true)
                 .useCount(5)
                 .type(COUNT)
