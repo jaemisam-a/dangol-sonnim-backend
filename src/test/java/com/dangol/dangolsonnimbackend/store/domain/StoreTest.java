@@ -1,8 +1,11 @@
 package com.dangol.dangolsonnimbackend.store.domain;
 
+import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -20,9 +23,10 @@ public class StoreTest {
                 .bname1("단골동")
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
-                .officeHours("08:00~10:00")
                 .registerNumber("123-456-789")
                 .registerName("단골손님")
+                .businessHours(List.of(new BusinessHourRequestDTO("월~수", "10:00~12:00"),
+                        new BusinessHourRequestDTO("토,일", "10:00~12:00")))
                 .build();
 
         Store store = new Store(dto);

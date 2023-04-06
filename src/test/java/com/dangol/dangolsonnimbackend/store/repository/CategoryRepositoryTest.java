@@ -5,9 +5,9 @@ import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
-import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,11 +58,12 @@ class CategoryRepositoryTest {
                 .bname2("")
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
-                .officeHours("08:00~10:00")
                 .categoryType(CategoryType.KOREAN)
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .tags(List.of("태그1", "태그2"))
+                .businessHours(List.of(new BusinessHourRequestDTO("월~수", "10:00~12:00"),
+                        new BusinessHourRequestDTO("토,일", "10:00~12:00")))
                 .build();
 
         category = new Category();

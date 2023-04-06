@@ -5,6 +5,7 @@ import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
+import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
@@ -92,11 +93,12 @@ public class StoreControllerTest {
             fieldWithPath("bname2").type(JsonFieldType.STRING).optional().description("가게 주소 (동/리)"),
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).optional().description("가게 상세주소"),
             fieldWithPath("comments").type(JsonFieldType.STRING).description("가게 한줄평"),
-            fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
             fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
             fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
-            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그")
+            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그"),
+            fieldWithPath("businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
+            fieldWithPath("businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간")
     };
 
     FieldDescriptor[] findResponseJsonField = new FieldDescriptor[] {
@@ -110,11 +112,12 @@ public class StoreControllerTest {
             fieldWithPath("bname1").type(JsonFieldType.STRING).description("가게 주소 (읍/면)"),
             fieldWithPath("bname2").type(JsonFieldType.STRING).description("가게 주소 (동/리)"),
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).description("가게 상세주소"),
-//            fieldWithPath("officeHours").type(JsonFieldType.STRING).description("가게 영업시간"),
             fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
             fieldWithPath("registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
-            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그")
+            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그"),
+            fieldWithPath("businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
+            fieldWithPath("businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간")
     };
 
     FieldDescriptor[] updateRequestJsonField = new FieldDescriptor[] {
@@ -127,11 +130,12 @@ public class StoreControllerTest {
             fieldWithPath("bname2").type(JsonFieldType.STRING).optional().description("가게 주소 (동/리)"),
             fieldWithPath("detailedAddress").type(JsonFieldType.STRING).optional().description("가게 상세주소"),
             fieldWithPath("comments").type(JsonFieldType.STRING).optional().description("가게 한줄평"),
-            fieldWithPath("officeHours").type(JsonFieldType.STRING).optional().description("가게 영업시간"),
             fieldWithPath("categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
             fieldWithPath("registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
             fieldWithPath("registerName").type(JsonFieldType.STRING).optional().description("가게 사업자명"),
-            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그")
+            fieldWithPath("tags").type(JsonFieldType.ARRAY).description("가게 태그"),
+            fieldWithPath("businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
+            fieldWithPath("businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간")
     };
 
     @BeforeEach
@@ -154,11 +158,12 @@ public class StoreControllerTest {
                 .bname2("")
                 .detailedAddress("")
                 .comments("단골손님 가게로 좋아요.")
-                .officeHours("08:00~10:00")
                 .categoryType(CategoryType.KOREAN)
                 .registerNumber("1234567890")
                 .registerName("단골손님")
                 .tags(List.of("태그1", "태그2"))
+                .businessHours(List.of(new BusinessHourRequestDTO("월~수", "10:00~12:00"),
+                        new BusinessHourRequestDTO("토,일", "10:00~12:00")))
                 .build();
 
         BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();
@@ -195,6 +200,10 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.categoryType").value(dto.getCategoryType().toString()))
                 .andExpect(jsonPath("$.tags[0]").exists())
                 .andExpect(jsonPath("$.tags[1]").exists())
+                .andExpect(jsonPath("$.businessHours[0].weeks").value(dto.getBusinessHours().get(0).getWeeks()))
+                .andExpect(jsonPath("$.businessHours[0].hours").value(dto.getBusinessHours().get(0).getHours()))
+                .andExpect(jsonPath("$.businessHours[1].weeks").value(dto.getBusinessHours().get(1).getWeeks()))
+                .andExpect(jsonPath("$.businessHours[1].hours").value(dto.getBusinessHours().get(1).getHours()))
                 .andDo(document("store/create",
                         requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
                         requestFields(signUpRequestJsonField)
@@ -223,6 +232,10 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.detailedAddress").value(dto.getDetailedAddress()))
                 .andExpect(jsonPath("$.categoryType").value(dto.getCategoryType().toString()))
                 .andExpect(jsonPath("$.tags[0]").exists())
+                .andExpect(jsonPath("$.businessHours[0].weeks").value(dto.getBusinessHours().get(0).getWeeks()))
+                .andExpect(jsonPath("$.businessHours[0].hours").value(dto.getBusinessHours().get(0).getHours()))
+                .andExpect(jsonPath("$.businessHours[1].weeks").value(dto.getBusinessHours().get(1).getWeeks()))
+                .andExpect(jsonPath("$.businessHours[1].hours").value(dto.getBusinessHours().get(1).getHours()))
                 .andDo(document("store/find",
                         requestParameters(
                                 parameterWithName("id").description("가게 아이디"),
@@ -248,6 +261,7 @@ public class StoreControllerTest {
         updateDTO.setSido(Optional.of("경기도"));
         updateDTO.setCategoryType(Optional.of(CategoryType.CHINESE));
         updateDTO.setTags(List.of("변경 태그1"));
+        updateDTO.setBusinessHours(List.of(new BusinessHourRequestDTO("수~목", "11:00~12:00")));
 
         mockMvc.perform(patch("/api/v1/store/update")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -258,6 +272,8 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.sido").value(updateDTO.getSido().get()))
                 .andExpect(jsonPath("$.categoryType").value(updateDTO.getCategoryType().get().toString()))
                 .andExpect(jsonPath("$.tags[0]").exists())
+                .andExpect(jsonPath("$.businessHours[0].weeks").value(updateDTO.getBusinessHours().get(0).getWeeks()))
+                .andExpect(jsonPath("$.businessHours[0].hours").value(updateDTO.getBusinessHours().get(0).getHours()))
                 .andDo(document("store/update",
                         requestFields(updateRequestJsonField)
                 ));
@@ -299,6 +315,10 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$[0].detailedAddress").value(dto.getDetailedAddress()))
                 .andExpect(jsonPath("$[0].categoryType").value(dto.getCategoryType().toString()))
                 .andExpect(jsonPath("$[0].tags[0]").exists())
+                .andExpect(jsonPath("$[0].businessHours[0].weeks").value(dto.getBusinessHours().get(0).getWeeks()))
+                .andExpect(jsonPath("$[0].businessHours[0].hours").value(dto.getBusinessHours().get(0).getHours()))
+                .andExpect(jsonPath("$[0].businessHours[1].weeks").value(dto.getBusinessHours().get(1).getWeeks()))
+                .andExpect(jsonPath("$[0].businessHours[1].hours").value(dto.getBusinessHours().get(1).getHours()))
                 .andDo(document("store/my-store",
                         requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
                         responseFields(
@@ -314,7 +334,9 @@ public class StoreControllerTest {
                                 fieldWithPath("[].categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
                                 fieldWithPath("[].registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
                                 fieldWithPath("[].registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
-                                fieldWithPath("[].tags").type(JsonFieldType.ARRAY).description("가게 태그")
+                                fieldWithPath("[].tags").type(JsonFieldType.ARRAY).description("가게 태그"),
+                                fieldWithPath("[].businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
+                                fieldWithPath("[].businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간")
                         )
                 ));
     }
