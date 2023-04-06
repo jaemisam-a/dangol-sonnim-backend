@@ -3,9 +3,11 @@ package com.dangol.dangolsonnimbackend.store.domain;
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Optional;
 
 @Entity
@@ -66,6 +68,10 @@ public class Store {
 
     @Column(nullable = false)
     private String registerName;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Menu> menuList;
 
     public Store(StoreSignupRequestDTO dto) {
         this.name = dto.getName();
