@@ -142,6 +142,15 @@ include::{snippets}/boss/emailValid/request-fields.adoc[]
 - Response
 include::{snippets}/boss/emailValid/http-response.adoc[]
 
+==== 10. 사장님 계좌 등록
+사장님의 계좌를 등록합니다.
+
+- Request
+include::{snippets}/boss/register-account/http-request.adoc[]
+include::{snippets}/boss/register-account/request-fields.adoc[]
+- Response
+include::{snippets}/boss/register-account/http-response.adoc[]
+
 === 손님 API
 
 === 가게 API

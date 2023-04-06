@@ -17,12 +17,17 @@ public class BossResponseDTO extends RepresentationModel<BossResponseDTO> {
     private String email;
     private Boolean marketingAgreement;
     private String createdAt;
-
+    private String accountHolder;
+    private String account;
+    private String bank;
     public BossResponseDTO(Boss boss){
         this.name = boss.getName();
         this.phoneNumber = boss.getPhoneNumber();
         this.email = boss.getEmail();
         this.marketingAgreement = boss.getMarketingAgreement();
         this.createdAt = String.valueOf(boss.getCreatedAt());
+        this.bank = boss.getBank();
+        this.account = boss.getAccount();
+        this.accountHolder = boss.getAccountHolder();
     }
 }

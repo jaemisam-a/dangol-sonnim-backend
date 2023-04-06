@@ -88,4 +88,10 @@ public class BossController {
                         linkTo(methodOn(BossController.class).updatePassword(null)).withRel("updatePassword"));
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
+
+    @PostMapping("/register-account")
+    public ResponseEntity<BossResponseDTO> registerAccount(@AuthenticationPrincipal String email, @Valid @RequestBody BossRegisterAccountRequestDTO dto){
+        BossResponseDTO responseDTO = bossService.registerAccount(email, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
 }

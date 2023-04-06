@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.boss.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossRegisterAccountRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossFindEmailResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossSigninResponseDTO;
@@ -91,6 +92,14 @@ public class BossServiceImpl implements BossService {
                 () -> new NotFoundException(ErrorCodeMessage.BOSS_NOT_FOUND)
         );
         return new BossFindEmailResponseDTO(boss.getEmail());
+    }
+
+    @Override
+    @Transactional
+    public BossResponseDTO registerAccount(String email, BossRegisterAccountRequestDTO dto) {
+        Boss boss = findByEmail(email);
+        boss.registerAccount(dto);
+        return new BossResponseDTO(boss);
     }
 
     private void validateSignup(BossSignupRequestDTO dto) {
