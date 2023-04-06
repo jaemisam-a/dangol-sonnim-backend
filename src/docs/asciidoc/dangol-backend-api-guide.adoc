@@ -173,3 +173,43 @@ include::{snippets}/store/update/http-request.adoc[]
 include::{snippets}/store/update/request-fields.adoc[]
 - Response
 include::{snippets}/store/update/http-response.adoc[]
+
+=== 메뉴 API
+==== 1. 메뉴 등록
+새로운 메뉴 정보를 등록합니다.
+(폼데이터 형식에서의 http-request가 보기 안좋게 나타나는 현상이 있습니다. 해결책을 모색해 볼 예정입니다.)
+
+- Request
+include::{snippets}/menu/create/http-request.adoc[]
+include::{snippets}/menu/create/request-parts.adoc[]
+include::{snippets}/menu/create/request-parameters.adoc[]
+
+- Response
+include::{snippets}/menu/create/http-response.adoc[]
+
+==== 2. 메뉴 조회
+현재 메뉴 정보를 조회합니다.
+
+- Request
+include::{snippets}/menu/find/http-request.adoc[]
+
+- Response
+include::{snippets}/menu/find/http-response.adoc[]
+
+==== 3. 메뉴 변경
+가게 정보를 변경합니다.
+
+- Request
+include::{snippets}/menu/update/http-request.adoc[]
+include::{snippets}/menu/update/request-parts.adoc[]
+include::{snippets}/menu/update/request-parameters.adoc[]
+- Response
+include::{snippets}/menu/update/http-response.adoc[]
+
+==== 4. 메뉴 삭제
+메뉴 정보를 삭제합니다.
+
+- Request
+include::{snippets}/menu/delete/http-request.adoc[]
+- Response
+include::{snippets}/menu/delete/http-response.adoc[]
