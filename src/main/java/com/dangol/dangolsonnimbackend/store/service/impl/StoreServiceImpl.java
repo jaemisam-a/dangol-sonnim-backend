@@ -6,13 +6,10 @@ import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.InternalServerException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
-import com.dangol.dangolsonnimbackend.store.domain.BusinessHour;
-import com.dangol.dangolsonnimbackend.store.domain.Category;
-import com.dangol.dangolsonnimbackend.store.domain.Store;
-import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
-import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
-import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.dangol.dangolsonnimbackend.file.service.FileService;
+import com.dangol.dangolsonnimbackend.store.domain.*;
+import com.dangol.dangolsonnimbackend.store.dto.*;
+import com.dangol.dangolsonnimbackend.store.repository.StoreImageRepository;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.store.repository.dsl.CategoryQueryRepository;
 import com.dangol.dangolsonnimbackend.store.repository.dsl.StoreQueryRepository;
@@ -21,6 +18,7 @@ import com.dangol.dangolsonnimbackend.store.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,14 +34,18 @@ public class StoreServiceImpl implements StoreService {
     private final CategoryQueryRepository categoryQueryRepository;
     private final TagService tagService;
     private final BossQueryRepository bossQueryRepository;
+    private final FileService fileService;
+    private final StoreImageRepository storeImageRepository;
 
     @Autowired
-    public StoreServiceImpl(StoreRepository storeRepository, StoreQueryRepository storeQueryRepository, CategoryQueryRepository categoryQueryRepository, TagService tagService, BossQueryRepository bossQueryRepository) {
+    public StoreServiceImpl(StoreRepository storeRepository, StoreQueryRepository storeQueryRepository, CategoryQueryRepository categoryQueryRepository, TagService tagService, BossQueryRepository bossQueryRepository, FileService fileService, StoreImageRepository storeImageRepository) {
         this.storeRepository = storeRepository;
         this.storeQueryRepository = storeQueryRepository;
         this.categoryQueryRepository = categoryQueryRepository;
         this.tagService = tagService;
         this.bossQueryRepository = bossQueryRepository;
+        this.fileService = fileService;
+        this.storeImageRepository = storeImageRepository;
     }
 
     /**
@@ -140,5 +142,28 @@ public class StoreServiceImpl implements StoreService {
         return storeQueryRepository.findMyStore(email).orElseThrow(
                 () -> new NotFoundException(ErrorCodeMessage.STORE_NOT_FOUND)
         ).stream().map(StoreResponseDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void imageUpload(StoreImageUploadRequestDTO dto) {
+        Store store = storeQueryRepository.findById(dto.getStoreId()).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.STORE_NOT_FOUND)
+        );
+
+        List<StoreImage> storeImages = new ArrayList<>();
+        for(MultipartFile multipartFile : dto.getMultipartFile()){
+            String s3FileUrl = fileService.upload(multipartFile);
+            StoreImage storeImage = storeImageRepository.save(new StoreImage(store, s3FileUrl));
+            storeImages.add(storeImage);
+        }
+
+        // 기존 이미지가 있다면 전부 삭제
+        for(StoreImage storeImage : store.getStoreImages()){
+            fileService.fileDelete(storeImage.getImageUrl());
+            storeImageRepository.delete(storeImage);
+        }
+
+        store.setStoreImages(storeImages);
     }
 }

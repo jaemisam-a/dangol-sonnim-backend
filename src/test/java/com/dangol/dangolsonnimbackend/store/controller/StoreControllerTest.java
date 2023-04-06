@@ -1,13 +1,12 @@
 package com.dangol.dangolsonnimbackend.store.controller;
 
+import com.amazonaws.util.IOUtils;
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
-import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
-import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
-import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
+import com.dangol.dangolsonnimbackend.store.dto.*;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.repository.CategoryRepository;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
@@ -20,20 +19,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.request.RequestDocumentation;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -46,8 +51,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -337,6 +343,34 @@ public class StoreControllerTest {
                                 fieldWithPath("[].tags").type(JsonFieldType.ARRAY).description("가게 태그"),
                                 fieldWithPath("[].businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
                                 fieldWithPath("[].businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간")
+                        )
+                ));
+    }
+
+    @Test
+    void imageUpload() throws Exception {
+        Long id = storeService.create(dto, BOSS_TEST_EMAIL).getId();
+        InputStream imageInputStream = getClass().getResourceAsStream("/example-image.png");
+        byte[] imageBytes = IOUtils.toByteArray(imageInputStream);
+
+        // MockMultipartFile 객체 생성
+        MockMultipartFile multipartFile1 = new MockMultipartFile("multipartFile", "example-image.png", "image/png", imageBytes);
+        MockMultipartFile multipartFile2 = new MockMultipartFile("multipartFile", "example-image.png", "image/png", imageBytes);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/store/image-upload")
+                        .file(multipartFile1)
+                        .file(multipartFile2)
+                        .param("storeId", id.toString())
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andDo(document("store/image-upload",
+                        requestParts(
+                                partWithName("multipartFile").description("가게 이미지 파일")
+                        ),
+                        requestParameters(
+                                parameterWithName("storeId").description("가게 ID"),
+                                parameterWithName("_csrf").description("CSRF 토큰 정보")
                         )
                 ));
     }

@@ -145,7 +145,7 @@ class MenuControllerTest {
 
 
         MenuRequestDTO dto = MenuRequestDTO.builder()
-                .name("메뉴")
+                .name("김치찌개")
                 .price(BigDecimal.valueOf(12000))
                 .storeId(storeId)
                 .multipartFile(multipartFile)
@@ -187,7 +187,7 @@ class MenuControllerTest {
     @Test
     void findById() throws Exception {
         MenuRequestDTO dto = MenuRequestDTO.builder()
-                .name("메뉴")
+                .name("김치찌개")
                 .price(BigDecimal.valueOf(12000))
                 .storeId(storeId)
                 .multipartFile(null)
@@ -228,7 +228,7 @@ class MenuControllerTest {
         MockMultipartFile multipartFile = new MockMultipartFile("multipartFile", "example-image.png", "image/png", imageBytes);
 
         MenuRequestDTO createDto = MenuRequestDTO.builder()
-                .name("메뉴")
+                .name("김치찌개")
                 .price(BigDecimal.valueOf(12000))
                 .storeId(storeId)
                 .multipartFile(null)
@@ -238,7 +238,7 @@ class MenuControllerTest {
 
         MenuUpdateRequestDTO updateDto = MenuUpdateRequestDTO.builder()
                 .menuId(createdMenu.getMenuId())
-                .name("메뉴 (업데이트)")
+                .name("된장찌개")
                 .price(BigDecimal.valueOf(10000))
                 .multipartFile(multipartFile)
                 .build();
@@ -278,7 +278,7 @@ class MenuControllerTest {
     @Test
     void delete() throws Exception {
         MenuRequestDTO createDto = MenuRequestDTO.builder()
-                .name("메뉴")
+                .name("김치찌개")
                 .price(BigDecimal.valueOf(12000))
                 .storeId(storeId)
                 .multipartFile(null)
