@@ -1,5 +1,8 @@
 package com.dangol.dangolsonnimbackend.store.controller;
 
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
@@ -20,6 +23,10 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -32,6 +39,8 @@ import java.util.Random;
 
 import static com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage.STORE_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -52,18 +61,26 @@ public class StoreControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private StoreService storeService;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
     private StoreSignupRequestDTO dto;
 
     @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
     private WebApplicationContext context;
+    private static final String BOSS_TEST_NAME = "GilDong";
+    private static final String BOSS_TEST_EMAIL = "test@example.com";
+    private static final String BOSS_TEST_PASSWORD = "password";
+    private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
+    private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+    private String accessToken;
+    @Autowired
+    private TokenProvider tokenProvider;
+    @Autowired
+    private StoreService storeService;
+    @Autowired
+    private BossService bossService;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     FieldDescriptor[] signUpRequestJsonField = new FieldDescriptor[] {
             fieldWithPath("name").type(JsonFieldType.STRING).description("가게 이름"),
@@ -144,8 +161,18 @@ public class StoreControllerTest {
                 .tags(List.of("태그1", "태그2"))
                 .build();
 
-        categoryRepository.saveAndFlush(new Category(CategoryType.KOREAN));
-        categoryRepository.saveAndFlush(new Category(CategoryType.CHINESE));
+        BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();
+        bossSignupRequestDTO.setName(BOSS_TEST_NAME);
+        bossSignupRequestDTO.setEmail(BOSS_TEST_EMAIL);
+        bossSignupRequestDTO.setPassword(BOSS_TEST_PASSWORD);
+        bossSignupRequestDTO.setPhoneNumber(BOSS_TEST_PHONE_NUMBER);
+        bossSignupRequestDTO.setMarketingAgreement(BOSS_TEST_MARKETING_AGREEMENT);
+        bossService.signup(bossSignupRequestDTO);
+
+        accessToken = tokenProvider.generateAccessToken(bossSignupRequestDTO.getEmail());
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                tokenProvider.getEmailFromToken(accessToken), null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     @Test
@@ -154,6 +181,7 @@ public class StoreControllerTest {
         mockMvc.perform(post("/api/v1/store/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + accessToken)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
@@ -168,18 +196,19 @@ public class StoreControllerTest {
                 .andExpect(jsonPath("$.tags[0]").exists())
                 .andExpect(jsonPath("$.tags[1]").exists())
                 .andDo(document("store/create",
+                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
                         requestFields(signUpRequestJsonField)
                 ));
 
         // 재등록 시에 이미 존재하는 사업자 번호로 반환
-        assertThrows(BadRequestException.class, () -> storeService.create(dto));
+        assertThrows(BadRequestException.class, () -> storeService.create(dto, BOSS_TEST_EMAIL));
     }
 
     @Test
     @Transactional
     @DisplayName("특정 가게 아이디 값을 통해 가게를 검색할 수 있다.")
     void givenStoreId_whenFindById_thenReturnStore() throws Exception {
-        Long id = storeService.create(dto).getId();
+        Long id = storeService.create(dto, BOSS_TEST_EMAIL).getId();
 
         mockMvc.perform(get("/api/v1/store/find?id="+ id)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -207,7 +236,11 @@ public class StoreControllerTest {
     @Transactional
     @DisplayName("특정 가게 정보를 업데이트하여 정보를 수정할 수 있다.")
     void givenStore_whenUpdate_thenUpdateStore() throws Exception {
-        String registerNumber = storeService.create(dto).getRegisterNumber();
+        Category category = new Category();
+        category.setCategoryType(CategoryType.CHINESE);
+        categoryRepository.save(category);
+
+        String registerNumber = storeService.create(dto, BOSS_TEST_EMAIL).getRegisterNumber();
 
         StoreUpdateDTO updateDTO = new StoreUpdateDTO(registerNumber);
 
@@ -242,5 +275,47 @@ public class StoreControllerTest {
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(STORE_NOT_FOUND.getMessage()));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("로그인된 사장님 유저의 가게를 조회한다.")
+    void givenBoss_whenFindMyStore_thenReturnStore() throws Exception {
+        // given
+        storeService.create(dto, BOSS_TEST_EMAIL);
+
+        // when
+        mockMvc.perform(get("/api/v1/store/my-store")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").exists())
+                .andExpect(jsonPath("$[0].name").value(dto.getName()))
+                .andExpect(jsonPath("$[0].newAddress").value(dto.getNewAddress()))
+                .andExpect(jsonPath("$[0].comments").value(dto.getComments()))
+                .andExpect(jsonPath("$[0].sigungu").value(dto.getSigungu()))
+                .andExpect(jsonPath("$[0].bname1").value(dto.getBname1()))
+                .andExpect(jsonPath("$[0].bname2").value(dto.getBname2()))
+                .andExpect(jsonPath("$[0].detailedAddress").value(dto.getDetailedAddress()))
+                .andExpect(jsonPath("$[0].categoryType").value(dto.getCategoryType().toString()))
+                .andExpect(jsonPath("$[0].tags[0]").exists())
+                .andDo(document("store/my-store",
+                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("가게 아이디"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("가게 이름"),
+                                fieldWithPath("[].newAddress").type(JsonFieldType.STRING).description("가게 주소"),
+                                fieldWithPath("[].comments").type(JsonFieldType.STRING).description("가게 한줄평"),
+                                fieldWithPath("[].sido").type(JsonFieldType.STRING).description("가게 주소 (시/도)"),
+                                fieldWithPath("[].sigungu").type(JsonFieldType.STRING).description("가게 주소 (시/군/구)"),
+                                fieldWithPath("[].bname1").type(JsonFieldType.STRING).description("가게 주소 (읍/면)"),
+                                fieldWithPath("[].bname2").type(JsonFieldType.STRING).description("가게 주소 (동/리)"),
+                                fieldWithPath("[].detailedAddress").type(JsonFieldType.STRING).description("가게 상세주소"),
+                                fieldWithPath("[].categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
+                                fieldWithPath("[].registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
+                                fieldWithPath("[].registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
+                                fieldWithPath("[].tags").type(JsonFieldType.ARRAY).description("가게 태그")
+                        )
+                ));
     }
 }

@@ -1,5 +1,8 @@
 package com.dangol.dangolsonnimbackend.store.service;
 
+import com.dangol.dangolsonnimbackend.boss.domain.Boss;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
@@ -35,6 +38,13 @@ public class StoreServiceTest {
     private CategoryRepository categoryRepository;
 
     private StoreSignupRequestDTO dto;
+    private static final String BOSS_TEST_NAME = "GilDong";
+    private static final String BOSS_TEST_EMAIL = "test@example.com";
+    private static final String BOSS_TEST_PASSWORD = "password";
+    private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
+    private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+    @Autowired
+    private BossService bossService;
 
     @BeforeEach
     public void setup() {
@@ -55,14 +65,19 @@ public class StoreServiceTest {
                 .tags(List.of("태그1", "태그2"))
                 .build();
 
-        categoryRepository.saveAndFlush(new Category(CategoryType.KOREAN));
-        categoryRepository.saveAndFlush(new Category(CategoryType.CHINESE));
+        BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();
+        bossSignupRequestDTO.setName(BOSS_TEST_NAME);
+        bossSignupRequestDTO.setEmail(BOSS_TEST_EMAIL);
+        bossSignupRequestDTO.setPassword(BOSS_TEST_PASSWORD);
+        bossSignupRequestDTO.setPhoneNumber(BOSS_TEST_PHONE_NUMBER);
+        bossSignupRequestDTO.setMarketingAgreement(BOSS_TEST_MARKETING_AGREEMENT);
+        bossService.signup(bossSignupRequestDTO);
     }
 
     @Test
     @DisplayName("새로운 가게 정보를 전달받으면 가게를 생성하도록 한다.")
-    public void givenRequestDto_whenSignup_thenSaveStore() {
-        StoreResponseDTO response = storeService.create(dto);
+    void givenRequestDto_whenSignup_thenSaveStore() {
+        StoreResponseDTO response = storeService.create(dto, BOSS_TEST_EMAIL);
 
         assertEquals(response.getName(), dto.getName());
         assertEquals(response.getNewAddress(), dto.getNewAddress());
@@ -71,16 +86,19 @@ public class StoreServiceTest {
 
     @Test
     @DisplayName("가게 ID 값을 전달받으면 가게를 정상적으로 조회할 수 있다")
-    public void givenStoreId_whenFindById_thenReturnStore() {
-        StoreResponseDTO response = storeService.create(dto);
+    void givenStoreId_whenFindById_thenReturnStore() {
+        StoreResponseDTO response = storeService.create(dto, BOSS_TEST_EMAIL);
 
         assertTrue(storeQueryRepository.findById(response.getId()).isPresent());
     }
 
     @Test
     @DisplayName("수정할 가게 정보를 전달받으면 가게를 수정하도록 한다.")
-    public void givenUpdateDto_whenFindByRegisterNumber_thenUpdateStore() {
-        storeService.create(dto);
+    void givenUpdateDto_whenFindByRegisterNumber_thenUpdateStore() {
+        storeService.create(dto, BOSS_TEST_EMAIL);
+        Category category = new Category();
+        category.setCategoryType(CategoryType.CHINESE);
+        categoryRepository.save(category);
 
         StoreUpdateDTO updateDto =
                 new StoreUpdateDTO(dto.getRegisterNumber())

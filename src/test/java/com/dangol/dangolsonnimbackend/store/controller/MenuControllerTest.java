@@ -1,6 +1,8 @@
 package com.dangol.dangolsonnimbackend.store.controller;
 
 import com.amazonaws.util.IOUtils;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.store.domain.Menu;
 import com.dangol.dangolsonnimbackend.store.dto.MenuRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.MenuResponseDTO;
@@ -61,12 +63,18 @@ class MenuControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private StoreService storeService;
-
+    @Autowired
+    private BossService bossService;
     @Autowired
     private MenuService menuService;
     @Autowired private MenuRepository menuRepository;
     @Autowired
     private MenuQueryRepository menuQueryRepository;
+    private static final String BOSS_TEST_NAME = "GilDong";
+    private static final String BOSS_TEST_EMAIL = "test@example.com";
+    private static final String BOSS_TEST_PASSWORD = "password";
+    private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
+    private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
 
     private static final String BASE_URL = "/api/v1/menu";
     private Long storeId;
@@ -81,6 +89,15 @@ class MenuControllerTest {
                         .withRequestDefaults(prettyPrint())
                         .withResponseDefaults(prettyPrint()))
                 .build();
+
+        BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();
+        bossSignupRequestDTO.setName(BOSS_TEST_NAME);
+        bossSignupRequestDTO.setEmail(BOSS_TEST_EMAIL);
+        bossSignupRequestDTO.setPassword(BOSS_TEST_PASSWORD);
+        bossSignupRequestDTO.setPhoneNumber(BOSS_TEST_PHONE_NUMBER);
+        bossSignupRequestDTO.setMarketingAgreement(BOSS_TEST_MARKETING_AGREEMENT);
+        bossService.signup(bossSignupRequestDTO);
+
 
         // storeId를 생성하고 저장합니다. 이 storeId는 테스트에 사용됩니다.
         storeId = createStore();
@@ -117,7 +134,7 @@ class MenuControllerTest {
                 .tags(List.of("태그1", "태그2"))
                 .build();
 
-        return storeService.create(dto).getId();
+        return storeService.create(dto, BOSS_TEST_EMAIL).getId();
     }
 
     @Test
