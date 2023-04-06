@@ -1,9 +1,13 @@
 package com.dangol.dangolsonnimbackend.store.repository;
 
+import com.dangol.dangolsonnimbackend.boss.domain.Boss;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
+import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -33,6 +38,16 @@ class CategoryRepositoryTest {
 
     private StoreSignupRequestDTO dto;
 
+    private static final String BOSS_TEST_NAME = "GilDong";
+    private static final String BOSS_TEST_EMAIL = "test@example.com";
+    private static final String BOSS_TEST_PASSWORD = "password";
+    private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
+    private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+    @Autowired
+    private StoreService storeService;
+    @Autowired
+    private BossService bossService;
+
     @BeforeEach
     void setUp() {
         dto = StoreSignupRequestDTO.builder()
@@ -49,13 +64,23 @@ class CategoryRepositoryTest {
                 .categoryType(CategoryType.KOREAN)
                 .registerNumber("1234567890")
                 .registerName("단골손님")
+                .tags(List.of("태그1", "태그2"))
                 .build();
 
         category = new Category();
         category.setCategoryType(dto.getCategoryType());
         categoryRepository.save(category);
 
-        store = new Store(dto, category);
+        BossSignupRequestDTO bossSignupRequestDTO = new BossSignupRequestDTO();
+        bossSignupRequestDTO.setName(BOSS_TEST_NAME);
+        bossSignupRequestDTO.setEmail(BOSS_TEST_EMAIL);
+        bossSignupRequestDTO.setPassword(BOSS_TEST_PASSWORD);
+        bossSignupRequestDTO.setPhoneNumber(BOSS_TEST_PHONE_NUMBER);
+        bossSignupRequestDTO.setMarketingAgreement(BOSS_TEST_MARKETING_AGREEMENT);
+        bossService.signup(bossSignupRequestDTO);
+        Boss boss = bossService.findByEmail(BOSS_TEST_EMAIL);
+
+        store = new Store(dto, category, boss);
         storeRepository.save(store);
     }
 

@@ -11,9 +11,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,8 +32,9 @@ public class StoreController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<StoreResponseDTO> create(@Valid @RequestBody StoreSignupRequestDTO dto) {
-        StoreResponseDTO res = storeService.create(dto);
+    public ResponseEntity<StoreResponseDTO> create(@Valid @RequestBody StoreSignupRequestDTO dto,
+                                                   @AuthenticationPrincipal String email) {
+        StoreResponseDTO res = storeService.create(dto, email);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -41,6 +44,15 @@ public class StoreController {
     @GetMapping("/find")
     public ResponseEntity<StoreResponseDTO> findById(@RequestParam Map<String, String> params) {
         StoreResponseDTO res = storeService.findById(Long.valueOf(params.get("id")));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(res);
+    }
+
+    @GetMapping("/my-store")
+    public ResponseEntity<List<StoreResponseDTO>> findMyStore(@AuthenticationPrincipal String email) {
+        List<StoreResponseDTO> res = storeService.findMyStore(email);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
