@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -40,6 +41,7 @@ class StoreRepositoryTest {
                 .officeHours("08:00~10:00")
                 .registerNumber("1234567890")
                 .registerName("단골손님")
+                .tags(List.of("태그1", "태그2"))
                 .build();
 
         store = new Store(dto);

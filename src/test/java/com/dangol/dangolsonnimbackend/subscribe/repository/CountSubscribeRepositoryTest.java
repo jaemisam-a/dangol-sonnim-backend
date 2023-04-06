@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,6 +38,7 @@ class CountSubscribeRepositoryTest {
                 .officeHours("08:00~10:00")
                 .registerNumber("123-456-789")
                 .registerName("단골손님")
+                .tags(List.of("태그1", "태그2"))
                 .build();
         Store store = storeRepository.save(new Store(dto));
 
