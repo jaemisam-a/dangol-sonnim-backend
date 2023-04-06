@@ -173,7 +173,7 @@ class BossServiceImplTest {
 
         // given
         bossService.signup(validDto);
-        BossUpdateRequestDTO requestDTO = new BossUpdateRequestDTO("01012345678", null);
+        BossUpdateRequestDTO requestDTO = new BossUpdateRequestDTO("01012345678", null, null, null, "신한");
 
         // when
         bossService.update(validDto.getEmail(), requestDTO);

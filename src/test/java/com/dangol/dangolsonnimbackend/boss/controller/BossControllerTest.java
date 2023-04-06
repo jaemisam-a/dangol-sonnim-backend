@@ -96,6 +96,9 @@ class BossControllerTest {
                 .andExpect(jsonPath("$.email").value(BOSS_TEST_EMAIL))
                 .andExpect(jsonPath("$.phoneNumber").value(BOSS_TEST_PHONE_NUMBER))
                 .andExpect(jsonPath("$.marketingAgreement").value(BOSS_TEST_MARKETING_AGREEMENT))
+                .andExpect(jsonPath("$.account").exists())
+                .andExpect(jsonPath("$.accountHolder").exists())
+                .andExpect(jsonPath("$.bank").exists())
                 .andExpect(jsonPath("$._links.self").exists())
                 .andExpect(jsonPath("$._links.authenticate").exists())
                 .andDo(document("boss/signup",
@@ -111,6 +114,9 @@ class BossControllerTest {
                                 fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("사장님 생성 날짜"),
+                                fieldWithPath("account").type(JsonFieldType.STRING).description("사장님 계좌"),
+                                fieldWithPath("accountHolder").type(JsonFieldType.STRING).description("예금주"),
+                                fieldWithPath("bank").type(JsonFieldType.STRING).description("어디 은행"),
                                 fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부"),
                                 fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("Self link"),
                                 fieldWithPath("_links.authenticate.href").type(JsonFieldType.STRING).description("Authenticate link")
@@ -189,6 +195,9 @@ class BossControllerTest {
             .andExpect(jsonPath("$.email").value(BOSS_TEST_EMAIL))
             .andExpect(jsonPath("$.phoneNumber").value(BOSS_TEST_PHONE_NUMBER))
             .andExpect(jsonPath("$.marketingAgreement").value(BOSS_TEST_MARKETING_AGREEMENT))
+            .andExpect(jsonPath("$.account").exists())
+            .andExpect(jsonPath("$.accountHolder").exists())
+            .andExpect(jsonPath("$.bank").exists())
             .andExpect(jsonPath("$._links.self").exists())
             .andExpect(jsonPath("$._links.updateBoss").exists())
             .andExpect(jsonPath("$._links.withdrawBoss").exists())
@@ -199,6 +208,9 @@ class BossControllerTest {
                             fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
                             fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
                             fieldWithPath("createdAt").type(JsonFieldType.STRING).description("사장님 생성 날짜"),
+                            fieldWithPath("account").type(JsonFieldType.STRING).description("사장님 계좌"),
+                            fieldWithPath("accountHolder").type(JsonFieldType.STRING).description("예금주"),
+                            fieldWithPath("bank").type(JsonFieldType.STRING).description("어디 은행"),
                             fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부"),
                             fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("Self link"),
                             fieldWithPath("_links.updateBoss.href").type(JsonFieldType.STRING).description("Update boss link"),
@@ -216,7 +228,14 @@ class BossControllerTest {
                 tokenProvider.getEmailFromToken(accessToken), null, AuthorityUtils.NO_AUTHORITIES);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        BossUpdateRequestDTO requestDTO = new BossUpdateRequestDTO("01087654321", Boolean.FALSE);
+        BossUpdateRequestDTO requestDTO = BossUpdateRequestDTO
+                .builder()
+                .account("010-1212-3434")
+                .accountHolder("마린")
+                .bank("국민")
+                .phoneNumber("01087654321")
+                .marketingAgreement(Boolean.FALSE)
+                .build();
 
         // when
         mockMvc.perform(patch(BASE_URL)
@@ -230,12 +249,18 @@ class BossControllerTest {
                 .andExpect(jsonPath("$.email").value(BOSS_TEST_EMAIL))
                 .andExpect(jsonPath("$.phoneNumber").value(requestDTO.getPhoneNumber()))
                 .andExpect(jsonPath("$.marketingAgreement").value(requestDTO.getMarketingAgreement()))
+                .andExpect(jsonPath("$.account").value(requestDTO.getAccount()))
+                .andExpect(jsonPath("$.accountHolder").value(requestDTO.getAccountHolder()))
+                .andExpect(jsonPath("$.bank").value(requestDTO.getBank()))
                 .andExpect(jsonPath("$._links.self").exists())
                 .andExpect(jsonPath("$._links.getBoss").exists())
                 .andExpect(jsonPath("$._links.withdrawBoss").exists())
                 .andDo(document("boss/update",
                         requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
                         requestFields(
+                                fieldWithPath("account").type(JsonFieldType.STRING).description("사장님 계좌"),
+                                fieldWithPath("accountHolder").type(JsonFieldType.STRING).description("예금주"),
+                                fieldWithPath("bank").type(JsonFieldType.STRING).description("어디 은행"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
                                 fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부")
                         ),
@@ -244,6 +269,9 @@ class BossControllerTest {
                                 fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("사장님 생성 날짜"),
+                                fieldWithPath("account").type(JsonFieldType.STRING).description("사장님 계좌"),
+                                fieldWithPath("accountHolder").type(JsonFieldType.STRING).description("예금주"),
+                                fieldWithPath("bank").type(JsonFieldType.STRING).description("어디 은행"),
                                 fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부"),
                                 fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("Self link"),
                                 fieldWithPath("_links.getBoss.href").type(JsonFieldType.STRING).description("Get boss link"),
@@ -253,7 +281,7 @@ class BossControllerTest {
     }
 
     @Test
-    void givenBossPasswordUpdateReqeuestDTO_whenUpdatePassword_thenSuccess() throws Exception {
+    void givenBossPasswordUpdateRequestDTO_whenUpdatePassword_thenSuccess() throws Exception {
         // given
         bossService.signup(dto);
 
@@ -301,5 +329,52 @@ class BossControllerTest {
                         )
                     )
                 );
+    }
+
+    @Test
+    void givenBossRegisterAccountRequestDTO_whenRegisterAccount_thenReturnBossResponseDTO() throws Exception {
+        // given
+        bossService.signup(dto);
+        String accessToken = tokenProvider.generateAccessToken(dto.getEmail());
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                tokenProvider.getEmailFromToken(accessToken), null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        BossRegisterAccountRequestDTO requestDTO = new BossRegisterAccountRequestDTO("권승민","110-1234-5678","신한");
+
+        // when
+        mockMvc.perform(post(BASE_URL + "/register-account")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .content(new ObjectMapper().writeValueAsString(requestDTO)))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(BOSS_TEST_NAME))
+                .andExpect(jsonPath("$.email").value(BOSS_TEST_EMAIL))
+                .andExpect(jsonPath("$.phoneNumber").value(BOSS_TEST_PHONE_NUMBER))
+                .andExpect(jsonPath("$.marketingAgreement").value(BOSS_TEST_MARKETING_AGREEMENT))
+                .andExpect(jsonPath("$.account").value("110-1234-5678"))
+                .andExpect(jsonPath("$.accountHolder").value("권승민"))
+                .andExpect(jsonPath("$.bank").value("신한"))
+                .andDo(document("boss/register-account",
+                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
+                        requestFields(
+                                fieldWithPath("account").type(JsonFieldType.STRING).description("사장님 계좌"),
+                                fieldWithPath("accountHolder").type(JsonFieldType.STRING).description("예금주"),
+                                fieldWithPath("bank").type(JsonFieldType.STRING).description("어디 은행")
+                        ),
+                        responseFields(
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("사장님 이름"),
+                                fieldWithPath("email").type(JsonFieldType.STRING).description("사장님 이메일 주소"),
+                                fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("사장님 휴대폰번호"),
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("사장님 생성 날짜"),
+                                fieldWithPath("account").type(JsonFieldType.STRING).description("사장님 계좌"),
+                                fieldWithPath("accountHolder").type(JsonFieldType.STRING).description("예금주"),
+                                fieldWithPath("bank").type(JsonFieldType.STRING).description("어디 은행"),
+                                fieldWithPath("marketingAgreement").type(JsonFieldType.BOOLEAN).description("마케팅 수신 동의 여부")
+                        )
+                ));
     }
 }
