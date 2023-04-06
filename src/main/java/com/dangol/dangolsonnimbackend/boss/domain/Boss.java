@@ -2,6 +2,8 @@ package com.dangol.dangolsonnimbackend.boss.domain;
 
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossUpdateRequestDTO;
+import com.dangol.dangolsonnimbackend.store.domain.Menu;
+import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +14,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -47,6 +51,10 @@ public class Boss {
 
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "boss", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Store> storeList = new ArrayList<>();
 
     public Boss(BossSignupRequestDTO dto) {
         this.name = dto.getName();

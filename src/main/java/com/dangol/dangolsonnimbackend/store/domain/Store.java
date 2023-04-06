@@ -57,8 +57,9 @@ public class Store {
     @Column(nullable = false)
     private String officeHours;
 
-    @OneToOne
-    @JoinColumn(name="boss_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "boss_id", nullable = false)
+    @JsonIgnore
     private Boss boss;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -104,10 +105,12 @@ public class Store {
         this.registerNumber = dto.getRegisterNumber();
     }
 
-    public Store(StoreSignupRequestDTO dto, Category category) {
+    public Store(StoreSignupRequestDTO dto, Category category, Boss boss) {
         this(dto);
         this.category = category;
         this.category.addStore(this);
+        this.boss = boss;
+        this.boss.getStoreList().add(this);
     }
 
     public void updateName(String name) {
