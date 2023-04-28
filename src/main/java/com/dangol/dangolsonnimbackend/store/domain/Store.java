@@ -18,7 +18,12 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="tb_store")
+@Table(name="tb_store",
+        indexes = {
+                @Index(name = "idx_sigungu", columnList = "sigungu"),
+                @Index(name = "idx_category", columnList = "category"),
+                @Index(name = "idx_name", columnList = "name")
+        })
 public class Store {
 
     @Id
@@ -152,5 +157,10 @@ public class Store {
     public void setBusinessHours(List<BusinessHour> businessHours) {
         this.businessHours = businessHours;
     }
-    public void setStoreImages(List<StoreImage> storeImages) {this.storeImages = storeImages;}
+    public void setStoreImages(List<StoreImage> storeImages) {
+        this.storeImages.clear();
+        if (storeImages != null) {
+            this.storeImages.addAll(storeImages);
+        }
+    }
 }
