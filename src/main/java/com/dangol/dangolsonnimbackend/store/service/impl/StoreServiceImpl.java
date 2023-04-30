@@ -9,6 +9,7 @@ import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.file.service.FileService;
 import com.dangol.dangolsonnimbackend.store.domain.*;
 import com.dangol.dangolsonnimbackend.store.dto.*;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.repository.StoreImageRepository;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.store.repository.dsl.CategoryQueryRepository;
@@ -16,6 +17,8 @@ import com.dangol.dangolsonnimbackend.store.repository.dsl.StoreQueryRepository;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import com.dangol.dangolsonnimbackend.store.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -163,5 +166,13 @@ public class StoreServiceImpl implements StoreService {
         }
 
         store.setStoreImages(storeImages);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<StoreResponseDTO> findStoreList(String sigungu, CategoryType category, String kw, Pageable pageable){
+
+        return storeRepository.findAllBySigunguContainingAndCategory_CategoryTypeAndNameContaining(sigungu, category, kw, pageable)
+                .map(StoreResponseDTO::new);
     }
 }

@@ -1,8 +1,10 @@
 package com.dangol.dangolsonnimbackend.store.repository.dsl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.QBoss;
+import com.dangol.dangolsonnimbackend.store.domain.QCategory;
 import com.dangol.dangolsonnimbackend.store.domain.QStore;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -61,7 +63,21 @@ public class StoreQueryRepository {
         return Optional.ofNullable(
                 queryFactory.selectFrom(QStore.store)
                         .leftJoin(QStore.store.boss, QBoss.boss).fetchJoin()
-                        .where(QStore.store.boss.email.eq(email))
+                        .where(QBoss.boss.email.eq(email))
                         .fetch());
+    }
+
+    public List<Store> findBySigungu(String sigungu) {
+        return queryFactory.selectFrom(QStore.store)
+                .where(QStore.store.sigungu.eq(sigungu))
+                .fetch();
+    }
+
+    public List<Store> findBySigunguAndCategoryType(String sigungu, CategoryType category) {
+        return queryFactory.selectFrom(QStore.store)
+                .leftJoin(QStore.store.category, QCategory.category).fetchJoin()
+                .where(QStore.store.sigungu.eq(sigungu)
+                        .and(QCategory.category.categoryType.eq(category)))
+                .fetch();
     }
 }

@@ -1,6 +1,9 @@
 package com.dangol.dangolsonnimbackend.store.service;
 
 import com.dangol.dangolsonnimbackend.store.dto.*;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,4 +15,5 @@ public interface StoreService {
     List<StoreResponseDTO> findMyStore(String email);
 
     void imageUpload(StoreImageUploadRequestDTO dto);
+    Page<StoreResponseDTO> findStoreList(String sigungu, CategoryType category, String kw, Pageable pageable);
 }

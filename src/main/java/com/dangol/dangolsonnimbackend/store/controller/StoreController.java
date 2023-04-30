@@ -3,10 +3,15 @@ package com.dangol.dangolsonnimbackend.store.controller;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.store.dto.*;
+import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -79,5 +84,19 @@ public class StoreController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .build();
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<Page<StoreResponseDTO>> findStoreList(
+            @RequestParam(value = "sigungu", defaultValue = "") String sigungu,
+            @RequestParam(value = "category", defaultValue = "NONE") CategoryType category,
+            @RequestParam(value = "kw", defaultValue = "") String kw,
+            @PageableDefault(size = 16, sort = "id", direction = Sort.Direction.DESC ) Pageable pageable)
+    {
+        Page<StoreResponseDTO> res = storeService.findStoreList(sigungu, category, kw, pageable);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(res);
     }
 }
