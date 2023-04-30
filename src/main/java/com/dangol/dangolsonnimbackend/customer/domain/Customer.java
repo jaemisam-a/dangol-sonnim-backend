@@ -1,13 +1,20 @@
 package com.dangol.dangolsonnimbackend.customer.domain;
 
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.oauth.ProviderType;
+import com.dangol.dangolsonnimbackend.oauth.RoleType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,26 +25,44 @@ import java.time.LocalDateTime;
 @Table(name = "tb_customer")
 public class Customer {
 
+    @JsonIgnore
     @Id
-    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userSeq;
 
+    @Column(length = 64, unique = true)
+    @NotNull
+    @Size(max = 64)
+    private String id; // 사용자에게 부여되는 고유 아이디
+
+    @Setter
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String providerType;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ProviderType providerType;
+
+    @Column(name = "ROLE_TYPE", length = 20)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private RoleType roleType;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public Customer(CustomerSignupRequestDTO dto) {
-        this.name = dto.getName();
-        this.email = dto.getEmail();
-        this.providerType = dto.getProviderType();
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+    private CustomerInfo customerInfo;
+
+    public Customer(String id, String name, String email, ProviderType providerType, RoleType roleType, CustomerInfo customerInfo) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.providerType = providerType;
+        this.roleType = roleType;
+        this.customerInfo = customerInfo;
     }
 }

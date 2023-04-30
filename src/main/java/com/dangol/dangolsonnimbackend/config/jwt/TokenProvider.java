@@ -1,12 +1,21 @@
 package com.dangol.dangolsonnimbackend.config.jwt;
 
+import com.dangol.dangolsonnimbackend.oauth.AuthTokenProvider;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class TokenProvider {
 
     @Value("${jwt.secret}")
@@ -21,37 +30,46 @@ public class TokenProvider {
         Date expirationDate = new Date(now.getTime() + accessExpirationInMs);
         return Jwts.builder()
                 .setSubject(email)
-                .setIssuedAt(now)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
     // 토큰으로 부터 이메일 추출
     public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+        return this.getTokenClaims(token).getSubject();
+    }
+
+    public Claims getTokenClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (SecurityException e) {
+            log.info("Invalid JWT signature.");
+        } catch (MalformedJwtException e) {
+            log.info("Invalid JWT token.");
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token.");
+            return e.getClaims();
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT token.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT token compact of handler are invalid.");
+        }
+        return null;
     }
 
     // 토큰의 유효성  검사
     public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        } catch (SignatureException ex) {
-            System.out.println("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            System.out.println("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            System.out.println("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            System.out.println("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            System.out.println("JWT claims string is empty");
-        }
-        return false;
+        return this.getTokenClaims(token) != null;
     }
+
+    @Bean
+    public AuthTokenProvider jwtProvider() {
+        return new AuthTokenProvider(secretKey);
+    }
+
 }

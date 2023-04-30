@@ -4,6 +4,7 @@ import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,15 +25,15 @@ public class CustomerInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nickname;
 
     private String profileImageUrl;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column
     private String birth;
 
     @CreationTimestamp
@@ -43,6 +44,7 @@ public class CustomerInfo {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
+    @Setter
     private Customer customer;
 
     public CustomerInfo(CustomerSignupRequestDTO dto) {
