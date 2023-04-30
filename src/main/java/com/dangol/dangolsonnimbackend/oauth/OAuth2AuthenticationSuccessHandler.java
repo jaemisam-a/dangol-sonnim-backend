@@ -94,6 +94,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CookieUtil.addSameSiteCookie(response, "access_token", accessToken.getToken(), 1800000);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
+                .queryParam("token", accessToken.getToken())
                 .build().toUriString();
     }
 

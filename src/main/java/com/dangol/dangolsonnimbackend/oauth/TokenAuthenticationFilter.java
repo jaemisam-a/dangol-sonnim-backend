@@ -23,12 +23,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)  throws ServletException, IOException {
 
-        String tokenStr = HeaderUtil.getAccessToken(request);
-        AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+        String requestURI = request.getRequestURI();
 
-        if (token.validate()) {
-            Authentication authentication = tokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        // 소셜 로그인 관련 URL 패턴 확인
+        if (requestURI.startsWith("/oauth2/callback/")) {
+            String tokenStr = HeaderUtil.getAccessToken(request);
+            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+
+            if (token.validate()) {
+                Authentication authentication = tokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
 
         filterChain.doFilter(request, response);
