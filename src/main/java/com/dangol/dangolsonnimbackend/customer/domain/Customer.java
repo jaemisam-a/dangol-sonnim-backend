@@ -14,6 +14,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -53,6 +55,9 @@ public class Customer {
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private CustomerInfo customerInfo;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Like> likeList = new ArrayList<>();;
 
     public Customer(String id, String name, String email, ProviderType providerType, RoleType roleType, CustomerInfo customerInfo) {
         this.id = id;

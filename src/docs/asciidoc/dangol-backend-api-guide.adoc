@@ -213,6 +213,28 @@ include::{snippets}/customer/is-nickname-duplicate/path-parameters.adoc[]
 - Response
 include::{snippets}/customer/is-nickname-duplicate/http-response.adoc[]
 
+==== 4. 가게 좋아요
+
+로그인한 유저가 가게 '좋아요' 하는 기능입니다.
+좋아요가 된 상태에서 한번 더 요청하면 좋아요가 취소됩니다.
+
+- Request
+include::{snippets}/customer/like/http-request.adoc[]
+include::{snippets}/customer/like/path-parameters.adoc[]
+- Response
+include::{snippets}/customer/like/http-response.adoc[]
+
+==== 5. 가게 좋아요 여부
+
+해당 가게를 좋아요 했는 지 여부를 파악하는 기능입니다.
+로그인 되어있지 않은 상태에서는 반드시 'False' 를 반환합니다.
+
+- Request
+include::{snippets}/customer/is-like/http-request.adoc[]
+include::{snippets}/customer/is-like/path-parameters.adoc[]
+- Response
+include::{snippets}/customer/is-like/http-response.adoc[]
+
 === 가게 API
 
 |===

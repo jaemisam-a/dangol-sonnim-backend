@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.store.domain;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
+import com.dangol.dangolsonnimbackend.customer.domain.Like;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreUpdateDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -59,6 +60,9 @@ public class Store {
     @Column(nullable = false)
     private String comments;
 
+    @Column
+    private Integer likeNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "boss_id", nullable = false)
     @JsonIgnore
@@ -83,6 +87,9 @@ public class Store {
     @JsonIgnore
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<BusinessHour> businessHours;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Like> likeList = new ArrayList<>();
   
     @ManyToMany
     @JoinTable(
@@ -114,6 +121,7 @@ public class Store {
         this.comments = dto.getComments();
         this.registerName = dto.getRegisterName();
         this.registerNumber = dto.getRegisterNumber();
+        this.likeNumber = 0;
     }
 
     public Store(StoreSignupRequestDTO dto, Category category, Boss boss) {
@@ -162,5 +170,13 @@ public class Store {
         if (storeImages != null) {
             this.storeImages.addAll(storeImages);
         }
+    }
+
+    public void increaseLikeNum() {
+        this.likeNumber += 1;
+    }
+
+    public void decreaseLikeNum() {
+        this.likeNumber -= 1;
     }
 }

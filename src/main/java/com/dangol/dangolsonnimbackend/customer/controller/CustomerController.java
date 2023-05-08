@@ -2,8 +2,8 @@ package com.dangol.dangolsonnimbackend.customer.controller;
 
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerResponseDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.IsLikeResponseDTO;
 import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
-import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,8 +36,24 @@ public class CustomerController {
     }
 
     @GetMapping("/validate/{nickname}")
-    public ResponseEntity<Object> isNicknameDuplicate(@Valid @PathVariable String nickname){
+    public ResponseEntity<Void> isNicknameDuplicate(@Valid @PathVariable String nickname){
         customerService.existsByNickname(nickname);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/like/{storeId}")
+    public ResponseEntity<Void> like(@AuthenticationPrincipal String id, @PathVariable Long storeId){
+        customerService.like(id, storeId);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/isLike/{storeId}")
+    public ResponseEntity<IsLikeResponseDTO> isLike(@AuthenticationPrincipal String id, @PathVariable Long storeId){
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.OK).body(new IsLikeResponseDTO(Boolean.FALSE));
+        }
+        Boolean isLike = customerService.isLike(id, storeId);
+        return ResponseEntity.status(HttpStatus.OK).body(new IsLikeResponseDTO(isLike));
     }
 }

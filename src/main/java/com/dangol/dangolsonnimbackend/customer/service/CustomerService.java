@@ -12,4 +12,8 @@ public interface CustomerService {
     CustomerResponseDTO getInfo(String id);
 
     void existsByNickname(String nickname);
+
+    void like(String id, Long storeId);
+
+    Boolean isLike(String id, Long storeId);
 }
