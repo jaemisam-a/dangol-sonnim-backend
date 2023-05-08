@@ -1,8 +1,15 @@
 package com.dangol.dangolsonnimbackend.customer.service;
 
 
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerResponseDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
 
 public interface CustomerService {
-    void signup(CustomerSignupRequestDTO dto);
+
+    CustomerResponseDTO addInfo(String id, CustomerInfoRequestDTO dto);
+
+    CustomerResponseDTO getInfo(String id);
+
+    void existsByNickname(String nickname);
 }

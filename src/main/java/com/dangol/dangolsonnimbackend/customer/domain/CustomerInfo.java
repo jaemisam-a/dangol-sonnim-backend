@@ -1,5 +1,6 @@
 package com.dangol.dangolsonnimbackend.customer.domain;
 
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,10 +48,10 @@ public class CustomerInfo {
     @Setter
     private Customer customer;
 
-    public CustomerInfo(CustomerSignupRequestDTO dto) {
+    public void setCustomerInfo(CustomerInfoRequestDTO dto, String profileImageUrl) {
         this.nickname = dto.getNickname();
-        this.profileImageUrl = dto.getProfileImageUrl();
         this.phoneNumber = dto.getPhoneNumber();
         this.birth = dto.getBirth();
+        this.profileImageUrl = profileImageUrl;
     }
 }

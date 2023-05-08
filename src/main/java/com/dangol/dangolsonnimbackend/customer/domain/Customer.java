@@ -1,10 +1,8 @@
 package com.dangol.dangolsonnimbackend.customer.domain;
 
-import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.oauth.ProviderType;
 import com.dangol.dangolsonnimbackend.oauth.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,7 +44,6 @@ public class Customer {
     @NotNull
     private ProviderType providerType;
 
-    @Column(name = "ROLE_TYPE", length = 20)
     @Enumerated(EnumType.STRING)
     @NotNull
     private RoleType roleType;
