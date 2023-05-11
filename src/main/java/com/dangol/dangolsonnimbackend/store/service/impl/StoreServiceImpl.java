@@ -173,7 +173,8 @@ public class StoreServiceImpl implements StoreService {
     public Page<StoreResponseDTO> findStoreList(String sigungu, CategoryType category, String kw, Pageable pageable){
 
         if(category == CategoryType.NONE){
-            storeRepository.findAllBySigunguContainingAndNameContaining(sigungu, kw);
+            return storeRepository.findAllBySigunguContainingAndNameContaining(sigungu, kw, pageable)
+                    .map(StoreResponseDTO::new);
         }
 
         return storeRepository.findAllBySigunguContainingAndCategory_CategoryTypeAndNameContaining(sigungu, category, kw, pageable)
