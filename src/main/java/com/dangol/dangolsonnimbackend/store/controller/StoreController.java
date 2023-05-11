@@ -89,7 +89,7 @@ public class StoreController {
     @GetMapping("/list")
     public ResponseEntity<Page<StoreResponseDTO>> findStoreList(
             @RequestParam(value = "sigungu", defaultValue = "") String sigungu,
-            @RequestParam(value = "category", defaultValue = "NONE") CategoryType category,
+            @RequestParam(value = "category", defaultValue = "") CategoryType category,
             @RequestParam(value = "kw", defaultValue = "") String kw,
             @PageableDefault(size = 16, sort = "id", direction = Sort.Direction.DESC ) Pageable pageable)
     {
