@@ -386,9 +386,9 @@ class StoreControllerTest {
         category.setCategoryType(CategoryType.CHINESE);
         categoryRepository.save(category);
 
-        String registerNumber = storeService.create(dto, BOSS_TEST_EMAIL).getRegisterNumber();
+        StoreResponseDTO responseDTO = storeService.create(dto, BOSS_TEST_EMAIL);
 
-        StoreUpdateDTO updateDTO = new StoreUpdateDTO(registerNumber);
+        StoreUpdateDTO updateDTO = new StoreUpdateDTO(responseDTO.getRegisterNumber());
 
         updateDTO.setName(Optional.of("단골손님" + new Random().nextInt()));
         updateDTO.setSido(Optional.of("경기도"));
@@ -396,7 +396,7 @@ class StoreControllerTest {
         updateDTO.setTags(List.of("변경 태그1"));
         updateDTO.setBusinessHours(List.of(new BusinessHourRequestDTO("수~목", "11:00~12:00")));
 
-        mockMvc.perform(patch("/api/v1/store/update")
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/v1/store/update/{storeId}", responseDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .content(objectMapper.writeValueAsString(updateDTO)))
@@ -408,22 +408,11 @@ class StoreControllerTest {
                 .andExpect(jsonPath("$.businessHours[0].weeks").value(updateDTO.getBusinessHours().get(0).getWeeks()))
                 .andExpect(jsonPath("$.businessHours[0].hours").value(updateDTO.getBusinessHours().get(0).getHours()))
                 .andDo(document("store/update",
+                        pathParameters(
+                                parameterWithName("storeId").description("상점 ID")
+                        ),
                         requestFields(updateRequestJsonField)
                 ));
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("존재하지 않은 가게 정보로 업데이트를 요청하면 Bad Request를 반환받는다.")
-    void givenNonExistedStore_whenUpdate_thenThrowException() throws Exception {
-        StoreUpdateDTO updateDTO = new StoreUpdateDTO("None");
-
-        mockMvc.perform(patch("/api/v1/store/update")
-                        .contentType(MediaType.APPLICATION_JSON)
-                           .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .content(objectMapper.writeValueAsString(updateDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(STORE_NOT_FOUND.getMessage()));
     }
 
     @Test

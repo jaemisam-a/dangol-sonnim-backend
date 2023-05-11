@@ -3,6 +3,7 @@ package com.dangol.dangolsonnimbackend.store.dto;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class StoreUpdateDTO {
     private Optional<String> name = Optional.empty();
 
@@ -40,8 +42,6 @@ public class StoreUpdateDTO {
 
     private List<String> tags;
     private List<BusinessHourRequestDTO> businessHours;
-
-    private StoreUpdateDTO() { }
 
     public StoreUpdateDTO(String registerNumber) {
         this.registerNumber = registerNumber;

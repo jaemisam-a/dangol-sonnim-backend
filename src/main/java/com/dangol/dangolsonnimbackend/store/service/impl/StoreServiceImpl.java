@@ -109,8 +109,8 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     @Transactional
-    public StoreResponseDTO updateStoreByDto(StoreUpdateDTO dto) {
-        Optional<Store> store =  storeQueryRepository.findByRegisterNumber(dto.getRegisterNumber());
+    public StoreResponseDTO updateStoreByDto(StoreUpdateDTO dto, Long storeId) {
+        Optional<Store> store =  storeQueryRepository.findById(storeId);
         Optional<Category> category = dto.getCategoryType().map(categoryType ->
                 categoryQueryRepository.findByCategoryType(categoryType).get());
 

@@ -62,11 +62,11 @@ public class StoreController {
                 .body(res);
     }
 
-    @PatchMapping("/update")
-    public ResponseEntity<StoreResponseDTO> update(@RequestBody String jsonString) throws BadRequestException {
+    @PatchMapping("/update/{storeId}")
+    public ResponseEntity<StoreResponseDTO> update(@RequestBody String jsonString, @PathVariable Long storeId) throws BadRequestException {
         try {
             StoreUpdateDTO dto = objectMapper.readValue(jsonString, StoreUpdateDTO.class);
-            StoreResponseDTO res = storeService.updateStoreByDto(dto);
+            StoreResponseDTO res = storeService.updateStoreByDto(dto, storeId);
 
             return ResponseEntity
                     .status(HttpStatus.OK)

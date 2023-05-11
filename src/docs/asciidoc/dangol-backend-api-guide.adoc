@@ -293,6 +293,7 @@ include::{snippets}/store/find/http-response.adoc[]
 - Request
 include::{snippets}/store/update/http-request.adoc[]
 include::{snippets}/store/update/request-fields.adoc[]
+
 - Response
 include::{snippets}/store/update/http-response.adoc[]
 

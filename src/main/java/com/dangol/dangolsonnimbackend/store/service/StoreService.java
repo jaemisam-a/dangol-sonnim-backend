@@ -10,7 +10,7 @@ import java.util.List;
 public interface StoreService {
     StoreResponseDTO create(StoreSignupRequestDTO dto, String email);
     StoreDetailResponseDTO findById(Long id);
-    StoreResponseDTO updateStoreByDto(StoreUpdateDTO dto);
+    StoreResponseDTO updateStoreByDto(StoreUpdateDTO dto, Long storeId);
 
     List<StoreResponseDTO> findMyStore(String email);
 
