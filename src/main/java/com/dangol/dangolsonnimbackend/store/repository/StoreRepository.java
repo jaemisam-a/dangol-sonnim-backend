@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
     Page<Store> findAllBySigunguContainingAndCategory_CategoryTypeAndNameContaining(String sigungu, CategoryType category, String kw, Pageable pageable);
+    Page<Store> findAllBySigunguContainingAndNameContaining(String sigungu, String name);
 }
