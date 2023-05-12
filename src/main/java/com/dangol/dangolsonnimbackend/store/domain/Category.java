@@ -26,7 +26,6 @@ public class Category {
 
     @Column
     @OneToMany(mappedBy = "category")
-    @ToString.Exclude
     private List<Store> store = new ArrayList<>();
 
     public Category(CategoryType categoryType) {

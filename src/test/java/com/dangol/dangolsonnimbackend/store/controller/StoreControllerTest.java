@@ -390,9 +390,9 @@ class StoreControllerTest {
 
         StoreUpdateDTO updateDTO = new StoreUpdateDTO(responseDTO.getRegisterNumber());
 
-        updateDTO.setName(Optional.of("단골손님" + new Random().nextInt()));
-        updateDTO.setSido(Optional.of("경기도"));
-        updateDTO.setCategoryType(Optional.of(CategoryType.CHINESE));
+        updateDTO.setName(("단골손님" + new Random().nextInt()));
+        updateDTO.setSido("경기도");
+        updateDTO.setCategoryType(CategoryType.CHINESE);
         updateDTO.setTags(List.of("변경 태그1"));
         updateDTO.setBusinessHours(List.of(new BusinessHourRequestDTO("수~목", "11:00~12:00")));
 
@@ -401,9 +401,9 @@ class StoreControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(updateDTO.getName().get()))
-                .andExpect(jsonPath("$.sido").value(updateDTO.getSido().get()))
-                .andExpect(jsonPath("$.categoryType").value(updateDTO.getCategoryType().get().toString()))
+                .andExpect(jsonPath("$.name").value(updateDTO.getName()))
+                .andExpect(jsonPath("$.sido").value(updateDTO.getSido()))
+                .andExpect(jsonPath("$.categoryType").value(updateDTO.getCategoryType().toString()))
                 .andExpect(jsonPath("$.tags[0]").exists())
                 .andExpect(jsonPath("$.businessHours[0].weeks").value(updateDTO.getBusinessHours().get(0).getWeeks()))
                 .andExpect(jsonPath("$.businessHours[0].hours").value(updateDTO.getBusinessHours().get(0).getHours()))

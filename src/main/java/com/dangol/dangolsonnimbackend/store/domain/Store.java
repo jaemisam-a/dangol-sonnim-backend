@@ -70,7 +70,6 @@ public class Store {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category")
-    @ToString.Exclude
     private Category category;
 
     @Column(nullable = false, unique = true)
@@ -85,8 +84,8 @@ public class Store {
     private List<Menu> menuList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<BusinessHour> businessHours;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<BusinessHour> businessHours = new ArrayList<>();
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Like> likeList = new ArrayList<>();
@@ -142,20 +141,21 @@ public class Store {
         this.category.addStore(this);
     }
 
-    public Optional<Store> update(StoreUpdateDTO dto, Optional<Category> category) {
-        dto.getName().ifPresent(name -> this.name = name);
-        dto.getPhoneNumber().ifPresent(phoneNumber -> this.phoneNumber = phoneNumber);
-        dto.getNewAddress().ifPresent(newAddress -> this.newAddress = newAddress);
-        dto.getSido().ifPresent(sido -> this.sido = sido);
-        dto.getSigungu().ifPresent(sigungu -> this.sigungu = sigungu);
-        dto.getBname1().ifPresent(bname1 -> this.bname1 = bname1);
-        dto.getBname2().ifPresent(bname2 -> this.bname2 = bname2);
-        dto.getDetailedAddress().ifPresent(detailedAddress -> this.detailedAddress = detailedAddress);
-        dto.getComments().ifPresent(comments -> this.comments = comments);
-        dto.getRegisterName().ifPresent(registerName -> this.registerName = registerName);
-        category.ifPresent(newCategory -> updateCategory(newCategory));
-
-        return Optional.of(this);
+    public Store update(StoreUpdateDTO dto, Category category) {
+        this.name = dto.getName() != null ? dto.getName() : this.name;
+        this.phoneNumber = dto.getPhoneNumber() != null ? dto.getPhoneNumber() : this.phoneNumber;
+        this.newAddress = dto.getNewAddress() != null ? dto.getNewAddress() : this.newAddress;
+        this.sido = dto.getSido() != null ? dto.getSido() : this.sido;
+        this.sigungu = dto.getSigungu() != null ? dto.getSigungu() : this.sigungu;
+        this.bname1 = dto.getBname1() != null ? dto.getBname1() : this.bname1;
+        this.bname2 = dto.getBname2() != null ? dto.getBname2() : this.bname2;
+        this.detailedAddress = dto.getDetailedAddress() != null ? dto.getDetailedAddress() : this.detailedAddress;
+        this.comments = dto.getComments() != null ? dto.getComments() : this.comments;
+        this.registerName = dto.getRegisterName() != null ? dto.getRegisterName() : this.registerName;
+        if (category != null) {
+            updateCategory(category);
+        }
+        return this;
     }
 
     public void setTags(Set<Tag> tags){
@@ -163,7 +163,8 @@ public class Store {
     }
 
     public void setBusinessHours(List<BusinessHour> businessHours) {
-        this.businessHours = businessHours;
+        this.businessHours.clear();
+        this.businessHours.addAll(businessHours);
     }
     public void setStoreImages(List<StoreImage> storeImages) {
         this.storeImages.clear();

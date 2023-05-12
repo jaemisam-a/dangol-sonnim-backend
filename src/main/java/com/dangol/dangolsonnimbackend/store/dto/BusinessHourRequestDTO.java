@@ -13,9 +13,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BusinessHourRequestDTO {
-    @NotNull(message = "영업 요일은 Null 일 수 없습니다")
     private String weeks;
-    @NotNull(message = "영업 시간은 Null 일 수 없습니다")
     private String hours;
 
     public BusinessHourRequestDTO(BusinessHour businessHour){

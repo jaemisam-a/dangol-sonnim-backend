@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/store")
@@ -63,18 +62,12 @@ public class StoreController {
     }
 
     @PatchMapping("/update/{storeId}")
-    public ResponseEntity<StoreResponseDTO> update(@RequestBody String jsonString, @PathVariable Long storeId) throws BadRequestException {
-        try {
-            StoreUpdateDTO dto = objectMapper.readValue(jsonString, StoreUpdateDTO.class);
-            StoreResponseDTO res = storeService.updateStoreByDto(dto, storeId);
+    public ResponseEntity<StoreResponseDTO> update(@Valid @RequestBody StoreUpdateDTO dto, @PathVariable Long storeId) throws BadRequestException {
+        StoreResponseDTO res = storeService.updateStoreByDto(dto, storeId);
 
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(res);
-
-        } catch (JacksonException e) {
-            throw new BadRequestException(ErrorCodeMessage.REQUEST_NOT_INVALID);
-        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(res);
     }
 
     @PostMapping("/image-upload")

@@ -36,10 +36,9 @@ public class CategoryQueryRepository {
      * @param categoryType 카테고리 ID
      * @return 카테고리 엔티티 객체
      */
-    public Optional<Category> findByCategoryType(CategoryType categoryType) {
-        return Optional.ofNullable(
-                queryFactory.selectFrom(QCategory.category)
+    public Category findByCategoryType(CategoryType categoryType) {
+        return queryFactory.selectFrom(QCategory.category)
                         .where(QCategory.category.categoryType.eq(categoryType))
-                        .fetchOne());
+                        .fetchOne();
     }
 }

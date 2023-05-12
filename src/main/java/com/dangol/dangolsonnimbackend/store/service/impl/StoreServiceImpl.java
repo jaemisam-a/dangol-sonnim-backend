@@ -66,8 +66,8 @@ public class StoreServiceImpl implements StoreService {
         );
 
         // 카테고리 정보는 스키마에 사전 반영이 되어있어야 한다.
-        Category category = categoryQueryRepository
-                .findByCategoryType(dto.getCategoryType())
+        Category category = Optional.ofNullable(categoryQueryRepository
+                .findByCategoryType(dto.getCategoryType()))
                 .orElse(new Category(dto.getCategoryType()));
 
         Store store = new Store(dto, category, boss);
@@ -110,31 +110,30 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional
     public StoreResponseDTO updateStoreByDto(StoreUpdateDTO dto, Long storeId) {
-        Optional<Store> store =  storeQueryRepository.findById(storeId);
-        Optional<Category> category = dto.getCategoryType().map(categoryType ->
-                categoryQueryRepository.findByCategoryType(categoryType).get());
+        Store store = storeQueryRepository.findById(storeId).orElseThrow(
+                () -> new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND)
+        );
 
-        if(store.isEmpty())
-            throw new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND);
-
+        // 태그 변경 부분
         if (dto.getTags() != null && !dto.getTags().isEmpty()) {
-            store.get().setTags(tagService.getOrCreateTags(dto.getTags()));
+            store.setTags(tagService.getOrCreateTags(dto.getTags()));
         }
 
+        // 가게 시간대 변경 부분
         if (dto.getBusinessHours() != null && !dto.getBusinessHours().isEmpty()) {
             List<BusinessHour> businessHours = new ArrayList<>();
             for (BusinessHourRequestDTO businessHourRequestDTO : dto.getBusinessHours()) {
-                BusinessHour businessHour = new BusinessHour(businessHourRequestDTO, store.get());
+                BusinessHour businessHour = new BusinessHour(businessHourRequestDTO, store);
                 businessHours.add(businessHour);
             }
-            store.get().setBusinessHours(businessHours);
+            store.setBusinessHours(businessHours);
         }
 
-        return store
-                .filter(o -> o.getRegisterNumber() != null)
-                .flatMap(o -> o.update(dto, category))
-                .map(StoreResponseDTO::new)
-                .orElseThrow(() -> new InternalServerException(ErrorCodeMessage.RESPONSE_CREATE_ERROR));
+        Category category = null;
+        if(dto.getCategoryType() != null){
+            category = categoryQueryRepository.findByCategoryType(dto.getCategoryType());
+        }
+        return new StoreResponseDTO(store.update(dto, category));
     }
 
     @Override

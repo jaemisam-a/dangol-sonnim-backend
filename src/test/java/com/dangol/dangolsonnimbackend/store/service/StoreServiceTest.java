@@ -93,25 +93,25 @@ public class StoreServiceTest {
         assertTrue(storeQueryRepository.findById(response.getId()).isPresent());
     }
 
-    @Test
-    @DisplayName("수정할 가게 정보를 전달받으면 가게를 수정하도록 한다.")
-    void givenUpdateDto_whenFindByRegisterNumber_thenUpdateStore() {
-        StoreResponseDTO responseDTO = storeService.create(dto, BOSS_TEST_EMAIL);
-        Category category = new Category();
-        category.setCategoryType(CategoryType.CHINESE);
-        categoryRepository.save(category);
-
-        StoreUpdateDTO updateDto =
-                new StoreUpdateDTO(dto.getRegisterNumber())
-                        .name("단골손님" + new Random().nextInt())
-                        .sido("부산광역시")
-                        .categoryType(CategoryType.CHINESE);
-
-        StoreResponseDTO response = storeService.updateStoreByDto(updateDto, responseDTO.getId());
-
-        assertNotEquals(dto.getName(), storeQueryRepository.findById(response.getId()).get().getName());
-        assertNotEquals(dto.getSido(), storeQueryRepository.findById(response.getId()).get().getSido());
-        assertEquals(CategoryType.CHINESE, response.getCategoryType());
-    }
+//    @Test
+//    @DisplayName("수정할 가게 정보를 전달받으면 가게를 수정하도록 한다.")
+//    void givenUpdateDto_whenFindByRegisterNumber_thenUpdateStore() {
+//        StoreResponseDTO responseDTO = storeService.create(dto, BOSS_TEST_EMAIL);
+//        Category category = new Category();
+//        category.setCategoryType(CategoryType.CHINESE);
+//        categoryRepository.save(category);
+//
+//        StoreUpdateDTO updateDto =
+//                new StoreUpdateDTO(dto.getRegisterNumber())
+//                        .name("단골손님" + new Random().nextInt())
+//                        .sido("부산광역시")
+//                        .categoryType(CategoryType.CHINESE);
+//
+//        StoreResponseDTO response = storeService.updateStoreByDto(updateDto, responseDTO.getId());
+//
+//        assertNotEquals(dto.getName(), storeQueryRepository.findById(response.getId()).get().getName());
+//        assertNotEquals(dto.getSido(), storeQueryRepository.findById(response.getId()).get().getSido());
+//        assertEquals(CategoryType.CHINESE, response.getCategoryType());
+//    }
 
 }
