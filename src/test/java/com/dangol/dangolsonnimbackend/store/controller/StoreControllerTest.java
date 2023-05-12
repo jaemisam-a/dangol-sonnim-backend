@@ -437,6 +437,7 @@ class StoreControllerTest {
                 .andExpect(jsonPath("$[0].detailedAddress").value(dto.getDetailedAddress()))
                 .andExpect(jsonPath("$[0].categoryType").value(dto.getCategoryType().toString()))
                 .andExpect(jsonPath("$[0].tags[0]").exists())
+                .andExpect(jsonPath("$[0].storeImageUrlList").exists())
                 .andExpect(jsonPath("$[0].businessHours[0].weeks").value(dto.getBusinessHours().get(0).getWeeks()))
                 .andExpect(jsonPath("$[0].businessHours[0].hours").value(dto.getBusinessHours().get(0).getHours()))
                 .andExpect(jsonPath("$[0].businessHours[1].weeks").value(dto.getBusinessHours().get(1).getWeeks()))
@@ -456,6 +457,7 @@ class StoreControllerTest {
                                 fieldWithPath("[].categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
                                 fieldWithPath("[].registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
                                 fieldWithPath("[].registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
+                                fieldWithPath("[].storeImageUrlList").type(JsonFieldType.ARRAY).description("가게 이미지 URL"),
                                 fieldWithPath("[].tags").type(JsonFieldType.ARRAY).description("가게 태그"),
                                 fieldWithPath("[].businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
                                 fieldWithPath("[].businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간")
@@ -469,7 +471,6 @@ class StoreControllerTest {
     void givenSigunguAndCategory_whenFindStoreList_thenReturnStoreList() throws Exception {
         // given
         storeService.create(dto, BOSS_TEST_EMAIL);
-
         String sigungu = "서초구";
         CategoryType categoryType = CategoryType.KOREAN;
         String kw = "골손";
@@ -491,6 +492,7 @@ class StoreControllerTest {
                 .andExpect(jsonPath("$.content[0].detailedAddress").value(dto.getDetailedAddress()))
                 .andExpect(jsonPath("$.content[0].categoryType").value(dto.getCategoryType().toString()))
                 .andExpect(jsonPath("$.content[0].tags[0]").exists())
+                .andExpect(jsonPath("$.content[0].storeImageUrlList").exists())
                 .andExpect(jsonPath("$.content[0].businessHours[0].weeks").value(dto.getBusinessHours().get(0).getWeeks()))
                 .andExpect(jsonPath("$.content[0].businessHours[0].hours").value(dto.getBusinessHours().get(0).getHours()))
                 .andExpect(jsonPath("$.content[0].businessHours[1].weeks").value(dto.getBusinessHours().get(1).getWeeks()))
@@ -513,6 +515,7 @@ class StoreControllerTest {
                                 fieldWithPath("content[].categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
                                 fieldWithPath("content[].registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
                                 fieldWithPath("content[].registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
+                                fieldWithPath("content[].storeImageUrlList").type(JsonFieldType.ARRAY).description("가게 이미지 URL"),
                                 fieldWithPath("content[].tags").type(JsonFieldType.ARRAY).description("가게 태그"),
                                 fieldWithPath("content[].businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
                                 fieldWithPath("content[].businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간"),

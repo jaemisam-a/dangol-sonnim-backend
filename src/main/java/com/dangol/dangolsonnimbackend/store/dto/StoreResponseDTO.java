@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.store.dto;
 
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.domain.StoreImage;
 import com.dangol.dangolsonnimbackend.store.domain.Tag;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,7 @@ public class StoreResponseDTO {
     private CategoryType categoryType;
     private List<String> tags;
     private List<BusinessHourRequestDTO> businessHours;
+    private List<String> storeImageUrlList;
 
     public StoreResponseDTO(Store store) {
         this.id = store.getId();
@@ -57,6 +59,8 @@ public class StoreResponseDTO {
         this.categoryType = store.getCategory().getCategoryType();
         this.tags = store.getTags().stream().map(Tag::getName).collect(Collectors.toList());
         this.businessHours = store.getBusinessHours().stream().map(BusinessHourRequestDTO::new)
+                .collect(Collectors.toList());
+        this.storeImageUrlList = store.getStoreImages().stream().map(StoreImage::getImageUrl)
                 .collect(Collectors.toList());
     }
 }
