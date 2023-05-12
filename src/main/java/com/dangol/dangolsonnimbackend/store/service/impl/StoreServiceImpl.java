@@ -121,6 +121,7 @@ public class StoreServiceImpl implements StoreService {
 
         // 가게 시간대 변경 부분
         if (dto.getBusinessHours() != null && !dto.getBusinessHours().isEmpty()) {
+
             List<BusinessHour> businessHours = new ArrayList<>();
             for (BusinessHourRequestDTO businessHourRequestDTO : dto.getBusinessHours()) {
                 BusinessHour businessHour = new BusinessHour(businessHourRequestDTO, store);
