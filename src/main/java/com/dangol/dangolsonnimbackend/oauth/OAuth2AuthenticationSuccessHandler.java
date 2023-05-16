@@ -91,7 +91,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         CookieUtil.deleteSameSiteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.addSameSiteCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-        CookieUtil.addSameSiteCookie(response, ACCESS_TOKEN, accessToken.getToken(), 1800000);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam(TOKEN, accessToken.getToken())
