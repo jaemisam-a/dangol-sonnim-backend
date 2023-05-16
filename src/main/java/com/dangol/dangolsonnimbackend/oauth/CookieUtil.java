@@ -63,7 +63,7 @@ public class CookieUtil {
                 .domain("dangol.shop")
                 .path("/")
                 .build();
-        response.addHeader(SET_COOKIE, cookie.toString());
+        response.setHeader(SET_COOKIE, cookie.toString());
     }
 
     public static void deleteSameSiteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
