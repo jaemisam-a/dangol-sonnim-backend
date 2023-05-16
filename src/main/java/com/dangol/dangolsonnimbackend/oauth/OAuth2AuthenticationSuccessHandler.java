@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REFRESH_TOKEN;
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
 @Component
 @RequiredArgsConstructor
@@ -91,10 +91,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         CookieUtil.deleteSameSiteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.addSameSiteCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-        CookieUtil.addSameSiteCookie(response, "access_token", accessToken.getToken(), 1800000);
+        CookieUtil.addSameSiteCookie(response, ACCESS_TOKEN, accessToken.getToken(), 1800000);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", accessToken.getToken())
+                .queryParam(TOKEN, accessToken.getToken())
                 .build().toUriString();
     }
 
