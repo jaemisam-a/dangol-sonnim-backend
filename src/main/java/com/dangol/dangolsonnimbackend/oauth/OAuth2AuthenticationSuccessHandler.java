@@ -59,6 +59,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl;
         if (roleType == RoleType.GUEST) {
             targetUrl = "https://dangol.store/login/profile";
+        } else if (roleType == RoleType.ADMIN) {
+            targetUrl = "http://127.0.0.1:5500/social.html";
         } else {
             targetUrl = "https://dangol.store/";
         }

@@ -60,6 +60,7 @@ public class CookieUtil {
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
+                .domain("dangol.store")
                 .path("/")
                 .build();
         response.addHeader(SET_COOKIE, cookie.toString());
@@ -74,6 +75,7 @@ public class CookieUtil {
                     ResponseCookie responseCookie = ResponseCookie.from(name, "")
                             .path("/")
                             .maxAge(0)
+                            .domain("dangol.store")
                             .secure(true)
                             .sameSite("None")
                             .build();
