@@ -4,6 +4,7 @@ import com.dangol.dangolsonnimbackend.customer.domain.Customer;
 import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -23,6 +24,8 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    @Value("jwt.refresh-expiration-in-ms")
+    private long refreshTokenExpiry;
     private final AuthTokenProvider tokenProvider;
     private final AppProperties appProperties;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
@@ -71,7 +74,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         );
 
         // refresh 토큰 설정
-        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+        refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
         AuthToken refreshToken = tokenProvider.createAuthToken(
                 appProperties.getAuth().getTokenSecret(),
