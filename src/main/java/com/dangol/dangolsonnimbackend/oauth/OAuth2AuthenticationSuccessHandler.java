@@ -24,7 +24,7 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    @Value("jwt.refresh-expiration-in-ms")
+    @Value("${jwt.refresh-expiration-in-ms}")
     private long refreshTokenExpiry;
     private final AuthTokenProvider tokenProvider;
     private final AppProperties appProperties;
@@ -61,9 +61,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl;
         if (roleType == RoleType.GUEST) {
-            targetUrl = "https://dangol.store/login/profile";
+            targetUrl = "/login/profile";
         }else {
-            targetUrl = "https://dangol.store/";
+            targetUrl = "/";
         }
 
         Date now = new Date();
