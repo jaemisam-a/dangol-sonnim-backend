@@ -41,7 +41,7 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping("/like/{storeId}")
+    @GetMapping("/like/{storeId}")
     public ResponseEntity<Void> like(@AuthenticationPrincipal String id, @PathVariable Long storeId){
         customerService.like(id, storeId);
 
