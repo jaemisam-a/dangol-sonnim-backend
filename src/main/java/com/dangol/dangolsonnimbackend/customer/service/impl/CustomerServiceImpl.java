@@ -1,5 +1,6 @@
 package com.dangol.dangolsonnimbackend.customer.service.impl;
 
+import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
 import com.dangol.dangolsonnimbackend.customer.domain.Like;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
@@ -92,6 +93,14 @@ public class CustomerServiceImpl implements CustomerService {
 
         Optional<Like> likeOptional = Optional.ofNullable(likeRepository.findByCustomerAndStore(customer, store));
         return likeOptional.isPresent();
+    }
+
+    @Override
+    public void withdraw(String id) {
+        Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
+        );
+        customerRepository.delete(customer);
     }
 
     private String uploadFileIfPresent(MultipartFile file) {

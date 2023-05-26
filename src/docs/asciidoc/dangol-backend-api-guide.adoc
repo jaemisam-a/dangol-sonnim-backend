@@ -151,7 +151,7 @@ include::{snippets}/boss/register-account/request-fields.adoc[]
 - Response
 include::{snippets}/boss/register-account/http-response.adoc[]
 
-사장님의 토큰을 검증합니다.
+==== 11. 사장님의 토큰을 검증합니다.
 
 - Request
 include::{snippets}/boss/token-validate/http-request.adoc[]
@@ -211,7 +211,16 @@ include::{snippets}/customer/get-info/http-request.adoc[]
 - Response
 include::{snippets}/customer/get-info/http-response.adoc[]
 
-==== 3. 닉네임 중복 확인
+==== 3. 손님 탈퇴
+
+로그인된 손님의 정보를 삭제합니다
+
+- Request
+include::{snippets}/customer/withdraw/http-request.adoc[]
+- Response
+include::{snippets}/customer/withdraw/http-response.adoc[]
+
+==== 4. 닉네임 중복 확인
 
 입력된 닉네임이 중복되는 지 체크하고 중복이 아니면 200번, 중복이면 400번 코드를 반환합니다.
 
@@ -221,7 +230,7 @@ include::{snippets}/customer/is-nickname-duplicate/path-parameters.adoc[]
 - Response
 include::{snippets}/customer/is-nickname-duplicate/http-response.adoc[]
 
-==== 4. 가게 좋아요
+==== 5. 가게 좋아요
 
 로그인한 유저가 가게 '좋아요' 하는 기능입니다.
 좋아요가 된 상태에서 한번 더 요청하면 좋아요가 취소됩니다.
@@ -232,7 +241,7 @@ include::{snippets}/customer/like/path-parameters.adoc[]
 - Response
 include::{snippets}/customer/like/http-response.adoc[]
 
-==== 5. 가게 좋아요 여부
+==== 6. 가게 좋아요 여부
 
 해당 가게를 좋아요 했는 지 여부를 파악하는 기능입니다.
 로그인 되어있지 않은 상태에서는 반드시 'False' 를 반환합니다.
@@ -268,12 +277,6 @@ include::{snippets}/customer/is-like/http-response.adoc[]
 |===
 
 카테고리
-,
-,
-,
-,
-,
-
 
 ==== 1. 가게 등록
 새로운 가게 정보를 등록합니다.

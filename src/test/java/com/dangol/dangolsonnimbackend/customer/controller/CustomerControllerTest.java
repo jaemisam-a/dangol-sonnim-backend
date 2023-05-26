@@ -47,6 +47,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -343,6 +344,29 @@ class CustomerControllerTest {
                         responseFields(
                                 fieldWithPath("isLike").type(JsonFieldType.BOOLEAN).description("좋아요 상태")
                         )
+                ));
+    }
+
+    @Test
+    void givenAuthenticatedUser_whenWithdraw_thenReturnNoContent() throws Exception {
+        // given
+        Customer customer = new Customer(CUSTOMER_TEST_ID, CUSTOMER_TEST_NAME, CUSTOMER_TEST_EMAIL, ProviderType.LOCAL, RoleType.USER, new CustomerInfo());
+        customerRepository.save(customer);
+
+        Date now = new Date();
+        AuthToken authToken = tokenProvider.createAuthToken(CUSTOMER_TEST_ID, new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+        String accessToken = authToken.getToken();
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                CUSTOMER_TEST_ID, null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL)
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isNoContent())
+                .andDo(document("customer/withdraw",
+                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보"))
                 ));
     }
 }

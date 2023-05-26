@@ -16,4 +16,6 @@ public interface CustomerService {
     void like(String id, Long storeId);
 
     Boolean isLike(String id, Long storeId);
+
+    void withdraw(String id);
 }

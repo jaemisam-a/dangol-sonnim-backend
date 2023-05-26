@@ -56,4 +56,10 @@ public class CustomerController {
         Boolean isLike = customerService.isLike(id, storeId);
         return ResponseEntity.status(HttpStatus.OK).body(new IsLikeResponseDTO(isLike));
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> withdraw(@AuthenticationPrincipal String id) {
+        customerService.withdraw(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
