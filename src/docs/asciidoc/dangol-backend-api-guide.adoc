@@ -151,6 +151,14 @@ include::{snippets}/boss/register-account/request-fields.adoc[]
 - Response
 include::{snippets}/boss/register-account/http-response.adoc[]
 
+사장님의 토큰을 검증합니다.
+
+- Request
+include::{snippets}/boss/token-validate/http-request.adoc[]
+include::{snippets}/boss/token-validate/request-fields.adoc[]
+- Response
+include::{snippets}/boss/token-validate/http-response.adoc[]
+
 === 손님 API
 
 ==== 1. 손님 정보 등록

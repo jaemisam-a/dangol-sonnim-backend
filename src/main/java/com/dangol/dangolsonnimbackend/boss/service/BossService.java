@@ -16,4 +16,5 @@ public interface BossService {
     BossSigninResponseDTO getByCredentials(BossSigninReqeustDTO reqeustDTO);
     BossFindEmailResponseDTO findEmailByPhoneNumber(BossFindEmailReqeustDTO reqeustDTO);
     BossResponseDTO registerAccount(String email, BossRegisterAccountRequestDTO dto);
+    void accessTokenValidate(IsValidAccessTokenRequestDTO dto);
 }

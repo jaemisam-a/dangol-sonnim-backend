@@ -94,4 +94,10 @@ public class BossController {
         BossResponseDTO responseDTO = bossService.registerAccount(email, dto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
+
+    @PostMapping("/token-validate")
+    public ResponseEntity<BossResponseDTO> accessTokenValidate(@Valid @RequestBody IsValidAccessTokenRequestDTO dto){
+        bossService.accessTokenValidate(dto);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

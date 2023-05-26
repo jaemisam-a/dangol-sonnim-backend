@@ -102,6 +102,13 @@ public class BossServiceImpl implements BossService {
         return new BossResponseDTO(boss);
     }
 
+    @Override
+    public void accessTokenValidate(IsValidAccessTokenRequestDTO dto) {
+        if (!tokenProvider.validateToken(dto.getAccessToken())){
+            throw new BadRequestException(ErrorCodeMessage.INVALID_TOKEN);
+        }
+    }
+
     private void validateSignup(BossSignupRequestDTO dto) {
         if (bossQueryRepository.existsByEmail(dto.getEmail())) {
             throw new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND);

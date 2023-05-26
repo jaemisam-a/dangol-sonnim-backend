@@ -377,4 +377,23 @@ class BossControllerTest {
                         )
                 ));
     }
+
+    @Test
+    void givenIsValidAccessTokenRequestDTO_whenAccessTokenValidate_thenReturnOk() throws Exception {
+        // given
+        IsValidAccessTokenRequestDTO requestDTO = new IsValidAccessTokenRequestDTO();
+        requestDTO.setAccessToken(tokenProvider.generateAccessToken(dto.getEmail()));
+
+        // when
+        mockMvc.perform(post(BASE_URL + "/token-validate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDTO)))
+                // then
+                .andExpect(status().isOk())
+                .andDo(document("boss/token-validate",
+                        requestFields(
+                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access 토큰")
+                        )
+                ));
+    }
 }

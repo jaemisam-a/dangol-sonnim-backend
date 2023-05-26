@@ -26,7 +26,8 @@ public enum ErrorCodeMessage {
     FILE_UPLOAD_FAIL("파일 업로드에 실패했습니다."),
     FILE_DELETE_FAIL("파일 삭제에 실패했습니다."),
     MENU_NOT_FOUND("존재하지 않는 메뉴입니다."),
-    CUSTOMER_NOT_FOUND("존재하지 않는 유저입니다.");
+    CUSTOMER_NOT_FOUND("존재하지 않는 유저입니다."),
+    INVALID_TOKEN("유효하지 않은 토큰입니다.");
 
     private final String message;
 }
