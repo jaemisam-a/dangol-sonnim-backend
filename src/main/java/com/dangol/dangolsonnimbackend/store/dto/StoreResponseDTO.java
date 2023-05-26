@@ -38,6 +38,7 @@ public class StoreResponseDTO {
     private String registerNumber;
 
     private String registerName;
+    private Integer likeNumber;
 
     private CategoryType categoryType;
     private List<String> tags;
@@ -62,5 +63,6 @@ public class StoreResponseDTO {
                 .collect(Collectors.toList());
         this.storeImageUrlList = store.getStoreImages().stream().map(StoreImage::getImageUrl)
                 .collect(Collectors.toList());
+        this.likeNumber = store.getLikeNumber();
     }
 }

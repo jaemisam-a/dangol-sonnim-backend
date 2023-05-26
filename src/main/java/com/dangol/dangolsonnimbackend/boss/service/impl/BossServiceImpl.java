@@ -111,7 +111,7 @@ public class BossServiceImpl implements BossService {
 
     private void validateSignup(BossSignupRequestDTO dto) {
         if (bossQueryRepository.existsByEmail(dto.getEmail())) {
-            throw new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND);
+            throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_EMAIL);
         }
         if (bossQueryRepository.existsByPhoneNumber(dto.getPhoneNumber())) {
             throw new BadRequestException(ErrorCodeMessage.ALREADY_EXISTS_STORE_REGISTER_NUMBER);
