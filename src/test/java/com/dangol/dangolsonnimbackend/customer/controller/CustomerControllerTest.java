@@ -301,7 +301,7 @@ class CustomerControllerTest {
         Long storeId = storeService.create(signupRequestDTO, BOSS_TEST_EMAIL).getId();
 
         // when
-        mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/like/{storeId}", storeId)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/like/{storeId}", storeId)
                         .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 // then
