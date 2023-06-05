@@ -173,6 +173,7 @@ class SubscribeControllerTest {
                                 fieldWithPath("useCount").type(JsonFieldType.NUMBER).description("구독권 사용가능 횟수"),
                                 fieldWithPath("createAt").type(JsonFieldType.STRING).description("구독권 생성날짜"),
                                 fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("구독권 수정날짜"),
+                                fieldWithPath("storeName").type(JsonFieldType.STRING).description("상점 이름"),
                                 fieldWithPath("benefits[].description").type(JsonFieldType.STRING).description("구독권 혜택")
                         )
                 ));
@@ -213,6 +214,7 @@ class SubscribeControllerTest {
                                 fieldWithPath("useCount").type(JsonFieldType.NUMBER).description("구독권 사용가능 횟수"),
                                 fieldWithPath("createAt").type(JsonFieldType.STRING).description("구독권 생성날짜"),
                                 fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("구독권 수정날짜"),
+                                fieldWithPath("storeName").type(JsonFieldType.STRING).description("상점 이름"),
                                 fieldWithPath("benefits[].description").type(JsonFieldType.STRING).description("구독권 혜택")
                         )));
     }

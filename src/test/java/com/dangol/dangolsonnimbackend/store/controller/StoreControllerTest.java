@@ -178,6 +178,7 @@ class StoreControllerTest {
             fieldWithPath("subscribeResponseDTOList[].useCount").type(JsonFieldType.NUMBER).optional().description("이용 횟수"),
             fieldWithPath("subscribeResponseDTOList[].createAt").type(JsonFieldType.STRING).description("구독 생성 일시"),
             fieldWithPath("subscribeResponseDTOList[].modifiedAt").type(JsonFieldType.STRING).description("구독 수정 일시"),
+            fieldWithPath("subscribeResponseDTOList[].storeName").type(JsonFieldType.STRING).description("상점 이름"),
             fieldWithPath("subscribeResponseDTOList[].benefits[].description").type(JsonFieldType.STRING).description("혜택 설명"),
             fieldWithPath("storeImageUrlList").type(JsonFieldType.ARRAY).description("가게 이미지 URL 리스트")
     };

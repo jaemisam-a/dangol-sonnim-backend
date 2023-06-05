@@ -26,6 +26,7 @@ public class SubscribeResponseDTO {
     private String createAt;
     private String modifiedAt;
     private List<BenefitDTO> benefits;
+    private String storeName;
 
     public SubscribeResponseDTO(CountSubscribe subscribe){
         this.type = SubscribeType.COUNT;
@@ -39,6 +40,7 @@ public class SubscribeResponseDTO {
         this.createAt = String.valueOf(subscribe.getCreatedAt());
         this.modifiedAt = String.valueOf(subscribe.getModifiedAt());
         this.benefits = subscribe.getBenefits().stream().map(BenefitDTO::new).collect(Collectors.toList());
+        this.storeName = subscribe.getStore().getName();
     }
 
     public SubscribeResponseDTO(MonthlySubscribe subscribe){
@@ -52,5 +54,6 @@ public class SubscribeResponseDTO {
         this.createAt = String.valueOf(subscribe.getCreatedAt());
         this.modifiedAt = String.valueOf(subscribe.getModifiedAt());
         this.benefits = subscribe.getBenefits().stream().map(BenefitDTO::new).collect(Collectors.toList());
+        this.storeName = subscribe.getStore().getName();
     }
 }
