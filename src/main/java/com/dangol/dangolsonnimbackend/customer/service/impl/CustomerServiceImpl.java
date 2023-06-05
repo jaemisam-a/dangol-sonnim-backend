@@ -1,10 +1,13 @@
 package com.dangol.dangolsonnimbackend.customer.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
+import com.dangol.dangolsonnimbackend.customer.domain.CustomerInfo;
 import com.dangol.dangolsonnimbackend.customer.domain.Like;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerResponseDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerUpdateRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.repository.CustomerInfoRepository;
 import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
 import com.dangol.dangolsonnimbackend.customer.repository.LikeRepository;
@@ -44,6 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
                 () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
         );
+        customer.setRoleTypeIsUser();
         String s3FileUrl = uploadFileIfPresent(dto.getMultipartFile());
         customer.getCustomerInfo().setCustomerInfo(dto, s3FileUrl);
         return new CustomerResponseDTO(customer);
@@ -101,6 +105,17 @@ public class CustomerServiceImpl implements CustomerService {
                 () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
         );
         customerRepository.delete(customer);
+    }
+
+    @Override
+    public CustomerResponseDTO update(String id, CustomerUpdateRequestDTO reqeustDTO) {
+        Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
+        );
+
+        String s3FileUrl = uploadFileIfPresent(reqeustDTO.getMultipartFile());
+        customer.getCustomerInfo().update(reqeustDTO, s3FileUrl);
+        return new CustomerResponseDTO(customer);
     }
 
     private String uploadFileIfPresent(MultipartFile file) {

@@ -67,4 +67,8 @@ public class Customer {
         this.roleType = roleType;
         this.customerInfo = customerInfo;
     }
+
+    public void setRoleTypeIsUser() {
+        this.roleType = RoleType.USER;
+    }
 }

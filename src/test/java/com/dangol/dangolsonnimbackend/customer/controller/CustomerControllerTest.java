@@ -7,6 +7,7 @@ import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
 import com.dangol.dangolsonnimbackend.customer.domain.CustomerInfo;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerUpdateRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
 import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
 import com.dangol.dangolsonnimbackend.oauth.*;
@@ -367,6 +368,80 @@ class CustomerControllerTest {
                 .andExpect(status().isNoContent())
                 .andDo(document("customer/withdraw",
                         requestHeaders(headerWithName("Authorization").description("Access 토큰 정보"))
+                ));
+    }
+
+    @Test
+    void givenAuthenticatedUserAndValidRequest_whenUpdate_thenReturnCustomerResponse() throws Exception {
+        // given
+        InputStream imageInputStream = getClass().getResourceAsStream("/example-image.png");
+        byte[] imageBytes = IOUtils.toByteArray(imageInputStream);
+
+        // Info 관련 RequestDTO
+        CustomerInfoRequestDTO dto = new CustomerInfoRequestDTO();
+        dto.setNickname(CUSTOMER_TEST_NICKNAME);
+        dto.setPhoneNumber(CUSTOMER_TEST_PHONE_NUMBER);
+        dto.setBirth(CUSTOMER_TEST_BIRTH);
+
+        // 고객 생성
+        Customer customer = new Customer(CUSTOMER_TEST_ID, CUSTOMER_TEST_NAME, CUSTOMER_TEST_EMAIL, ProviderType.LOCAL, RoleType.USER, new CustomerInfo());
+        customerRepository.save(customer);
+
+        // MockMultipartFile 객체 생성
+        MockMultipartFile multipartFile = new MockMultipartFile("multipartFile", "example-image.png", "image/png", imageBytes);
+
+        Date now = new Date();
+        AuthToken authToken = tokenProvider.createAuthToken(CUSTOMER_TEST_ID, new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+        String accessToken = authToken.getToken();
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                CUSTOMER_TEST_ID, null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+        // when
+        mockMvc.perform(RestDocumentationRequestBuilders.fileUpload(BASE_URL + "/info/update")
+                        .file(multipartFile)
+                        .param("nickname", dto.getNickname())
+                        .param("phoneNumber", dto.getPhoneNumber())
+                        .param("birth", dto.getBirth())
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value(CUSTOMER_TEST_NAME))
+                .andExpect(jsonPath("$.email").value(CUSTOMER_TEST_EMAIL))
+                .andExpect(jsonPath("$.providerType").value(ProviderType.LOCAL.toString()))
+                .andExpect(jsonPath("$.roleType").value(RoleType.USER.toString()))
+                .andExpect(jsonPath("$.nickname").value(CUSTOMER_TEST_NICKNAME))
+                .andExpect(jsonPath("$.profileImageUrl").exists())
+                .andExpect(jsonPath("$.phoneNumber").value(CUSTOMER_TEST_PHONE_NUMBER))
+                .andExpect(jsonPath("$.birth").value(CUSTOMER_TEST_BIRTH))
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andExpect(jsonPath("$.modifiedAt").exists())
+                .andDo(document("customer/update-info",
+                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
+                        requestParts(
+                                partWithName("multipartFile").description("메뉴 이미지 파일")
+                        ),
+                        requestParameters(
+                                parameterWithName("nickname").description("고객 닉네임"),
+                                parameterWithName("phoneNumber").description("고객 휴대폰번호"),
+                                parameterWithName("birth").description("고객 생년월일")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.STRING).description("고객 ID"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("고객 이름"),
+                                fieldWithPath("email").type(JsonFieldType.STRING).description("고객 이메일 주소"),
+                                fieldWithPath("providerType").type(JsonFieldType.STRING).description("소셜 로그인 제공자"),
+                                fieldWithPath("roleType").type(JsonFieldType.STRING).description("고객 역할"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("고객 닉네임"),
+                                fieldWithPath("profileImageUrl").type(JsonFieldType.STRING).description("고객 프로필 이미지 URL"),
+                                fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("고객 휴대폰번호"),
+                                fieldWithPath("birth").type(JsonFieldType.STRING).description("고객 생년월일"),
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("고객 생성 일자"),
+                                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("고객 수정 일자")
+                        )
                 ));
     }
 }

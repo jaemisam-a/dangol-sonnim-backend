@@ -1,7 +1,11 @@
 package com.dangol.dangolsonnimbackend.customer.controller;
 
+import com.dangol.dangolsonnimbackend.boss.controller.BossController;
+import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.BossUpdateRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerResponseDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerUpdateRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.IsLikeResponseDTO;
 import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
 import org.springframework.http.HttpStatus;
@@ -10,6 +14,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/v1/customer")
@@ -61,5 +68,12 @@ public class CustomerController {
     public ResponseEntity<Void> withdraw(@AuthenticationPrincipal String id) {
         customerService.withdraw(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("/info/update")
+    public ResponseEntity<CustomerResponseDTO> update(@AuthenticationPrincipal String id, @Valid @ModelAttribute CustomerUpdateRequestDTO reqeustDTO) {
+        CustomerResponseDTO responseDTO = customerService.update(id, reqeustDTO);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 }

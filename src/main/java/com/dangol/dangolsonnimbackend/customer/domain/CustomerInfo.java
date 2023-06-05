@@ -1,7 +1,8 @@
 package com.dangol.dangolsonnimbackend.customer.domain;
 
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
-import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.CustomerUpdateRequestDTO;
+import com.dangol.dangolsonnimbackend.oauth.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,5 +54,12 @@ public class CustomerInfo {
         this.phoneNumber = dto.getPhoneNumber();
         this.birth = dto.getBirth();
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void update(CustomerUpdateRequestDTO dto, String s3FileUrl) {
+        if (dto.getBirth() != null) this.birth = dto.getBirth();
+        if (dto.getNickname() != null) this.nickname = dto.getNickname();
+        if (dto.getPhoneNumber() != null) this.phoneNumber = dto.getPhoneNumber();
+        if (s3FileUrl != null) this.profileImageUrl = s3FileUrl;
     }
 }
