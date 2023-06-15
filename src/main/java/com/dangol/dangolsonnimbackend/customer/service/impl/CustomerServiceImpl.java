@@ -81,10 +81,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (likeOptional.isPresent()) {
             store.decreaseLikeNum();
+            customer.getLikeList().remove(likeOptional.get());
             likeRepository.delete(likeOptional.get());
         } else {
             store.increaseLikeNum();
-            likeRepository.save(new Like(customer, store));
+            customer.getLikeList().add(likeRepository.save(new Like(customer, store)));
         }
     }
 

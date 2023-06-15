@@ -203,7 +203,8 @@ class CustomerControllerTest {
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("고객 휴대폰번호"),
                                 fieldWithPath("birth").type(JsonFieldType.STRING).description("고객 생년월일"),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("고객 생성 일자"),
-                                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("고객 수정 일자")
+                                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("고객 수정 일자"),
+                                fieldWithPath("likeStoreList[]").type(JsonFieldType.ARRAY).description("가게 좋아요 리스트")
                         )
                 ));
     }
@@ -258,7 +259,8 @@ class CustomerControllerTest {
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("고객 휴대폰번호"),
                                 fieldWithPath("birth").type(JsonFieldType.STRING).description("고객 생년월일"),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("고객 생성 일자"),
-                                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("고객 수정 일자")
+                                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("고객 수정 일자"),
+                                fieldWithPath("likeStoreList[]").type(JsonFieldType.ARRAY).description("가게 좋아요 리스트")
                         )
                 ));
     }
@@ -440,7 +442,8 @@ class CustomerControllerTest {
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("고객 휴대폰번호"),
                                 fieldWithPath("birth").type(JsonFieldType.STRING).description("고객 생년월일"),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("고객 생성 일자"),
-                                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("고객 수정 일자")
+                                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("고객 수정 일자"),
+                                fieldWithPath("likeStoreList[]").type(JsonFieldType.ARRAY).description("가게 좋아요 리스트")
                         )
                 ));
     }

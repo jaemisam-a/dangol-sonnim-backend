@@ -57,7 +57,7 @@ public class Customer {
     private CustomerInfo customerInfo;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Like> likeList = new ArrayList<>();;
+    private List<Like> likeList = new ArrayList<>();
 
     public Customer(String id, String name, String email, ProviderType providerType, RoleType roleType, CustomerInfo customerInfo) {
         this.id = id;
