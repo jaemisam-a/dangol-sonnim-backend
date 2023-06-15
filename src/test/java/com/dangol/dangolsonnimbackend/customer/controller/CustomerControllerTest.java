@@ -2,6 +2,7 @@ package com.dangol.dangolsonnimbackend.customer.controller;
 
 import com.amazonaws.util.IOUtils;
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAccessTokenRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
@@ -16,6 +17,7 @@ import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import com.dangol.dangolsonnimbackend.subscribe.dto.BenefitDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.jdbc.CallableStatement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,10 +52,10 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -444,6 +446,31 @@ class CustomerControllerTest {
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("고객 생성 일자"),
                                 fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("고객 수정 일자"),
                                 fieldWithPath("likeStoreList[]").type(JsonFieldType.ARRAY).description("가게 좋아요 리스트")
+                        )
+                ));
+    }
+
+    @Test
+    void givenIsValidAccessTokenRequestDTO_whenAccessTokenValidate_thenReturnOk() throws Exception {
+        // given
+        IsValidAccessTokenRequestDTO requestDTO = new IsValidAccessTokenRequestDTO();
+        Date now = new Date();
+        AuthToken authToken = tokenProvider.createAuthToken(CUSTOMER_TEST_ID, new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+        String accessToken = authToken.getToken();
+        requestDTO.setAccessToken(accessToken);
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                CUSTOMER_TEST_ID, null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // when
+        mockMvc.perform(post(BASE_URL + "/token-validate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDTO)))
+                // then
+                .andExpect(status().isOk())
+                .andDo(document("customer/token-validate",
+                        requestFields(
+                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access 토큰")
                         )
                 ));
     }

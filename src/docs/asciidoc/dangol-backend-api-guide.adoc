@@ -293,6 +293,14 @@ include::{snippets}/customer/is-like/path-parameters.adoc[]
 - Response
 include::{snippets}/customer/is-like/http-response.adoc[]
 
+==== 8. 손님의 토큰을 검증합니다.
+
+- Request
+include::{snippets}/customer/token-validate/http-request.adoc[]
+include::{snippets}/customer/token-validate/request-fields.adoc[]
+- Response
+include::{snippets}/customer/token-validate/http-response.adoc[]
+
 === 가게 API
 
 |===

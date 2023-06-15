@@ -2,6 +2,7 @@ package com.dangol.dangolsonnimbackend.customer.service;
 
 
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAccessTokenRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerResponseDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerSignupRequestDTO;
@@ -22,4 +23,6 @@ public interface CustomerService {
     void withdraw(String id);
 
     CustomerResponseDTO update(String id, CustomerUpdateRequestDTO reqeustDTO);
+
+    void accessTokenValidate(IsValidAccessTokenRequestDTO dto);
 }

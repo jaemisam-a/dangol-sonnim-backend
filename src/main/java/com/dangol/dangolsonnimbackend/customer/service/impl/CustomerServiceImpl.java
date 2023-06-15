@@ -1,9 +1,7 @@
 package com.dangol.dangolsonnimbackend.customer.service.impl;
 
-import com.dangol.dangolsonnimbackend.boss.domain.Boss;
-import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAccessTokenRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
-import com.dangol.dangolsonnimbackend.customer.domain.CustomerInfo;
 import com.dangol.dangolsonnimbackend.customer.domain.Like;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerResponseDTO;
@@ -16,6 +14,8 @@ import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
 import com.dangol.dangolsonnimbackend.file.service.FileService;
+import com.dangol.dangolsonnimbackend.oauth.AuthToken;
+import com.dangol.dangolsonnimbackend.oauth.AuthTokenProvider;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import org.springframework.stereotype.Service;
@@ -33,13 +33,15 @@ public class CustomerServiceImpl implements CustomerService {
     private final LikeRepository likeRepository;
     private final CustomerInfoRepository customerInfoRepository;
     private final FileService fileService;
+    private final AuthTokenProvider authTokenProvider;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository, StoreRepository storeRepository, LikeRepository likeRepository, CustomerInfoRepository customerInfoRepository, FileService fileService) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, StoreRepository storeRepository, LikeRepository likeRepository, CustomerInfoRepository customerInfoRepository, FileService fileService, AuthTokenProvider authTokenProvider) {
         this.customerRepository = customerRepository;
         this.storeRepository = storeRepository;
         this.likeRepository = likeRepository;
         this.customerInfoRepository = customerInfoRepository;
         this.fileService = fileService;
+        this.authTokenProvider = authTokenProvider;
     }
 
     @Override
@@ -117,6 +119,15 @@ public class CustomerServiceImpl implements CustomerService {
         String s3FileUrl = uploadFileIfPresent(reqeustDTO.getMultipartFile());
         customer.getCustomerInfo().update(reqeustDTO, s3FileUrl);
         return new CustomerResponseDTO(customer);
+    }
+
+    @Override
+    public void accessTokenValidate(IsValidAccessTokenRequestDTO dto) {
+        AuthToken authToken = authTokenProvider.convertAuthToken(dto.getAccessToken());
+
+        if (!authToken.validate()){
+            throw new BadRequestException(ErrorCodeMessage.INVALID_TOKEN);
+        }
     }
 
     private String uploadFileIfPresent(MultipartFile file) {

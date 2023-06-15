@@ -3,6 +3,7 @@ package com.dangol.dangolsonnimbackend.customer.controller;
 import com.dangol.dangolsonnimbackend.boss.controller.BossController;
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossUpdateRequestDTO;
+import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAccessTokenRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerResponseDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerUpdateRequestDTO;
@@ -75,5 +76,11 @@ public class CustomerController {
         CustomerResponseDTO responseDTO = customerService.update(id, reqeustDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
+    @PostMapping("/token-validate")
+    public ResponseEntity<BossResponseDTO> accessTokenValidate(@Valid @RequestBody IsValidAccessTokenRequestDTO dto){
+        customerService.accessTokenValidate(dto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
