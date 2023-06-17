@@ -5,6 +5,8 @@ import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 
+import java.util.List;
+
 public interface SubscribeService {
     SubscribeResponseDTO create(SubscribeRequestDTO dto);
     Subscribe classify(SubscribeRequestDTO dto, Store store);
@@ -12,4 +14,6 @@ public interface SubscribeService {
     SubscribeResponseDTO getSubscribe(Long subscribeId);
 
     void deleteSubscribe(Long subscribeId);
+
+    List<SubscribeResponseDTO> getSubscribeList(String id);
 }

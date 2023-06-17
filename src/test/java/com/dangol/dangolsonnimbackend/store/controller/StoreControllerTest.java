@@ -97,9 +97,6 @@ class StoreControllerTest {
     private static final String CUSTOMER_TEST_ID = "customer123";
     private static final String CUSTOMER_TEST_EMAIL = "rnjstmdals6@gmail.com";
     private static final String CUSTOMER_TEST_NAME = "홍길동";
-    private static final String CUSTOMER_TEST_PHONE_NUMBER = "01012345678";
-    private static final String CUSTOMER_TEST_BIRTH = "19990101";
-    private static final String CUSTOMER_TEST_NICKNAME = "nickname";
     private String accessToken;
     @Autowired
     private TokenProvider tokenProvider;

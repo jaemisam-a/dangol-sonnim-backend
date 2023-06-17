@@ -5,9 +5,11 @@ import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.service.SubscribeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/subscribe")
@@ -36,5 +38,11 @@ public class SubscribeController {
     public ResponseEntity<Void> deleteSubscribe(@PathVariable Long subscribeId){
         subscribeService.deleteSubscribe(subscribeId);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/subscribe-list")
+    public ResponseEntity<List<SubscribeResponseDTO>> getSubscribeList(@AuthenticationPrincipal String id){
+        List<SubscribeResponseDTO> responseDTO = subscribeService.getSubscribeList(id);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 }

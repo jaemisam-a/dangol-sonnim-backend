@@ -2,6 +2,12 @@ package com.dangol.dangolsonnimbackend.subscribe.controller;
 
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
+import com.dangol.dangolsonnimbackend.customer.domain.Customer;
+import com.dangol.dangolsonnimbackend.customer.domain.CustomerInfo;
+import com.dangol.dangolsonnimbackend.customer.dto.PurchaseSubscribeRequestDTO;
+import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
+import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
+import com.dangol.dangolsonnimbackend.oauth.*;
 import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
@@ -23,6 +29,11 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Repository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -30,10 +41,13 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.transaction.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import static com.dangol.dangolsonnimbackend.subscribe.enumeration.SubscribeType.COUNT;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -71,6 +85,17 @@ class SubscribeControllerTest {
     private static final String BOSS_TEST_PASSWORD = "password";
     private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
     private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+    private static final String CUSTOMER_TEST_ID = "customer123";
+    private static final String CUSTOMER_TEST_EMAIL = "rnjstmdals6@gmail.com";
+    private static final String CUSTOMER_TEST_NAME = "홍길동";
+    @Autowired
+    private AuthTokenProvider tokenProvider;
+    @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private AppProperties appProperties;
     @Autowired
     private BossService bossService;
 
@@ -229,6 +254,62 @@ class SubscribeControllerTest {
                 .andDo(document("subscribe/delete",
                         pathParameters(
                                 parameterWithName("subscribeId").description("구독권 아이디")
+                        )));
+    }
+
+    @Test
+    void givenAuthenticatedUserAndValidRequest_whenPurchaseSubscribe_thenReturnHttpStatusOK() throws Exception {
+
+        Customer customer = new Customer(CUSTOMER_TEST_ID, CUSTOMER_TEST_NAME, CUSTOMER_TEST_EMAIL, ProviderType.LOCAL, RoleType.USER, new CustomerInfo());
+        customerRepository.save(customer);
+
+        Date now = new Date();
+        AuthToken authToken = tokenProvider.createAuthToken(CUSTOMER_TEST_ID, new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+        String accessToken = authToken.getToken();
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                CUSTOMER_TEST_ID, null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        SubscribeResponseDTO subscribeResponseDTO = subscribeService.create(subscribeRequestDTO);
+
+        PurchaseSubscribeRequestDTO dto = new PurchaseSubscribeRequestDTO();
+        dto.setMerchantUid("TESTS");
+        dto.setSubscribeId(subscribeResponseDTO.getSubscribeId());
+        dto.setSubscribeType(subscribeResponseDTO.getType());
+        customerService.purchaseSubscribe(CUSTOMER_TEST_ID, dto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get(BASE_URL + "/subscribe-list")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].subscribeId").exists())
+                .andExpect(jsonPath("$.[0].type").value(subscribeRequestDTO.getType().toString()))
+                .andExpect(jsonPath("$.[0].name").value(subscribeRequestDTO.getName()))
+                .andExpect(jsonPath("$.[0].price").value(subscribeRequestDTO.getPrice()))
+                .andExpect(jsonPath("$.[0].storeId").value(subscribeRequestDTO.getStoreId()))
+                .andExpect(jsonPath("$.[0].intro").value(subscribeRequestDTO.getIntro()))
+                .andExpect(jsonPath("$.[0].isTop").value(subscribeRequestDTO.getIsTop()))
+                .andExpect(jsonPath("$.[0].useCount").value(subscribeRequestDTO.getUseCount()))
+                .andExpect(jsonPath("$.[0].createAt").exists())
+                .andExpect(jsonPath("$.[0].modifiedAt").exists())
+                .andExpect(jsonPath("$.[0].benefits.[0].description").value(subscribeRequestDTO.getBenefits().get(0).getDescription()))
+                .andExpect(jsonPath("$.[0].benefits.[1].description").value(subscribeRequestDTO.getBenefits().get(1).getDescription()))
+                .andExpect(jsonPath("$.[0].benefits.[2].description").value(subscribeRequestDTO.getBenefits().get(2).getDescription()))
+                .andDo(document("subscribe/list",
+                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
+                        responseFields(
+                                fieldWithPath("[].subscribeId").type(JsonFieldType.NUMBER).description("구독권 아이디"),
+                                fieldWithPath("[].type").type(JsonFieldType.STRING).description("구독권 타입"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("구독권 이름"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구독권 가격"),
+                                fieldWithPath("[].storeId").type(JsonFieldType.NUMBER).description("구독권 가게 아이디"),
+                                fieldWithPath("[].intro").type(JsonFieldType.STRING).description("구독권 간단소개"),
+                                fieldWithPath("[].isTop").type(JsonFieldType.BOOLEAN).description("구독권 대표 여부"),
+                                fieldWithPath("[].useCount").type(JsonFieldType.NUMBER).description("구독권 사용가능 횟수"),
+                                fieldWithPath("[].createAt").type(JsonFieldType.STRING).description("구독권 생성날짜"),
+                                fieldWithPath("[].modifiedAt").type(JsonFieldType.STRING).description("구독권 수정날짜"),
+                                fieldWithPath("[].storeName").type(JsonFieldType.STRING).description("상점 이름"),
+                                fieldWithPath("[].benefits[].description").type(JsonFieldType.STRING).description("구독권 혜택")
                         )));
     }
 }

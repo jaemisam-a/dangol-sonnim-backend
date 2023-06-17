@@ -1,5 +1,8 @@
 package com.dangol.dangolsonnimbackend.subscribe.service.impl;
 
+import com.dangol.dangolsonnimbackend.customer.domain.Customer;
+import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
+import com.dangol.dangolsonnimbackend.customer.repository.PurchasedSubscribeRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
@@ -18,17 +21,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class SubscribeServiceImpl implements SubscribeService {
 
     private final SubscribeRepository<Subscribe> subscribeRepository;
     // 가게 관련 서비스 머지 시 QueryDsl Repository로 수정할 예정
     private final StoreRepository storeRepository;
+    private final CustomerRepository customerRepository;
+    private final PurchasedSubscribeRepository purchasedSubscribeRepository;
 
     @Autowired
-    public SubscribeServiceImpl(SubscribeRepository<Subscribe> subscribeRepository, StoreRepository storeRepository, BenefitRepository benefitRepository){
+    public SubscribeServiceImpl(SubscribeRepository<Subscribe> subscribeRepository, StoreRepository storeRepository, CustomerRepository customerRepository, PurchasedSubscribeRepository purchasedSubscribeRepository){
         this.subscribeRepository = subscribeRepository;
         this.storeRepository = storeRepository;
+        this.customerRepository = customerRepository;
+        this.purchasedSubscribeRepository = purchasedSubscribeRepository;
     }
 
     @Transactional
@@ -74,5 +86,15 @@ public class SubscribeServiceImpl implements SubscribeService {
                 () -> new NotFoundException(ErrorCodeMessage.SUBSCRIBE_NOT_FOUND));
         subscribe.getStore().getSubscribeList().remove(subscribe);
         subscribeRepository.deleteById(subscribeId);
+    }
+
+    @Override
+    public List<SubscribeResponseDTO> getSubscribeList(String id) {
+        Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
+        );
+
+        return subscribeRepository.findAllPurchasedSubscribeByCustomerId(id).stream()
+                .map(Subscribe::toResponseDTO).collect(Collectors.toList());
     }
 }
