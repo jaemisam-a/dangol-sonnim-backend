@@ -151,7 +151,7 @@ include::{snippets}/boss/register-account/request-fields.adoc[]
 - Response
 include::{snippets}/boss/register-account/http-response.adoc[]
 
-==== 11. 사장님의 토큰을 검증합니다.
+==== 11. 사장님 토큰 검증
 
 - Request
 include::{snippets}/boss/token-validate/http-request.adoc[]
@@ -293,7 +293,7 @@ include::{snippets}/customer/is-like/path-parameters.adoc[]
 - Response
 include::{snippets}/customer/is-like/http-response.adoc[]
 
-==== 8. 손님 구독권 구매 검증
+==== 8. 손님 구독권 구매
 
 - Request
 include::{snippets}/customer/purchase-subscribe/http-request.adoc[]
@@ -301,7 +301,7 @@ include::{snippets}/customer/purchase-subscribe/request-fields.adoc[]
 - Response
 include::{snippets}/customer/purchase-subscribe/http-response.adoc[]
 
-==== 9. 손님 토큰 검증.
+==== 9. 손님 토큰 검증
 
 - Request
 include::{snippets}/customer/token-validate/http-request.adoc[]
