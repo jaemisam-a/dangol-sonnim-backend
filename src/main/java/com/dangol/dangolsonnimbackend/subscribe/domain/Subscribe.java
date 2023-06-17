@@ -1,5 +1,6 @@
 package com.dangol.dangolsonnimbackend.subscribe.domain;
 
+import com.dangol.dangolsonnimbackend.customer.domain.PurchasedSubscribe;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import lombok.*;
@@ -47,6 +48,9 @@ public abstract class Subscribe {
 
     @UpdateTimestamp
     private LocalDateTime modifiedAt;
+
+    @OneToMany(mappedBy = "subscribe", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PurchasedSubscribe> subscribeList = new ArrayList<>();
 
     @Column
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

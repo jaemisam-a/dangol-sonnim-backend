@@ -9,14 +9,22 @@ import com.dangol.dangolsonnimbackend.customer.domain.Customer;
 import com.dangol.dangolsonnimbackend.customer.domain.CustomerInfo;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerInfoRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.CustomerUpdateRequestDTO;
+import com.dangol.dangolsonnimbackend.customer.dto.PurchaseSubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
 import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
 import com.dangol.dangolsonnimbackend.oauth.*;
+import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.dto.BusinessHourRequestDTO;
 import com.dangol.dangolsonnimbackend.store.dto.StoreSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
+import com.dangol.dangolsonnimbackend.subscribe.domain.CountSubscribe;
+import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import com.dangol.dangolsonnimbackend.subscribe.dto.BenefitDTO;
+import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
+import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
+import com.dangol.dangolsonnimbackend.subscribe.enumeration.SubscribeType;
+import com.dangol.dangolsonnimbackend.subscribe.service.SubscribeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.jdbc.CallableStatement;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,10 +50,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import static com.dangol.dangolsonnimbackend.subscribe.enumeration.SubscribeType.COUNT;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -94,6 +104,8 @@ class CustomerControllerTest {
     private BossService bossService;
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private SubscribeService subscribeService;
     private StoreSignupRequestDTO signupRequestDTO;
 
     @BeforeEach
@@ -316,6 +328,64 @@ class CustomerControllerTest {
                         requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
                         pathParameters(
                                 parameterWithName("storeId").description("상점 ID")
+                        )
+                ));
+    }
+
+    @Test
+    void givenAuthenticatedUserAndValidRequest_whenPurchaseSubscribe_thenReturnHttpStatusOK() throws Exception {
+
+
+        Customer customer = new Customer(CUSTOMER_TEST_ID, CUSTOMER_TEST_NAME, CUSTOMER_TEST_EMAIL, ProviderType.LOCAL, RoleType.USER, new CustomerInfo());
+        customerRepository.save(customer);
+
+        Date now = new Date();
+        AuthToken authToken = tokenProvider.createAuthToken(CUSTOMER_TEST_ID, new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+        String accessToken = authToken.getToken();
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                CUSTOMER_TEST_ID, null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        Long storeId = storeService.create(signupRequestDTO, BOSS_TEST_EMAIL).getId();
+
+        List<BenefitDTO> benefitDTOList = List.of(
+                new BenefitDTO("Benefit 1"),
+                new BenefitDTO("Benefit 2"),
+                new BenefitDTO("Benefit 3")
+        );
+
+        SubscribeRequestDTO subscribeRequestDTO = SubscribeRequestDTO.builder()
+                .isTop(true)
+                .useCount(5)
+                .type(COUNT)
+                .storeId(storeId)
+                .price(BigDecimal.valueOf(12000))
+                .intro("INTRO TEST")
+                .name("NAME TEST")
+                .benefits(benefitDTOList)
+                .build();
+
+        SubscribeResponseDTO subscribeResponseDTO = subscribeService.create(subscribeRequestDTO);
+
+        PurchaseSubscribeRequestDTO dto = new PurchaseSubscribeRequestDTO();
+        dto.setMerchantUid(CUSTOMER_TEST_ID);
+        dto.setSubscribeId(subscribeResponseDTO.getSubscribeId());
+        dto.setSubscribeType(subscribeResponseDTO.getType());
+
+        // when
+        mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL +"/purchase-subscribe")
+                        .content(new ObjectMapper().writeValueAsString(dto))
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                // then
+                .andExpect(status().isOk())
+                .andDo(document("customer/purchase-subscribe",
+                        requestHeaders(
+                                headerWithName("Authorization").description("Access 토큰 정보")),
+                        requestFields(
+                                fieldWithPath("merchantUid").type(JsonFieldType.STRING).description("구매자 고유 ID"),
+                                fieldWithPath("subscribeId").type(JsonFieldType.NUMBER).description("구독권 ID"),
+                                fieldWithPath("subscribeType").type(JsonFieldType.STRING).description("구독권 타입")
                         )
                 ));
     }
