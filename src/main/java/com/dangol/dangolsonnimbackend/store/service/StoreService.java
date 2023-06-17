@@ -16,4 +16,6 @@ public interface StoreService {
 
     void imageUpload(StoreImageUploadRequestDTO dto);
     Page<StoreResponseDTO> findStoreList(String sigungu, CategoryType category, String kw, Pageable pageable);
+
+    List<StoreResponseDTO> likeStoreList(String id);
 }

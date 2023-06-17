@@ -2,6 +2,8 @@ package com.dangol.dangolsonnimbackend.store.service.impl;
 
 import com.dangol.dangolsonnimbackend.boss.domain.Boss;
 import com.dangol.dangolsonnimbackend.boss.repository.dsl.BossQueryRepository;
+import com.dangol.dangolsonnimbackend.customer.domain.Customer;
+import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.InternalServerException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
@@ -16,6 +18,7 @@ import com.dangol.dangolsonnimbackend.store.repository.dsl.CategoryQueryReposito
 import com.dangol.dangolsonnimbackend.store.repository.dsl.StoreQueryRepository;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import com.dangol.dangolsonnimbackend.store.service.TagService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +33,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
     private final StoreRepository storeRepository;
@@ -39,17 +43,7 @@ public class StoreServiceImpl implements StoreService {
     private final BossQueryRepository bossQueryRepository;
     private final FileService fileService;
     private final StoreImageRepository storeImageRepository;
-
-    @Autowired
-    public StoreServiceImpl(StoreRepository storeRepository, StoreQueryRepository storeQueryRepository, CategoryQueryRepository categoryQueryRepository, TagService tagService, BossQueryRepository bossQueryRepository, FileService fileService, StoreImageRepository storeImageRepository) {
-        this.storeRepository = storeRepository;
-        this.storeQueryRepository = storeQueryRepository;
-        this.categoryQueryRepository = categoryQueryRepository;
-        this.tagService = tagService;
-        this.bossQueryRepository = bossQueryRepository;
-        this.fileService = fileService;
-        this.storeImageRepository = storeImageRepository;
-    }
+    private final CustomerRepository customerRepository;
 
     /**
      * 신규 가게 정보를 통해 새로운 가게 정보를 생성한다.
@@ -179,5 +173,15 @@ public class StoreServiceImpl implements StoreService {
 
         return storeRepository.findAllBySigunguContainingAndCategory_CategoryTypeAndNameContaining(sigungu, category, kw, pageable)
                 .map(StoreResponseDTO::new);
+    }
+
+    @Override
+    public List<StoreResponseDTO> likeStoreList(String id) {
+        Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
+        );
+
+        return storeRepository.findAllByLikedStore(customer).stream()
+                .map(StoreResponseDTO::new).collect(Collectors.toList());
     }
 }

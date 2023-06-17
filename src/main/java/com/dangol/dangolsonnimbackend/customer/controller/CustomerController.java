@@ -1,17 +1,18 @@
 package com.dangol.dangolsonnimbackend.customer.controller;
 
-import com.dangol.dangolsonnimbackend.boss.controller.BossController;
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
-import com.dangol.dangolsonnimbackend.boss.dto.request.BossUpdateRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAccessTokenRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.*;
 import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
+import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;

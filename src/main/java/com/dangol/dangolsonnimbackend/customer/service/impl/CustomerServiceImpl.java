@@ -20,6 +20,7 @@ import com.dangol.dangolsonnimbackend.file.service.FileService;
 import com.dangol.dangolsonnimbackend.oauth.AuthToken;
 import com.dangol.dangolsonnimbackend.oauth.AuthTokenProvider;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
+import com.dangol.dangolsonnimbackend.store.dto.StoreResponseDTO;
 import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.subscribe.domain.CountSubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.MonthlySubscribe;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service

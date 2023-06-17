@@ -4,7 +4,12 @@ import com.amazonaws.util.IOUtils;
 import com.dangol.dangolsonnimbackend.boss.dto.request.BossSignupRequestDTO;
 import com.dangol.dangolsonnimbackend.boss.service.BossService;
 import com.dangol.dangolsonnimbackend.config.jwt.TokenProvider;
+import com.dangol.dangolsonnimbackend.customer.domain.Customer;
+import com.dangol.dangolsonnimbackend.customer.domain.CustomerInfo;
+import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
+import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
+import com.dangol.dangolsonnimbackend.oauth.*;
 import com.dangol.dangolsonnimbackend.store.domain.Category;
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.store.domain.StoreImage;
@@ -48,10 +53,7 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.transaction.Transactional;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage.STORE_NOT_FOUND;
@@ -92,6 +94,12 @@ class StoreControllerTest {
     private static final String BOSS_TEST_PASSWORD = "password";
     private static final String BOSS_TEST_PHONE_NUMBER = "01012345678";
     private static final Boolean BOSS_TEST_MARKETING_AGREEMENT = true;
+    private static final String CUSTOMER_TEST_ID = "customer123";
+    private static final String CUSTOMER_TEST_EMAIL = "rnjstmdals6@gmail.com";
+    private static final String CUSTOMER_TEST_NAME = "홍길동";
+    private static final String CUSTOMER_TEST_PHONE_NUMBER = "01012345678";
+    private static final String CUSTOMER_TEST_BIRTH = "19990101";
+    private static final String CUSTOMER_TEST_NICKNAME = "nickname";
     private String accessToken;
     @Autowired
     private TokenProvider tokenProvider;
@@ -109,6 +117,14 @@ class StoreControllerTest {
     private StoreImageRepository storeImageRepository;
     @Autowired
     private StoreRepository storeRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private AuthTokenProvider AuthtokenProvider;
+    @Autowired
+    private AppProperties appProperties;
 
     FieldDescriptor[] signUpRequestJsonField = new FieldDescriptor[] {
             fieldWithPath("name").type(JsonFieldType.STRING).description("가게 이름"),
@@ -544,6 +560,68 @@ class StoreControllerTest {
                                 fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
                                 fieldWithPath("empty").type(JsonFieldType.BOOLEAN).description("페이지가 비어 있는지 여부")
 
+                        )
+                ));
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("사용자가 좋아하는 가게 목록을 가져올 수 있다.")
+    void givenUserId_whenLikeList_thenReturnStoreList() throws Exception {
+        // given
+        Long storeId = storeService.create(dto, BOSS_TEST_EMAIL).getId();
+        Customer customer = new Customer(CUSTOMER_TEST_ID, CUSTOMER_TEST_NAME, CUSTOMER_TEST_EMAIL, ProviderType.LOCAL, RoleType.USER, new CustomerInfo());
+        customerRepository.save(customer);
+        customerService.like(customer.getId(), storeId);
+
+        Date now = new Date();
+        AuthToken authToken = AuthtokenProvider.createAuthToken(CUSTOMER_TEST_ID, new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+        String accessToken = authToken.getToken();
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                CUSTOMER_TEST_ID, null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // when
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/store/like-list")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].id").exists())
+                .andExpect(jsonPath("$.[0].name").value(dto.getName()))
+                .andExpect(jsonPath("$.[0].newAddress").value(dto.getNewAddress()))
+                .andExpect(jsonPath("$.[0].comments").value(dto.getComments()))
+                .andExpect(jsonPath("$.[0].sigungu").value(dto.getSigungu()))
+                .andExpect(jsonPath("$.[0].bname1").value(dto.getBname1()))
+                .andExpect(jsonPath("$.[0].bname2").value(dto.getBname2()))
+                .andExpect(jsonPath("$.[0].detailedAddress").value(dto.getDetailedAddress()))
+                .andExpect(jsonPath("$.[0].categoryType").value(dto.getCategoryType().toString()))
+                .andExpect(jsonPath("$.[0].tags[0]").exists())
+                .andExpect(jsonPath("$.[0].likeNumber").exists())
+                .andExpect(jsonPath("$.[0].storeImageUrlList").exists())
+                .andExpect(jsonPath("$.[0].businessHours[0].weeks").value(dto.getBusinessHours().get(0).getWeeks()))
+                .andExpect(jsonPath("$.[0].businessHours[0].hours").value(dto.getBusinessHours().get(0).getHours()))
+                .andExpect(jsonPath("$.[0].businessHours[1].weeks").value(dto.getBusinessHours().get(1).getWeeks()))
+                .andExpect(jsonPath("$.[0].businessHours[1].hours").value(dto.getBusinessHours().get(1).getHours()))
+                .andDo(document("store/like-list",
+                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("가게 아이디"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("가게 이름"),
+                                fieldWithPath("[].newAddress").type(JsonFieldType.STRING).description("가게 주소"),
+                                fieldWithPath("[].comments").type(JsonFieldType.STRING).description("가게 한줄평"),
+                                fieldWithPath("[].sido").type(JsonFieldType.STRING).description("가게 주소 (시/도)"),
+                                fieldWithPath("[].sigungu").type(JsonFieldType.STRING).description("가게 주소 (시/군/구)"),
+                                fieldWithPath("[].bname1").type(JsonFieldType.STRING).description("가게 주소 (읍/면)"),
+                                fieldWithPath("[].bname2").type(JsonFieldType.STRING).description("가게 주소 (동/리)"),
+                                fieldWithPath("[].detailedAddress").type(JsonFieldType.STRING).description("가게 상세주소"),
+                                fieldWithPath("[].categoryType").type(JsonFieldType.VARIES).description("카테고리 정보"),
+                                fieldWithPath("[].registerNumber").type(JsonFieldType.STRING).description("가게 사업자번호"),
+                                fieldWithPath("[].registerName").type(JsonFieldType.STRING).description("가게 사업자명"),
+                                fieldWithPath("[].storeImageUrlList").type(JsonFieldType.ARRAY).description("가게 이미지 URL"),
+                                fieldWithPath("[].tags").type(JsonFieldType.ARRAY).description("가게 태그"),
+                                fieldWithPath("[].businessHours[].weeks").type(JsonFieldType.STRING).description("영업 요일"),
+                                fieldWithPath("[].businessHours[].hours").type(JsonFieldType.STRING).description("영업 시간"),
+                                fieldWithPath("[].likeNumber").type(JsonFieldType.NUMBER).description("좋아요 수")
                         )
                 ));
     }

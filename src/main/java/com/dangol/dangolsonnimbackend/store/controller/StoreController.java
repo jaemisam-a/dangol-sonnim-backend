@@ -25,12 +25,10 @@ import java.util.List;
 public class StoreController {
 
     private final StoreService storeService;
-    private final ObjectMapper objectMapper;
 
     @Autowired
-    public StoreController(StoreService storeService, ObjectMapper objectMapper) {
+    public StoreController(StoreService storeService) {
         this.storeService = storeService;
-        this.objectMapper = objectMapper;
     }
 
     @PostMapping("/create")
@@ -91,5 +89,12 @@ public class StoreController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(res);
+    }
+
+    @GetMapping("/like-list")
+    public ResponseEntity<List<StoreResponseDTO>> likeList(@AuthenticationPrincipal String id) {
+        List<StoreResponseDTO> responseDTO = storeService.likeStoreList(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 }
