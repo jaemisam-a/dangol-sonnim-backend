@@ -13,7 +13,7 @@ import java.util.List;
 public interface StoreRepository extends JpaRepository<Store, Long> {
     Page<Store> findAllBySigunguContainingAndCategory_CategoryTypeAndNameContaining(String sigungu, CategoryType category, String kw, Pageable pageable);
     Page<Store> findAllBySigunguContainingAndNameContaining(String sigungu, String name, Pageable pageable);
-    @Query(value = "SELECT s FROM Store s LEFT JOIN FETCH Like l " + "ON l.store.id = s.id WHERE l.customer = ?1")
+    @Query(value = "SELECT s FROM Store s LEFT JOIN Like l " + "ON l.store.id = s.id WHERE l.customer = ?1")
     List<Store> findAllByLikedStore(Customer customer);
 
 }
