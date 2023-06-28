@@ -71,6 +71,12 @@ dependencies {
 	 **/
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	/**
+	 * QR CODE 관련 dependency 추가
+	 **/
+	implementation 'com.google.zxing:core:3.4.1'
+	implementation 'com.google.zxing:javase:3.4.1'
 }
 
 // ext : build script 에서 사용할 수 있는 추가적인 속성들을 정의

@@ -16,6 +16,7 @@ import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
 import com.dangol.dangolsonnimbackend.errors.NotFoundException;
 import com.dangol.dangolsonnimbackend.errors.enumeration.ErrorCodeMessage;
+import com.dangol.dangolsonnimbackend.file.service.ByteArrayResourceMultipartFile;
 import com.dangol.dangolsonnimbackend.file.service.FileService;
 import com.dangol.dangolsonnimbackend.oauth.AuthToken;
 import com.dangol.dangolsonnimbackend.oauth.AuthTokenProvider;
@@ -28,11 +29,22 @@ import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import com.dangol.dangolsonnimbackend.subscribe.enumeration.SubscribeType;
 import com.dangol.dangolsonnimbackend.subscribe.repository.CountSubscribeRepository;
 import com.dangol.dangolsonnimbackend.subscribe.repository.MonthlySubscribeRepository;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +62,9 @@ public class CustomerServiceImpl implements CustomerService {
     private final CountSubscribeRepository countSubscribeRepository;
     private final MonthlySubscribeRepository monthlySubscribeRepository;
     private final PurchasedSubscribeRepository purchasedSubscribeRepository;
+
+    private static final Integer QR_WIDTH = 320;
+    private static final Integer QR_HEIGHT = 320;
 
     @Override
     public CustomerResponseDTO addInfo(String id, CustomerInfoRequestDTO dto) {
@@ -138,7 +153,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void purchaseSubscribe(String id, PurchaseSubscribeRequestDTO dto) {
+    public void purchaseSubscribe(String id, PurchaseSubscribeRequestDTO dto) throws IOException, WriterException {
         Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
                 () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
         );
@@ -158,7 +173,9 @@ public class CustomerServiceImpl implements CustomerService {
             purchasedSubscribe = new PurchasedSubscribe(monthlySubscribe, customer, dto);
         }
 
-        purchasedSubscribeRepository.save(purchasedSubscribe);
+        PurchasedSubscribe saved = purchasedSubscribeRepository.save(purchasedSubscribe);
+        String qrCodeImageUrl = generateAndUploadQRCode(saved.getId().toString(), QR_WIDTH, QR_HEIGHT);
+        purchasedSubscribe.setQRImageUrl(qrCodeImageUrl);
     }
 
     private String uploadFileIfPresent(MultipartFile file) {
@@ -166,5 +183,20 @@ public class CustomerServiceImpl implements CustomerService {
             return fileService.upload(file);
         }
         return "";
+    }
+
+    public String generateAndUploadQRCode(String text, int width, int height) throws WriterException, IOException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+
+        BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(qrImage, "png", baos);
+        byte[] imageBytes = baos.toByteArray();
+
+        MultipartFile multipartFile = new ByteArrayResourceMultipartFile(imageBytes, "QRCode.png");
+
+        return fileService.upload(multipartFile);
     }
 }

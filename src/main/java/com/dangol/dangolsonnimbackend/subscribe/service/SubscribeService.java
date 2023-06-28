@@ -2,6 +2,7 @@ package com.dangol.dangolsonnimbackend.subscribe.service;
 
 import com.dangol.dangolsonnimbackend.store.domain.Store;
 import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
+import com.dangol.dangolsonnimbackend.subscribe.dto.PurchasedSubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 
@@ -15,5 +16,5 @@ public interface SubscribeService {
 
     void deleteSubscribe(Long subscribeId);
 
-    List<SubscribeResponseDTO> getSubscribeList(String id);
+    List<PurchasedSubscribeResponseDTO> getSubscribeList(String id);
 }

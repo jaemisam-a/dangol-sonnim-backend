@@ -72,8 +72,6 @@ class SubscribeControllerTest {
     private WebApplicationContext context;
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private CategoryRepository categoryRepository;
     private static final String BASE_URL = "/api/v1/subscribe";
     @Autowired
     private StoreService storeService;
@@ -282,34 +280,22 @@ class SubscribeControllerTest {
                         .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].subscribeId").exists())
-                .andExpect(jsonPath("$.[0].type").value(subscribeRequestDTO.getType().toString()))
-                .andExpect(jsonPath("$.[0].name").value(subscribeRequestDTO.getName()))
-                .andExpect(jsonPath("$.[0].price").value(subscribeRequestDTO.getPrice()))
-                .andExpect(jsonPath("$.[0].storeId").value(subscribeRequestDTO.getStoreId()))
-                .andExpect(jsonPath("$.[0].intro").value(subscribeRequestDTO.getIntro()))
-                .andExpect(jsonPath("$.[0].isTop").value(subscribeRequestDTO.getIsTop()))
-                .andExpect(jsonPath("$.[0].useCount").value(subscribeRequestDTO.getUseCount()))
-                .andExpect(jsonPath("$.[0].createAt").exists())
-                .andExpect(jsonPath("$.[0].modifiedAt").exists())
-                .andExpect(jsonPath("$.[0].benefits.[0].description").value(subscribeRequestDTO.getBenefits().get(0).getDescription()))
-                .andExpect(jsonPath("$.[0].benefits.[1].description").value(subscribeRequestDTO.getBenefits().get(1).getDescription()))
-                .andExpect(jsonPath("$.[0].benefits.[2].description").value(subscribeRequestDTO.getBenefits().get(2).getDescription()))
                 .andDo(document("subscribe/list",
                         requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
                         responseFields(
-                                fieldWithPath("[].subscribeId").type(JsonFieldType.NUMBER).description("구독권 아이디"),
-                                fieldWithPath("[].type").type(JsonFieldType.STRING).description("구독권 타입"),
-                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("구독권 이름"),
-                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구독권 가격"),
-                                fieldWithPath("[].storeId").type(JsonFieldType.NUMBER).description("구독권 가게 아이디"),
-                                fieldWithPath("[].intro").type(JsonFieldType.STRING).description("구독권 간단소개"),
-                                fieldWithPath("[].isTop").type(JsonFieldType.BOOLEAN).description("구독권 대표 여부"),
-                                fieldWithPath("[].useCount").type(JsonFieldType.NUMBER).description("구독권 사용가능 횟수"),
-                                fieldWithPath("[].createAt").type(JsonFieldType.STRING).description("구독권 생성날짜"),
-                                fieldWithPath("[].modifiedAt").type(JsonFieldType.STRING).description("구독권 수정날짜"),
-                                fieldWithPath("[].storeName").type(JsonFieldType.STRING).description("상점 이름"),
-                                fieldWithPath("[].benefits[].description").type(JsonFieldType.STRING).description("구독권 혜택")
+                                fieldWithPath("[].merchantUid").type(JsonFieldType.STRING).description("결제 고유번호"),
+                                fieldWithPath("[].subscribeType").type(JsonFieldType.STRING).description("구독권 타입"),
+                                fieldWithPath("[].storeTitle").type(JsonFieldType.STRING).description("상점 제목"),
+                                fieldWithPath("[].sigungu").type(JsonFieldType.STRING).description("시군구"),
+                                fieldWithPath("[].bname1").type(JsonFieldType.STRING).description("사업장명(상호)"),
+                                fieldWithPath("[].bname2").type(JsonFieldType.STRING).description("사업장명 상세(지점)"),
+                                fieldWithPath("[].subscribeName").type(JsonFieldType.STRING).description("구독권 이름"),
+                                fieldWithPath("[].qrimageUrl").type(JsonFieldType.STRING).description("QR 이미지 URL"),
+                                fieldWithPath("[].benefits[].description").type(JsonFieldType.STRING).description("구독권 혜택"),
+                                fieldWithPath("[].totalCount").type(JsonFieldType.NUMBER).description("구독 총 횟수"),
+                                fieldWithPath("[].remainingCount").type(JsonFieldType.NUMBER).description("구독 남은 횟수"),
+                                fieldWithPath("[].createdAt").type(JsonFieldType.STRING).description("구독 생성 날짜"),
+                                fieldWithPath("[].expiredAt").type(JsonFieldType.STRING).description("구독 만료 날짜")
                         )));
     }
 }

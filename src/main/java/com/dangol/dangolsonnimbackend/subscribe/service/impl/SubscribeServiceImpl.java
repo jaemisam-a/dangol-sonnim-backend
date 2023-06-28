@@ -1,6 +1,7 @@
 package com.dangol.dangolsonnimbackend.subscribe.service.impl;
 
 import com.dangol.dangolsonnimbackend.customer.domain.Customer;
+import com.dangol.dangolsonnimbackend.customer.domain.PurchasedSubscribe;
 import com.dangol.dangolsonnimbackend.customer.repository.CustomerRepository;
 import com.dangol.dangolsonnimbackend.customer.repository.PurchasedSubscribeRepository;
 import com.dangol.dangolsonnimbackend.errors.BadRequestException;
@@ -12,16 +13,15 @@ import com.dangol.dangolsonnimbackend.subscribe.domain.Benefit;
 import com.dangol.dangolsonnimbackend.subscribe.domain.CountSubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.MonthlySubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
+import com.dangol.dangolsonnimbackend.subscribe.dto.PurchasedSubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
-import com.dangol.dangolsonnimbackend.subscribe.repository.BenefitRepository;
 import com.dangol.dangolsonnimbackend.subscribe.repository.SubscribeRepository;
 import com.dangol.dangolsonnimbackend.subscribe.service.SubscribeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,7 +47,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     public SubscribeResponseDTO create(SubscribeRequestDTO dto) {
         // 가게 관련 머지 시 수정 예정
         Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(
-                () -> new BadRequestException(ErrorCodeMessage.BOSS_NOT_FOUND)
+                () -> new BadRequestException(ErrorCodeMessage.STORE_NOT_FOUND)
         );
 
         Subscribe savedSubscribe = subscribeRepository.save(classify(dto, store));
@@ -89,12 +89,13 @@ public class SubscribeServiceImpl implements SubscribeService {
     }
 
     @Override
-    public List<SubscribeResponseDTO> getSubscribeList(String id) {
-        Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
+    @Transactional(readOnly = true)
+    public List<PurchasedSubscribeResponseDTO> getSubscribeList(String id) {
+        Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
                 () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
         );
 
-        return subscribeRepository.findAllPurchasedSubscribeByCustomerId(id).stream()
-                .map(Subscribe::toResponseDTO).collect(Collectors.toList());
+        return purchasedSubscribeRepository.findAllByCustomer(customer).stream()
+                .map(PurchasedSubscribe::toResponseDTO).collect(Collectors.toList());
     }
 }

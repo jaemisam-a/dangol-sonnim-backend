@@ -1,5 +1,6 @@
 package com.dangol.dangolsonnimbackend.subscribe.controller;
 
+import com.dangol.dangolsonnimbackend.subscribe.dto.PurchasedSubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.service.SubscribeService;
@@ -41,8 +42,8 @@ public class SubscribeController {
     }
 
     @GetMapping("/subscribe-list")
-    public ResponseEntity<List<SubscribeResponseDTO>> getSubscribeList(@AuthenticationPrincipal String id){
-        List<SubscribeResponseDTO> responseDTO = subscribeService.getSubscribeList(id);
+    public ResponseEntity<List<PurchasedSubscribeResponseDTO>> getSubscribeList(@AuthenticationPrincipal String id){
+        List<PurchasedSubscribeResponseDTO> responseDTO = subscribeService.getSubscribeList(id);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 }
