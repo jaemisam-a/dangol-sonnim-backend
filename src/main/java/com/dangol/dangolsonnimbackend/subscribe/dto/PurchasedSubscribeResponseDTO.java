@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -14,6 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PurchasedSubscribeResponseDTO {
+
+    private Long purchasedSubscribeId;
 
     private String merchantUid;
     private SubscribeType subscribeType;

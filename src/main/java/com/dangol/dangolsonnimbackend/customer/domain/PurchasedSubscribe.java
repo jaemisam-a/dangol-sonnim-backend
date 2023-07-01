@@ -82,6 +82,7 @@ public class PurchasedSubscribe {
 
     public PurchasedSubscribeResponseDTO toResponseDTO() {
         PurchasedSubscribeResponseDTO dto = new PurchasedSubscribeResponseDTO();
+        dto.setPurchasedSubscribeId(this.id);
         dto.setMerchantUid(this.merchantUid);
         dto.setSubscribeType(this.subscribeType);
         dto.setStoreTitle(this.subscribe.getStore().getName());
@@ -105,5 +106,8 @@ public class PurchasedSubscribe {
 
     public void setQRImageUrl(String qrCodeImageUrl) {
         this.qrCodeImageUrl = qrCodeImageUrl;
+    }
+    public void useSubscribe(){
+        this.remainingCount -= 1;
     }
 }

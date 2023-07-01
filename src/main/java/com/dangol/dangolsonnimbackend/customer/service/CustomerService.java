@@ -4,6 +4,7 @@ package com.dangol.dangolsonnimbackend.customer.service;
 import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAccessTokenRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.*;
+import com.dangol.dangolsonnimbackend.subscribe.dto.PurchasedSubscribeResponseDTO;
 import com.google.zxing.WriterException;
 
 import java.io.IOException;
@@ -26,5 +27,5 @@ public interface CustomerService {
 
     void accessTokenValidate(IsValidAccessTokenRequestDTO dto);
 
-    void purchaseSubscribe(String id, PurchaseSubscribeRequestDTO dto) throws IOException, WriterException;
+    PurchasedSubscribeResponseDTO purchaseSubscribe(String id, PurchaseSubscribeRequestDTO dto) throws IOException, WriterException;
 }

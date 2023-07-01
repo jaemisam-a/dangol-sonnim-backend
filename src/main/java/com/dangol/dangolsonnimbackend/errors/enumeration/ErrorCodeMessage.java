@@ -27,7 +27,8 @@ public enum ErrorCodeMessage {
     FILE_DELETE_FAIL("파일 삭제에 실패했습니다."),
     MENU_NOT_FOUND("존재하지 않는 메뉴입니다."),
     CUSTOMER_NOT_FOUND("존재하지 않는 유저입니다."),
-    INVALID_TOKEN("유효하지 않은 토큰입니다.");
+    INVALID_TOKEN("유효하지 않은 토큰입니다."), NOT_REMAINING_COUNT("구독권 횟수가 남아있지 않습니다."),
+    EXPIRED_SUBSCRIBE("유효기간이 지난 구독권입니다.");
 
     private final String message;
 }

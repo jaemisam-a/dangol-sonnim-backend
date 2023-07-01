@@ -14,6 +14,7 @@ import com.dangol.dangolsonnimbackend.store.enumeration.CategoryType;
 import com.dangol.dangolsonnimbackend.store.repository.CategoryRepository;
 import com.dangol.dangolsonnimbackend.store.service.StoreService;
 import com.dangol.dangolsonnimbackend.subscribe.dto.BenefitDTO;
+import com.dangol.dangolsonnimbackend.subscribe.dto.PurchasedSubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.service.SubscribeService;
@@ -283,6 +284,7 @@ class SubscribeControllerTest {
                 .andDo(document("subscribe/list",
                         requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
                         responseFields(
+                                fieldWithPath("[].purchasedSubscribeId").type(JsonFieldType.NUMBER).description("결제 고유번호"),
                                 fieldWithPath("[].merchantUid").type(JsonFieldType.STRING).description("결제 고유번호"),
                                 fieldWithPath("[].subscribeType").type(JsonFieldType.STRING).description("구독권 타입"),
                                 fieldWithPath("[].storeTitle").type(JsonFieldType.STRING).description("상점 제목"),
@@ -298,4 +300,51 @@ class SubscribeControllerTest {
                                 fieldWithPath("[].expiredAt").type(JsonFieldType.STRING).description("구독 만료 날짜")
                         )));
     }
+
+    @Test
+    void givenAuthenticatedUserAndValidSubscribeId_whenUseSubscribe_thenReturnHttpStatusOK() throws Exception {
+        // Given
+        Customer customer = new Customer(CUSTOMER_TEST_ID, CUSTOMER_TEST_NAME, CUSTOMER_TEST_EMAIL, ProviderType.LOCAL, RoleType.USER, new CustomerInfo());
+        customerRepository.save(customer);
+
+        Date now = new Date();
+        AuthToken authToken = tokenProvider.createAuthToken(CUSTOMER_TEST_ID, new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+        String accessToken = authToken.getToken();
+        AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                CUSTOMER_TEST_ID, null, AuthorityUtils.NO_AUTHORITIES);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        SubscribeResponseDTO subscribeResponseDTO = subscribeService.create(subscribeRequestDTO);
+
+        PurchaseSubscribeRequestDTO dto = new PurchaseSubscribeRequestDTO();
+        dto.setMerchantUid("TESTS");
+        dto.setSubscribeId(subscribeResponseDTO.getSubscribeId());
+        dto.setSubscribeType(subscribeResponseDTO.getType());
+        Long validSubscribeId = customerService.purchaseSubscribe(CUSTOMER_TEST_ID, dto).getPurchasedSubscribeId();
+
+        // Then
+        mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/use-subscribe/" + validSubscribeId)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(document("subscribe/use",
+                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
+                        responseFields(
+                                fieldWithPath("purchasedSubscribeId").type(JsonFieldType.NUMBER).description("결제 고유번호"),
+                                fieldWithPath("merchantUid").type(JsonFieldType.STRING).description("결제 고유번호"),
+                                fieldWithPath("subscribeType").type(JsonFieldType.STRING).description("구독권 타입"),
+                                fieldWithPath("storeTitle").type(JsonFieldType.STRING).description("상점 제목"),
+                                fieldWithPath("sigungu").type(JsonFieldType.STRING).description("시군구"),
+                                fieldWithPath("bname1").type(JsonFieldType.STRING).description("사업장명(상호)"),
+                                fieldWithPath("bname2").type(JsonFieldType.STRING).description("사업장명 상세(지점)"),
+                                fieldWithPath("subscribeName").type(JsonFieldType.STRING).description("구독권 이름"),
+                                fieldWithPath("qrimageUrl").type(JsonFieldType.STRING).description("QR 이미지 URL"),
+                                fieldWithPath("benefits[].description").type(JsonFieldType.STRING).description("구독권 혜택"),
+                                fieldWithPath("totalCount").type(JsonFieldType.NUMBER).description("구독 총 횟수"),
+                                fieldWithPath("remainingCount").type(JsonFieldType.NUMBER).description("구독 남은 횟수"),
+                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("구독 생성 날짜"),
+                                fieldWithPath("expiredAt").type(JsonFieldType.STRING).description("구독 만료 날짜")
+                        )));
+    }
+
 }

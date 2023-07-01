@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PurchasedSubscribeRepository extends JpaRepository<PurchasedSubscribe, Long> {
     List<PurchasedSubscribe> findAllByCustomer(Customer customer);
+
+    PurchasedSubscribe findByIdAndCustomer(Long id, Customer customer);
 }

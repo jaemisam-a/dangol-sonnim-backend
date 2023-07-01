@@ -581,7 +581,16 @@ include::{snippets}/subscribe/delete/path-parameters.adoc[]
 - Response
 include::{snippets}/subscribe/delete/http-response.adoc[]
 
-==== 7. 구독권(유저 구독) 리스트 조회
+==== 4. 유저 구독권 사용
+구매한 구독권을 사용합니다. (단 기간과 횟수가 남아있어야 함.)
+
+- Request
+include::{snippets}/subscribe/use/http-request.adoc[]
+
+- Response
+include::{snippets}/subscribe/use/http-response.adoc[]
+
+==== 5. 구독권(유저 구독) 리스트 조회
 
 - Request
 include::{snippets}/subscribe/list/http-request.adoc[]

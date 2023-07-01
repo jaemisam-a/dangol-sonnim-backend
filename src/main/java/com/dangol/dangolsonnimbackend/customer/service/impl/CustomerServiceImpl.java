@@ -26,6 +26,7 @@ import com.dangol.dangolsonnimbackend.store.repository.StoreRepository;
 import com.dangol.dangolsonnimbackend.subscribe.domain.CountSubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.MonthlySubscribe;
 import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
+import com.dangol.dangolsonnimbackend.subscribe.dto.PurchasedSubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.enumeration.SubscribeType;
 import com.dangol.dangolsonnimbackend.subscribe.repository.CountSubscribeRepository;
 import com.dangol.dangolsonnimbackend.subscribe.repository.MonthlySubscribeRepository;
@@ -153,7 +154,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void purchaseSubscribe(String id, PurchaseSubscribeRequestDTO dto) throws IOException, WriterException {
+    public PurchasedSubscribeResponseDTO purchaseSubscribe(String id, PurchaseSubscribeRequestDTO dto) throws IOException, WriterException {
         Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
                 () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
         );
@@ -176,6 +177,8 @@ public class CustomerServiceImpl implements CustomerService {
         PurchasedSubscribe saved = purchasedSubscribeRepository.save(purchasedSubscribe);
         String qrCodeImageUrl = generateAndUploadQRCode(saved.getId().toString(), QR_WIDTH, QR_HEIGHT);
         purchasedSubscribe.setQRImageUrl(qrCodeImageUrl);
+
+        return purchasedSubscribe.toResponseDTO();
     }
 
     private String uploadFileIfPresent(MultipartFile file) {

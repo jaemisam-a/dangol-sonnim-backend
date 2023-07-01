@@ -16,12 +16,14 @@ import com.dangol.dangolsonnimbackend.subscribe.domain.Subscribe;
 import com.dangol.dangolsonnimbackend.subscribe.dto.PurchasedSubscribeResponseDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeRequestDTO;
 import com.dangol.dangolsonnimbackend.subscribe.dto.SubscribeResponseDTO;
+import com.dangol.dangolsonnimbackend.subscribe.enumeration.SubscribeType;
 import com.dangol.dangolsonnimbackend.subscribe.repository.SubscribeRepository;
 import com.dangol.dangolsonnimbackend.subscribe.service.SubscribeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -97,5 +99,26 @@ public class SubscribeServiceImpl implements SubscribeService {
 
         return purchasedSubscribeRepository.findAllByCustomer(customer).stream()
                 .map(PurchasedSubscribe::toResponseDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public PurchasedSubscribeResponseDTO useSubscribe(String id, Long subscribeId) {
+        Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
+        );
+
+        PurchasedSubscribe purchasedSubscribe = purchasedSubscribeRepository.findByIdAndCustomer(subscribeId, customer);
+
+        if (purchasedSubscribe.getSubscribeType() == SubscribeType.COUNT && purchasedSubscribe.getRemainingCount() < 0){
+            throw new BadRequestException(ErrorCodeMessage.NOT_REMAINING_COUNT);
+        }
+        if (purchasedSubscribe.getExpiredAt().isBefore(LocalDateTime.now())){
+            throw new BadRequestException(ErrorCodeMessage.EXPIRED_SUBSCRIBE);
+        }
+        if (purchasedSubscribe.getSubscribeType() == SubscribeType.COUNT) {
+            purchasedSubscribe.useSubscribe();
+        }
+
+        return purchasedSubscribe.toResponseDTO();
     }
 }

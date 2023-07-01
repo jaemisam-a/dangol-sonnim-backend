@@ -4,6 +4,7 @@ import com.dangol.dangolsonnimbackend.boss.dto.reponse.BossResponseDTO;
 import com.dangol.dangolsonnimbackend.boss.dto.request.IsValidAccessTokenRequestDTO;
 import com.dangol.dangolsonnimbackend.customer.dto.*;
 import com.dangol.dangolsonnimbackend.customer.service.CustomerService;
+import com.dangol.dangolsonnimbackend.subscribe.dto.PurchasedSubscribeResponseDTO;
 import com.google.zxing.WriterException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,8 +81,8 @@ public class CustomerController {
     }
 
     @PostMapping("/purchase-subscribe")
-    public ResponseEntity<Void> purchaseSubscribe(@AuthenticationPrincipal String id, @Valid @RequestBody PurchaseSubscribeRequestDTO dto) throws IOException, WriterException {
-        customerService.purchaseSubscribe(id, dto);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<PurchasedSubscribeResponseDTO> purchaseSubscribe(@AuthenticationPrincipal String id, @Valid @RequestBody PurchaseSubscribeRequestDTO dto) throws IOException, WriterException {
+        PurchasedSubscribeResponseDTO responseDTO = customerService.purchaseSubscribe(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 }

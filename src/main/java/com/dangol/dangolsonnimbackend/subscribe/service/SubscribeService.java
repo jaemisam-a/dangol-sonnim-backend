@@ -17,4 +17,6 @@ public interface SubscribeService {
     void deleteSubscribe(Long subscribeId);
 
     List<PurchasedSubscribeResponseDTO> getSubscribeList(String id);
+
+    PurchasedSubscribeResponseDTO useSubscribe(String id, Long subscribeId);
 }
