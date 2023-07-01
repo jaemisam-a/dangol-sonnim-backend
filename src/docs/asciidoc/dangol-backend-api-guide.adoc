@@ -581,7 +581,7 @@ include::{snippets}/subscribe/delete/path-parameters.adoc[]
 - Response
 include::{snippets}/subscribe/delete/http-response.adoc[]
 
-==== 4. 유저 구독권 사용
+==== 4. 구독권 사용
 구매한 구독권을 사용합니다. (단 기간과 횟수가 남아있어야 함.)
 
 - Request
