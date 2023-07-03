@@ -102,12 +102,11 @@ public class SubscribeServiceImpl implements SubscribeService {
     }
 
     @Override
-    public PurchasedSubscribeResponseDTO useSubscribe(String id, Long subscribeId) {
-        Customer customer = Optional.ofNullable(customerRepository.findById(id)).orElseThrow(
-                () -> new NotFoundException(ErrorCodeMessage.CUSTOMER_NOT_FOUND)
-        );
+    public PurchasedSubscribeResponseDTO useSubscribe(Long subscribeId) {
 
-        PurchasedSubscribe purchasedSubscribe = purchasedSubscribeRepository.findByIdAndCustomer(subscribeId, customer);
+        PurchasedSubscribe purchasedSubscribe = purchasedSubscribeRepository.findById(subscribeId).orElseThrow(
+                () -> new NotFoundException(ErrorCodeMessage.SUBSCRIBE_NOT_FOUND)
+        );
 
         if (purchasedSubscribe.getSubscribeType() == SubscribeType.COUNT && purchasedSubscribe.getRemainingCount() < 0){
             throw new BadRequestException(ErrorCodeMessage.NOT_REMAINING_COUNT);

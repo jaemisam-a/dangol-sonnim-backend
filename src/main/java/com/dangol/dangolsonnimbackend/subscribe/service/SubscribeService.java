@@ -18,5 +18,5 @@ public interface SubscribeService {
 
     List<PurchasedSubscribeResponseDTO> getSubscribeList(String id);
 
-    PurchasedSubscribeResponseDTO useSubscribe(String id, Long subscribeId);
+    PurchasedSubscribeResponseDTO useSubscribe(Long subscribeId);
 }

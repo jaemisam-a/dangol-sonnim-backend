@@ -48,8 +48,8 @@ public class SubscribeController {
     }
 
     @PostMapping("use-subscribe/{subscribeId}")
-    public ResponseEntity<PurchasedSubscribeResponseDTO> useSubscribe(@AuthenticationPrincipal String id, @PathVariable Long subscribeId){
-        PurchasedSubscribeResponseDTO responseDTO = subscribeService.useSubscribe(id, subscribeId);
+    public ResponseEntity<PurchasedSubscribeResponseDTO> useSubscribe(@PathVariable Long subscribeId){
+        PurchasedSubscribeResponseDTO responseDTO = subscribeService.useSubscribe(subscribeId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 }

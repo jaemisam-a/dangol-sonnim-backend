@@ -309,7 +309,6 @@ class SubscribeControllerTest {
 
         Date now = new Date();
         AuthToken authToken = tokenProvider.createAuthToken(CUSTOMER_TEST_ID, new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
-        String accessToken = authToken.getToken();
         AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 CUSTOMER_TEST_ID, null, AuthorityUtils.NO_AUTHORITIES);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -324,11 +323,9 @@ class SubscribeControllerTest {
 
         // Then
         mockMvc.perform(RestDocumentationRequestBuilders.post(BASE_URL + "/use-subscribe/" + validSubscribeId)
-                        .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("subscribe/use",
-                        requestHeaders(headerWithName("Authorization").description("Access 토큰 정보")),
                         responseFields(
                                 fieldWithPath("purchasedSubscribeId").type(JsonFieldType.NUMBER).description("결제 고유번호"),
                                 fieldWithPath("merchantUid").type(JsonFieldType.STRING).description("결제 고유번호"),
