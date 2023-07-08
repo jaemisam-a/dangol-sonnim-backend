@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -34,4 +35,7 @@ public class PurchasedSubscribeResponseDTO {
     private Integer remainingCount;
     private String createdAt;
     private String expiredAt;
+
+    private String intro;
+    private BigDecimal price;
 }

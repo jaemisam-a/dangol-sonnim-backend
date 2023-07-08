@@ -297,7 +297,9 @@ class SubscribeControllerTest {
                                 fieldWithPath("[].totalCount").type(JsonFieldType.NUMBER).description("구독 총 횟수"),
                                 fieldWithPath("[].remainingCount").type(JsonFieldType.NUMBER).description("구독 남은 횟수"),
                                 fieldWithPath("[].createdAt").type(JsonFieldType.STRING).description("구독 생성 날짜"),
-                                fieldWithPath("[].expiredAt").type(JsonFieldType.STRING).description("구독 만료 날짜")
+                                fieldWithPath("[].expiredAt").type(JsonFieldType.STRING).description("구독 만료 날짜"),
+                                fieldWithPath("[].intro").type(JsonFieldType.STRING).description("구독권 소개"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구독권 가격")
                         )));
     }
 
@@ -340,8 +342,10 @@ class SubscribeControllerTest {
                                 fieldWithPath("totalCount").type(JsonFieldType.NUMBER).description("구독 총 횟수"),
                                 fieldWithPath("remainingCount").type(JsonFieldType.NUMBER).description("구독 남은 횟수"),
                                 fieldWithPath("createdAt").type(JsonFieldType.STRING).description("구독 생성 날짜"),
-                                fieldWithPath("expiredAt").type(JsonFieldType.STRING).description("구독 만료 날짜")
-                        )));
+                                fieldWithPath("expiredAt").type(JsonFieldType.STRING).description("구독 만료 날짜"),
+                                fieldWithPath("intro").type(JsonFieldType.STRING).description("구독권 소개"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("구독권 가격")
+                                )));
     }
 
 }

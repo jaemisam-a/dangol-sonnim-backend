@@ -102,6 +102,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     }
 
     @Override
+    @Transactional
     public PurchasedSubscribeResponseDTO useSubscribe(Long subscribeId) {
 
         PurchasedSubscribe purchasedSubscribe = purchasedSubscribeRepository.findById(subscribeId).orElseThrow(

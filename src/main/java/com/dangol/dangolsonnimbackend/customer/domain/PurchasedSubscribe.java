@@ -100,6 +100,8 @@ public class PurchasedSubscribe {
             dto.setTotalCount(this.totalCount);
             dto.setRemainingCount(this.remainingCount);
         }
+        dto.setIntro(this.subscribe.getIntro());
+        dto.setPrice(this.subscribe.getPrice());
 
         return dto;
     }
