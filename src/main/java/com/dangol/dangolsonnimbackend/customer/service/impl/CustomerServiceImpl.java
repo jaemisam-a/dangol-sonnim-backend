@@ -66,6 +66,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     private static final Integer QR_WIDTH = 320;
     private static final Integer QR_HEIGHT = 320;
+    private static final String QR_SUFFIX = "-dangol";
 
     @Override
     public CustomerResponseDTO addInfo(String id, CustomerInfoRequestDTO dto) {
@@ -190,7 +191,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     public String generateAndUploadQRCode(String text, int width, int height) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+        BitMatrix bitMatrix = qrCodeWriter.encode(text + QR_SUFFIX, BarcodeFormat.QR_CODE, width, height);
 
         BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
